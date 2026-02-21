@@ -1,75 +1,79 @@
-<div class="min-h-screen bg-stone-50">
-	<header
-		class="h-16 bg-white border-b border-stone-200 flex items-center justify-between px-6 sticky top-0 z-10 shadow-xs"
-	>
-		<p-button
-			icon="pi pi-bars"
-			[text]="true"
-			[rounded]="true"
-			severity="secondary"
-			(onClick)="toggleSidebar()"
-		/>
+@if (isAuthenticated()) {
+	<div class="min-h-screen bg-stone-50">
+		<header
+			class="h-16 bg-white border-b border-stone-200 flex items-center justify-between px-6 sticky top-0 z-10 shadow-xs"
+		>
+			<p-button
+				icon="pi pi-bars"
+				[text]="true"
+				[rounded]="true"
+				severity="secondary"
+				(onClick)="toggleSidebar()"
+			/>
 
-		@if (user()) {
-			<div class="flex items-center gap-4">
-				<div class="flex flex-col items-end sm:flex">
-					<span class="text-sm font-semibold text-gray-900">{{ user()!.displayName }}</span>
-					<span class="text-xs text-gray-500">{{ user()!.email }}</span>
+			@if (user()) {
+				<div class="flex items-center gap-4">
+					<div class="flex flex-col items-end sm:flex">
+						<span class="text-sm font-semibold text-gray-900">{{ user()!.displayName }}</span>
+						<span class="text-xs text-gray-500">{{ user()!.email }}</span>
+					</div>
+
+					<p-avatar
+						[image]="user()!.photoURL || ''"
+						shape="circle"
+						size="large"
+					/>
+
+					<p-button
+						icon="pi pi-sign-out"
+						[text]="true"
+						[rounded]="true"
+						severity="danger"
+						(onClick)="logout()"
+					/>
 				</div>
+			}
+		</header>
 
-				<p-avatar
-					[image]="user()!.photoURL || ''"
-					shape="circle"
-					size="large"
-				/>
-
-				<p-button
-					icon="pi pi-sign-out"
-					[text]="true"
-					[rounded]="true"
-					severity="danger"
-					(onClick)="logout()"
-				/>
+		<p-drawer
+			[(visible)]="isSidebarVisible"
+			header="Menu"
+		>
+			<div class="flex flex-col gap-2 mt-4">
+				<a
+					routerLink="/home"
+					routerLinkActive="bg-violet-50 text-violet-600"
+					class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-violet-50 transition-all font-medium"
+					(click)="isSidebarVisible.set(false)"
+				>
+					<i class="pi pi-home"></i>
+					Prenotazioni
+				</a>
+				<a
+					routerLink="/availability-management"
+					routerLinkActive="bg-violet-50 text-violet-600"
+					class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-violet-50 transition-all font-medium"
+					(click)="isSidebarVisible.set(false)"
+				>
+					<i class="pi pi-calendar"></i>
+					Gestione Disponibilità
+				</a>
+				<a
+					routerLink="/about"
+					routerLinkActive="bg-violet-50 text-violet-600"
+					class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-violet-50 transition-all font-medium"
+					(click)="isSidebarVisible.set(false)"
+				>
+					<i class="pi pi-user"></i>
+					About
+				</a>
 			</div>
-		}
-	</header>
+		</p-drawer>
 
-	<p-drawer
-		[(visible)]="isSidebarVisible"
-		header="Menu"
-	>
-		<div class="flex flex-col gap-2 mt-4">
-			<a
-				routerLink="/home"
-				routerLinkActive="bg-violet-50 text-violet-600"
-				class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-violet-50 transition-all font-medium"
-				(click)="isSidebarVisible.set(false)"
-			>
-				<i class="pi pi-home"></i>
-				Prenotazioni
-			</a>
-			<a
-				routerLink="/availability-management"
-				routerLinkActive="bg-violet-50 text-violet-600"
-				class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-violet-50 transition-all font-medium"
-				(click)="isSidebarVisible.set(false)"
-			>
-				<i class="pi pi-calendar"></i>
-				Gestione Disponibilità
-			</a>
-			<a
-				routerLink="/about"
-				routerLinkActive="bg-violet-50 text-violet-600"
-				class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-violet-50 transition-all font-medium"
-				(click)="isSidebarVisible.set(false)"
-			>
-				<i class="pi pi-user"></i>
-				About
-			</a>
-		</div>
-	</p-drawer>
-
-	<main class="p-8">
-		<router-outlet />
-	</main>
-</div>
+		<main class="p-8">
+			<router-outlet />
+		</main>
+	</div>
+} @else {
+	<router-outlet />
+}
