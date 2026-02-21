@@ -1,0 +1,12 @@
+# Ignore:
+/build
+/coverage
+/dist
+/.angular
+/.husky
+/.idea
+/.vscode
+/nginx
+/node_modules
+/public
+**/src/assets
