@@ -53,10 +53,15 @@ export class Booking {
 
 	readonly selectedDate = signal<Date | null>(null);
 	readonly selectedTime = signal<string | null>(null);
-
-	readonly minDate = signal<Date>(new Date());
+	
+	readonly minDate = computed(() => {
+		const date = new Date();
+		date.setHours(0, 0, 0, 0);
+		return date;
+	})
 	readonly maxDate = computed(() => {
 		const date = new Date();
+		date.setHours(23, 59, 59, 999);
 		date.setMonth(date.getMonth() + 1);
 		return date;
 	});

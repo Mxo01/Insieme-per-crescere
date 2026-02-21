@@ -43,123 +43,109 @@
 		</p-card>
 	</div>
 
-	<div class="bg-white rounded-2xl shadow-sm overflow-hidden">
-		<p-table
-			[value]="bookings()"
-			stripedRows
-			[rows]="10"
+	<p-table
+		[value]="bookings()"
+		stripedRows
+		class="shadow-sm"
+		[rows]="20"
+		[paginator]="true"
+		[rowsPerPageOptions]="[10, 20, 50]"
+	>
+		<ng-template #header>
+			<tr>
+				<th>Azioni</th>
+				<th>Stato</th>
+				<th>Data</th>
+				<th>Ora</th>
+				<th>Cliente</th>
+				<th>Email</th>
+				<th>Telefono</th>
+			</tr>
+			<tr>
+				<th></th>
+				<th>
+					<p-columnFilter
+						type="boolean"
+						field="isAccepted"
+					></p-columnFilter>
+				</th>
+				<th>
+					<p-columnFilter
+						type="text"
+						field="date"
+						ariaLabel="Filter Date"
+						filterOn="input"
+					></p-columnFilter>
+				</th>
+				<th>
+					<p-columnFilter
+						type="text"
+						field="time"
+						ariaLabel="Filter Time"
+						filterOn="input"
+					></p-columnFilter>
+				</th>
+				<th>
+					<p-columnFilter
+						type="text"
+						field="name"
+						ariaLabel="Filter Name"
+						filterOn="input"
+					></p-columnFilter>
+				</th>
+				<th>
+					<p-columnFilter
+						type="text"
+						field="email"
+						ariaLabel="Filter email"
+						filterOn="input"
+					></p-columnFilter>
+				</th>
+				<th></th>
+			</tr>
+		</ng-template>
+		<ng-template
+			#body
+			let-booking
 		>
-			<ng-template #header>
-				<tr>
-					<th style="width: 5rem">Azioni</th>
-					<th>Stato</th>
-					<th>Data</th>
-					<th>Ora</th>
-					<th>Cliente</th>
-					<th>Email</th>
-					<th>Telefono</th>
-					<th>Note</th>
-				</tr>
-				<tr>
-					<th></th>
-					<th>
-						<p-columnFilter
-							type="boolean"
-							field="isAccepted"
-						></p-columnFilter>
-					</th>
-					<th>
-						<p-columnFilter
-							type="text"
-							field="date"
-							ariaLabel="Filter Date"
-							filterOn="input"
-						></p-columnFilter>
-					</th>
-					<th>
-						<p-columnFilter
-							type="text"
-							field="time"
-							ariaLabel="Filter Time"
-							filterOn="input"
-						></p-columnFilter>
-					</th>
-					<th>
-						<p-columnFilter
-							type="text"
-							field="name"
-							ariaLabel="Filter Name"
-							filterOn="input"
-						></p-columnFilter>
-					</th>
-					<th>
-						<p-columnFilter
-							type="text"
-							field="email"
-							ariaLabel="Filter email"
-							filterOn="input"
-						></p-columnFilter>
-					</th>
-					<th></th>
-					<th></th>
-				</tr>
-			</ng-template>
-			<ng-template
-				#body
-				let-booking
-			>
-				<tr class="[&>td]:text-sm">
-					<td>
-						<p-button
-							icon="pi pi-ellipsis-v"
-							[rounded]="true"
-							[text]="true"
-							severity="secondary"
-							(click)="onRowActionsClick($event, booking)"
-						/>
-					</td>
-					<td class="whitespace-nowrap">
-						<p-tag
-							[severity]="booking.isAccepted ? 'success' : 'warn'"
-							[value]="booking.isAccepted ? 'Accettata' : 'In attesa'"
-							[rounded]="true"
-						/>
-					</td>
-					<td>{{ booking.date }}</td>
-					<td>{{ booking.time }}</td>
-					<td>{{ booking.name }} {{ booking.lastName }}</td>
-					<td>{{ booking.email }}</td>
-					<td>{{ booking.phone }}</td>
-					<td>
-						@if (booking.notes) {
-							<p-button
-								icon="pi pi-info-circle"
-								[rounded]="true"
-								[text]="true"
-								severity="secondary"
-								(click)="onViewNotes(booking)"
-							/>
-						} @else {
-							<small class="italic whitespace-nowrap text-stone-400">Nessuna nota</small>
-						}
-					</td>
-				</tr>
-			</ng-template>
-			<ng-template #emptymessage>
-				<tr>
-					<td
-						colspan="8"
-						class="text-center py-12"
-					>
-						<div class="flex flex-col items-center gap-4 text-stone-400">
-							<i class="pi pi-inbox text-4xl"></i>
-							<p>Nessuna prenotazione trovata.</p>
-						</div>
-					</td>
-				</tr>
-			</ng-template>
-		</p-table>
-	</div>
+			<tr class="[&>td]:text-sm">
+				<td>
+					<p-button
+						icon="pi pi-ellipsis-v"
+						[rounded]="true"
+						[text]="true"
+						severity="secondary"
+						(click)="onRowActionsClick($event, booking)"
+					/>
+				</td>
+				<td class="whitespace-nowrap">
+					<p-tag
+						[severity]="booking.isAccepted ? 'success' : 'warn'"
+						[value]="booking.isAccepted ? 'Accettata' : 'In attesa'"
+						[rounded]="true"
+					/>
+				</td>
+				<td>{{ booking.date }}</td>
+				<td>{{ booking.time }}</td>
+				<td>{{ booking.name }} {{ booking.lastName }}</td>
+				<td>{{ booking.email }}</td>
+				<td>{{ booking.phone }}</td>
+			</tr>
+		</ng-template>
+		<ng-template #emptymessage>
+			<tr>
+				<td
+					colspan="7"
+					class="text-center py-12"
+				>
+					<div class="flex flex-col items-center gap-4 text-stone-400">
+						<i class="pi pi-inbox text-4xl"></i>
+						<p>Nessuna prenotazione trovata.</p>
+					</div>
+				</td>
+			</tr>
+		</ng-template>
+	</p-table>
 </div>
 
 <p-menu
@@ -170,6 +156,7 @@
 />
 
 <p-dialog
+	[modal]="true"
 	header="Note del cliente"
 	[focusOnShow]="false"
 	(onHide)="selectedBooking.set(null)"
@@ -179,6 +166,7 @@
 </p-dialog>
 
 <p-dialog
+	[modal]="true"
 	header="Modifica la data della prenotazione"
 	[focusOnShow]="false"
 	(onHide)="onEditDateDialogHide()"
@@ -191,13 +179,14 @@
 		>
 			Data
 		</label>
-		<p-date-picker
+		<p-datepicker
 			fluid
 			appendTo="body"
 			dateFormat="dd/mm/yy"
 			showIcon
 			iconDisplay="input"
 			inputId="date"
+			[minDate]="minDate()"
 			[(ngModel)]="selectedDate"
 		/>
 	</div>
@@ -211,6 +200,9 @@
 		<p-select
 			[options]="timeOptions()"
 			fluid
+			optionLabel="label"
+			optionValue="value"
+			optionDisabled="isBooked"
 			appendTo="body"
 			inputId="time"
 			[(ngModel)]="selectedTime"

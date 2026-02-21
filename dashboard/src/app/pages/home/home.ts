@@ -1,4 +1,4 @@
-import { Component, inject, computed, signal, viewChild, ElementRef } from "@angular/core";
+import { Component, inject, computed, signal, viewChild, ElementRef, effect } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { TableModule } from "primeng/table";
 import { CardModule } from "primeng/card";
@@ -15,6 +15,7 @@ import { DatePicker } from "primeng/datepicker";
 import { Select } from "primeng/select";
 import { timeOptions } from "src/app/shared/utils/constants";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
+import { Dates } from "src/app/shared/services/dates/dates";
 
 @Component({
 	imports: [
@@ -35,29 +36,42 @@ import { ConfirmDialogModule } from "primeng/confirmdialog";
 	templateUrl: "./home.html"
 })
 export class Home {
+	private readonly datesService = inject(Dates);
 	private readonly bookingsService = inject(Bookings);
 	private readonly messageService = inject(MessageService);
 	private readonly confirmationService = inject(ConfirmationService);
 
-	menu = viewChild<Menu>("menu");
+	readonly menu = viewChild<Menu>("menu");
 
-	timeOptions = signal(timeOptions);
-	bookings = this.bookingsService.getBookings();
+	readonly timeOptions = signal(timeOptions);
+	readonly bookings = this.bookingsService.getBookings();
 
-	totalBookings = computed(() => this.bookings().length);
-	pendingBookings = computed(() => this.bookings().filter(b => !b.isAccepted).length);
-	acceptedBookings = computed(() => this.bookings().filter(b => b.isAccepted).length);
+	readonly minDate = computed(() => {
+		const date = new Date();
+		date.setHours(0, 0, 0, 0);
+		return date;
+	})
+	readonly maxDate = computed(() => {
+		const date = new Date();
+		date.setHours(23, 59, 59, 999);
+		date.setMonth(date.getMonth() + 1);
+		return date;
+	});
 
-	selectedBooking = signal<BookingDto | null>(null);
-	selectedDate = signal<Date | null>(null);
-	selectedTime = signal<string | null>(null);
+	readonly totalBookings = computed(() => this.bookings().length);
+	readonly pendingBookings = computed(() => this.bookings().filter(b => !b.isAccepted).length);
+	readonly acceptedBookings = computed(() => this.bookings().filter(b => b.isAccepted).length);
 
-	isNotesDialogVisible = signal(false);
-	isDateEditVisible = signal(false);
-	isDateEditLoading = signal(false);
-	isDeleteLoading = signal(false);
+	readonly selectedBooking = signal<BookingDto | null>(null);
+	readonly selectedDate = signal<Date | null>(null);
+	readonly selectedTime = signal<string | null>(null);
 
-	menuItems = computed<MenuItem[]>(() => {
+	readonly isNotesDialogVisible = signal(false);
+	readonly isDateEditVisible = signal(false);
+	readonly isDateEditLoading = signal(false);
+	readonly isDeleteLoading = signal(false);
+
+	readonly menuItems = computed<MenuItem[]>(() => {
 		const booking = this.selectedBooking();
 
 		if (!booking) return [];
@@ -69,20 +83,46 @@ export class Home {
 				command: () => this.toggleBookingStatus(booking)
 			},
 			{
-				label: "Elimina",
-				icon: "pi pi-trash",
-				command: event => this.deleteBooking(event.originalEvent, booking)
-			},
-			{
 				label: "Modifica data",
 				icon: "pi pi-calendar",
 				command: () => this.openDateEdit(booking)
+			},
+			{
+				label: "Visualizza note",
+				icon: "pi pi-info-circle",
+				disabled: !booking.notes,
+				command: () => this.onViewNotes()
+			},
+			{
+				label: "Elimina",
+				icon: "pi pi-trash",
+				iconClass: "text-red-500!",
+				labelClass: "text-red-500",
+				command: event => this.deleteBooking(event.originalEvent, booking)
 			}
 		];
 	});
 
-	onViewNotes(booking: BookingDto) {
-		this.selectedBooking.set(booking);
+	constructor() {
+		effect(async () => {
+			const date = this.selectedDate();
+			this.selectedTime.set(null);
+
+			if (date) {
+				const existingAvailability = await this.datesService.getAvailabilityByDate(
+					date.toLocaleDateString()
+				);
+				this.timeOptions.update(options =>
+					options.map(option => ({
+						...option,
+						isBooked: !!existingAvailability?.bookedTimeSlots.includes(option.value)
+					}))
+				);
+			}
+		});
+	}
+
+	onViewNotes() {
 		this.isNotesDialogVisible.set(true);
 	}
 
