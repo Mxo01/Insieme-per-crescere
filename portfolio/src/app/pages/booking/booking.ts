@@ -135,7 +135,8 @@ export class Booking {
 			phone: this.bookingForm.value.phone!,
 			notes: this.bookingForm.value.notes,
 			date: this.selectedDate()!.toLocaleDateString(),
-			time: this.selectedTime()!
+			time: this.selectedTime()!,
+			isAccepted: false
 		};
 
 		this.bookingsService

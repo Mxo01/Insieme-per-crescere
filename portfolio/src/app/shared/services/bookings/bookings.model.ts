@@ -7,4 +7,5 @@ export interface BookingDto {
 	notes?: string;
 	date: string;
 	time: string;
+	isAccepted: boolean;
 }
