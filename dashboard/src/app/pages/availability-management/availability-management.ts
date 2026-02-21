@@ -37,6 +37,14 @@ export class AvailabilityManagement {
 
 	isSaving = signal(false);
 
+	minDate = signal<Date>(
+		(() => {
+			const d = new Date();
+			d.setHours(0, 0, 0, 0);
+			return d;
+		})()
+	);
+
 	constructor() {
 		effect(async () => {
 			const date = this.selectedDate();

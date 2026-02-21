@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { query, where, getDocs, addDoc, updateDoc, doc } from "@angular/fire/firestore";
+import { query, where, getDocs, addDoc, updateDoc, doc, deleteDoc } from "@angular/fire/firestore";
 import { Database } from "../database";
 import { AvailableDateDto } from "./dates.model";
 import { BookingDto } from "../bookings/bookings.model";
@@ -11,6 +11,8 @@ export class Dates {
 	private db = inject(Database);
 
 	async saveAvailability(date: string, availableTimeSlots: string[]) {
+		await this.cleanupOldDates();
+
 		const q = query(this.db.datesCollection, where("date", "==", date));
 		const querySnapshot = await getDocs(q);
 
@@ -24,6 +26,24 @@ export class Dates {
 				availableTimeSlots
 			});
 		}
+	}
+
+	private async cleanupOldDates() {
+		const today = new Date();
+		today.setHours(0, 0, 0, 0);
+
+		const querySnapshot = await getDocs(this.db.datesCollection);
+
+		const deletePromises = querySnapshot.docs
+			.filter(doc => {
+				const data = doc.data() as AvailableDateDto;
+				const [day, month, year] = data.date.split("/").map(Number);
+				const date = new Date(year, month - 1, day);
+				return date < today;
+			})
+			.map(doc => deleteDoc(doc.ref));
+
+		return Promise.all(deletePromises);
 	}
 
 	async getAvailabilityByDate(
