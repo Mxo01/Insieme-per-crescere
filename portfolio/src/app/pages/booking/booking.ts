@@ -16,27 +16,38 @@ import { Toast } from "primeng/toast";
 import { MessageService } from "primeng/api";
 import { FormBuilder, ReactiveFormsModule, Validators, FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
+import { Dates } from "src/app/shared/services/dates/dates";
+import { Bookings } from "src/app/shared/services/bookings/bookings";
+import { BookingDto } from "src/app/shared/services/bookings/bookings.model";
+import { v4 as uuid } from "uuid";
+import { Tag } from "primeng/tag";
 
 @Component({
 	selector: "app-booking",
 	imports: [
-		DatePicker,
-		ButtonModule,
-		InputText,
-		Textarea,
-		Toast,
-		ReactiveFormsModule,
-		FormsModule,
-		RouterLink
-	],
+    DatePicker,
+    ButtonModule,
+    InputText,
+    Textarea,
+    Toast,
+    ReactiveFormsModule,
+    FormsModule,
+    RouterLink,
+    Tag
+],
 	providers: [MessageService],
 	templateUrl: "./booking.html",
 	styleUrl: "./booking.scss",
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class Booking {
-	private readonly fb = inject(FormBuilder);
+	private readonly datesService = inject(Dates);
+	private readonly bookingsService = inject(Bookings);
 	private readonly messageService = inject(MessageService);
+
+	private readonly fb = inject(FormBuilder);
+
+	readonly isSubmitting = signal<boolean>(false);
 
 	timeSection = viewChild<ElementRef<HTMLDivElement>>("timeSection");
 	detailsSection = viewChild<ElementRef<HTMLDivElement>>("detailsSection");
@@ -44,9 +55,37 @@ export class Booking {
 	readonly selectedDate = signal<Date | null>(null);
 	readonly selectedTime = signal<string | null>(null);
 
-	readonly availableTimes = computed(() => ["09:00", "10:00", "11:00", "14:00", "15:00", "17:00"]);
+	readonly minDate = signal<Date>(new Date());
+	readonly maxDate = computed(() => {
+		const date = new Date();
+		date.setMonth(date.getMonth() + 1);
+		return date;
+	});
 
-	readonly minDate = new Date();
+	private readonly availableDates = this.datesService.getAvailableDates();
+
+	readonly availableTimes = computed(() => {
+		const selectedDate = this.selectedDate()?.toLocaleDateString();
+		const availableTimeSlots = this.availableDates().find(
+			day => day.date === selectedDate
+		)?.availableTimeSlots;
+		return !selectedDate || !availableTimeSlots ? [] : availableTimeSlots;
+	});
+
+	readonly disabledDates = computed(() => {
+		const availableDates = this.availableDates().map(({ date }) => date);
+		const disabledDates: Date[] = [];
+
+		const start = new Date(this.minDate());
+		const end = new Date(this.maxDate());
+
+		for (let day = new Date(start); day <= end; day.setDate(day.getDate() + 1)) {
+			const dateStr = day.toLocaleDateString();
+			if (!availableDates.includes(dateStr)) disabledDates.push(new Date(day));
+		}
+
+		return disabledDates;
+	});
 
 	readonly bookingForm = this.fb.nonNullable.group({
 		name: ["", Validators.required],
@@ -75,26 +114,52 @@ export class Booking {
 		this.selectedTime.set(time);
 	}
 
-	onConfirm() {
-		if (this.bookingForm.invalid) {
+	onConfirmBooking() {
+		if (this.bookingForm.invalid || !this.selectedDate() || !this.selectedTime()) {
 			this.messageService.add({
 				severity: "error",
 				summary: "Errore",
 				detail: "Compila tutti i campi obbligatori correttamente."
 			});
+
 			return;
 		}
 
-		this.messageService.add({
-			severity: "success",
-			summary: "Prenotazione confermata",
-			detail: "La tua consulenza è stata prenotata con successo!"
-		});
+		this.isSubmitting.set(true);
 
-		this.resetBooking();
+		const booking: BookingDto = {
+			id: uuid(),
+			name: this.bookingForm.value.name!,
+			lastName: this.bookingForm.value.lastName!,
+			email: this.bookingForm.value.email!,
+			phone: this.bookingForm.value.phone!,
+			notes: this.bookingForm.value.notes,
+			date: this.selectedDate()!.toLocaleDateString(),
+			time: this.selectedTime()!
+		};
+
+		this.bookingsService
+			.addBooking(booking)
+			.then(() => {
+				this.messageService.add({
+					severity: "success",
+					summary: "Prenotazione effettuata",
+					detail: "La tua prenotazione è stata confermata."
+				});
+
+				this.resetBooking();
+			})
+			.catch(() => {
+				this.messageService.add({
+					severity: "error",
+					summary: "Errore",
+					detail: "Errore durante la prenotazione. Riprova più tardi."
+				});
+			})
+			.finally(() => this.isSubmitting.set(false));
 	}
 
-	onCancel() {
+	onCancelBooking() {
 		this.resetBooking();
 	}
 
