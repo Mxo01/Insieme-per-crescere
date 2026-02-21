@@ -1,1 +1,280 @@
-<p>booking works!</p>
+<div class="min-h-screen bg-violet-50/40 text-gray-800 p-4 sm:p-6">
+	<p-toast></p-toast>
+
+	<main class="max-w-5xl mx-auto">
+		<nav class="mb-6 md:mb-12">
+			<p-button
+				routerLink="/"
+				link
+				label="Torna alla Home"
+				icon="pi pi-arrow-left"
+			/>
+		</nav>
+
+		<header class="text-center mb-10 md:mb-12 flex flex-col items-center">
+			<span
+				class="inline-flex items-center gap-2 text-violet-600 font-bold tracking-widest uppercase text-xs sm:text-sm mb-3 sm:mb-4"
+			>
+				<i class="pi pi-calendar text-xs"></i>
+				Prenotazione
+			</span>
+			<h1
+				class="text-3xl sm:text-4xl md:text-6xl font-extrabold text-gray-900 tracking-tight mb-4 sm:mb-6"
+			>
+				Prenota una
+				<span class="text-violet-600">Consulenza</span>
+			</h1>
+			<p class="text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto font-medium">
+				Scegli il giorno e l'orario che preferisci per iniziare questo percorso insieme.
+			</p>
+		</header>
+
+		<div
+			class="bg-white rounded-3xl md:rounded-4xl p-6 sm:p-8 md:p-12 shadow-sm border border-stone-100 relative overflow-hidden transition-all duration-500"
+		>
+			<div class="flex flex-col md:flex-row gap-8 md:gap-12">
+				<div class="flex flex-col gap-4 sm:gap-6">
+					<h2 class="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-3">
+						<span
+							class="flex items-center justify-center min-w-8 w-8 h-8 rounded-full bg-violet-100 text-violet-600 text-sm"
+						>
+							1
+						</span>
+						Seleziona un giorno
+					</h2>
+					<p-datepicker
+						[minDate]="minDate"
+						[ngModel]="selectedDate()"
+						(ngModelChange)="onDateChange($event)"
+						inline
+						class="overflow-auto"
+						panelStyleClass="border-none! bg-transparent! p-0!"
+					></p-datepicker>
+				</div>
+
+				<div
+					#timeSection
+					class="flex flex-col w-full gap-4 sm:gap-6 transition-opacity duration-300"
+					[class.opacity-50]="!selectedDate()"
+					[class.pointer-events-none]="!selectedDate()"
+				>
+					<h2 class="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-3">
+						<span
+							class="flex items-center justify-center min-w-8 w-8 h-8 rounded-full bg-violet-100 text-violet-600 text-sm"
+						>
+							2
+						</span>
+						Scegli l'orario
+					</h2>
+
+					@if (selectedDate()) {
+						@if (!availableTimes().length) {
+							<div
+								class="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-stone-200 rounded-3xl p-6 sm:p-8 text-center bg-stone-50/50 min-h-40 sm:min-h-50"
+							>
+								<i class="pi pi-clock text-3xl sm:text-4xl text-stone-300 mb-3 sm:mb-4"></i>
+								<p class="text-sm sm:text-base text-gray-500 font-medium max-w-xs">
+									Non ci sono orari disponibili per la data selezionata.
+								</p>
+							</div>
+						} @else {
+							<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
+								@for (time of availableTimes(); track time) {
+									<button
+										type="button"
+										class="py-3 sm:py-4 px-3 sm:px-4 rounded-2xl border-2 font-semibold transition-all text-center text-base sm:text-lg cursor-pointer"
+										[class.border-violet-600]="selectedTime() === time"
+										[class.bg-violet-50]="selectedTime() === time"
+										[class.text-violet-700]="selectedTime() === time"
+										[class.border-stone-100]="selectedTime() !== time"
+										[class.bg-white]="selectedTime() !== time"
+										[class.text-gray-600]="selectedTime() !== time"
+										[class.hover:border-violet-300]="selectedTime() !== time"
+										(click)="onTimeSelect(time)"
+									>
+										{{ time }}
+									</button>
+								}
+							</div>
+						}
+					} @else {
+						<div
+							class="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-stone-200 rounded-3xl p-6 sm:p-8 text-center bg-stone-50/50 min-h-40 sm:min-h-50"
+						>
+							<i class="pi pi-clock text-3xl sm:text-4xl text-stone-300 mb-3 sm:mb-4"></i>
+							<p class="text-sm sm:text-base text-gray-500 font-medium max-w-xs">
+								Seleziona prima una data per vedere gli orari disponibili.
+							</p>
+						</div>
+					}
+				</div>
+			</div>
+
+			@if (selectedDate() && selectedTime()) {
+				<div
+					#detailsSection
+					class="mt-8 sm:mt-12 pt-8 sm:pt-12 border-t border-stone-100 transition-opacity duration-500"
+				>
+					<h2
+						class="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-3 mb-6 sm:mb-8"
+					>
+						<span
+							class="flex items-center justify-center min-w-8 w-8 h-8 rounded-full bg-violet-100 text-violet-600 text-sm"
+						>
+							3
+						</span>
+						I tuoi dettagli
+					</h2>
+
+					<form
+						[formGroup]="bookingForm"
+						(ngSubmit)="onConfirm()"
+					>
+						@let isNameErrorVisible =
+							bookingForm.controls.name.invalid &&
+							bookingForm.controls.name.touched &&
+							bookingForm.controls.name.dirty;
+						@let isLastNameErrorVisible =
+							bookingForm.controls.lastName.invalid &&
+							bookingForm.controls.lastName.touched &&
+							bookingForm.controls.lastName.dirty;
+						@let isEmailErrorVisible =
+							bookingForm.controls.email.invalid &&
+							bookingForm.controls.email.touched &&
+							bookingForm.controls.email.dirty;
+						@let isPhoneErrorVisible =
+							bookingForm.controls.phone.invalid &&
+							bookingForm.controls.phone.touched &&
+							bookingForm.controls.phone.dirty;
+
+						<div class="grid md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+							<div class="flex flex-col gap-2">
+								<label
+									for="name"
+									class="font-semibold text-gray-700 text-sm sm:text-base"
+								>
+									Nome
+									<span class="text-red-500">*</span>
+								</label>
+								<input
+									pInputText
+									id="name"
+									formControlName="name"
+									placeholder="Il tuo nome"
+									class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
+									[class.border-red-500]="isNameErrorVisible"
+								/>
+
+								@if (isNameErrorVisible) {
+									<small class="text-red-500 pl-2">Il nome è obbligatorio</small>
+								}
+							</div>
+							<div class="flex flex-col gap-2">
+								<label
+									for="lastName"
+									class="font-semibold text-gray-700 text-sm sm:text-base"
+								>
+									Cognome
+									<span class="text-red-500">*</span>
+								</label>
+								<input
+									pInputText
+									id="lastName"
+									formControlName="lastName"
+									placeholder="Il tuo cognome"
+									class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
+									[class.border-red-500]="isLastNameErrorVisible"
+								/>
+								@if (isLastNameErrorVisible) {
+									<small class="text-red-500 pl-2">Il cognome è obbligatorio</small>
+								}
+							</div>
+							<div class="flex flex-col gap-2">
+								<label
+									for="email"
+									class="font-semibold text-gray-700 text-sm sm:text-base"
+								>
+									Email
+									<span class="text-red-500">*</span>
+								</label>
+								<input
+									pInputText
+									id="email"
+									type="email"
+									formControlName="email"
+									placeholder="La tua email"
+									class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
+									[class.border-red-500]="isEmailErrorVisible"
+								/>
+								@if (isEmailErrorVisible) {
+									<small class="text-red-500 pl-2">Inserisci un'email valida</small>
+								}
+							</div>
+							<div class="flex flex-col gap-2">
+								<label
+									for="phone"
+									class="font-semibold text-gray-700 text-sm sm:text-base"
+								>
+									Numero di telefono
+									<span class="text-red-500">*</span>
+								</label>
+								<input
+									pInputText
+									id="phone"
+									type="tel"
+									formControlName="phone"
+									placeholder="Il tuo numero"
+									class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
+									[class.border-red-500]="isPhoneErrorVisible"
+								/>
+								@if (isPhoneErrorVisible) {
+									@if (bookingForm.controls.phone.errors?.["required"]) {
+										<small class="text-red-500 pl-2">Il numero di telefono è obbligatorio</small>
+									} @else {
+										<small class="text-red-500 pl-2">
+											Inserisci un numero italiano valido (solo cifre, senza spazi)
+										</small>
+									}
+								}
+							</div>
+						</div>
+
+						<div class="flex flex-col gap-2 mb-6 sm:mb-8">
+							<label
+								for="notes"
+								class="font-semibold text-gray-700 text-sm sm:text-base"
+							>
+								Note opzionali
+							</label>
+							<textarea
+								pTextarea
+								id="notes"
+								formControlName="notes"
+								rows="4"
+								placeholder="C'è qualcosa che vorresti anticiparmi?"
+								class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 resize-none focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
+							></textarea>
+						</div>
+
+						<div class="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-6 sm:mt-8">
+							<p-button
+								label="Annulla"
+								severity="secondary"
+								[rounded]="true"
+								(onClick)="onCancel()"
+								styleClass="w-full sm:w-auto"
+							/>
+							<p-button
+								label="Conferma prenotazione"
+								[rounded]="true"
+								type="submit"
+								[disabled]="bookingForm.invalid"
+								styleClass="w-full sm:w-auto"
+							/>
+						</div>
+					</form>
+				</div>
+			}
+		</div>
+	</main>
+</div>

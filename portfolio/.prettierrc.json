@@ -9,5 +9,13 @@
 	"trailingComma": "none",
 	"arrowParens": "avoid",
 	"bracketSpacing": true,
-	"htmlWhitespaceSensitivity": "ignore"
+	"htmlWhitespaceSensitivity": "ignore",
+	"overrides": [
+		{
+			"files": "*.html",
+			"options": {
+				"parser": "angular"
+			}
+		}
+	]
 }
