@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Insieme per Crescere</title>
+    <script>
+      // SPA redirect for GitHub Pages — handles both portfolio (root) and dashboard (/dashboard/) paths.
+      // Based on https://github.com/rafgraph/spa-github-pages
+      (function () {
+        var segments = window.location.pathname.split("/").filter(Boolean);
+        // segments[0] = 'insieme-per-crescere' (repo name)
+        // segments[1] = 'dashboard' if this is a dashboard route, otherwise a portfolio route
+        var segmentsToKeep = segments[1] === "dashboard" ? 2 : 1;
+        var l = window.location;
+        l.replace(
+          l.protocol +
+            "//" +
+            l.host +
+            "/" +
+            segments.slice(0, segmentsToKeep).join("/") +
+            "/?/" +
+            segments
+              .slice(segmentsToKeep)
+              .join("/")
+              .replace(/&/g, "~and~") +
+            (l.search
+              ? "&" + l.search.slice(1).replace(/&/g, "~and~")
+              : "") +
+            l.hash
+        );
+      })();
+    </script>
+  </head>
+  <body></body>
+</html>
