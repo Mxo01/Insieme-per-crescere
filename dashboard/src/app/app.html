@@ -22,7 +22,7 @@
 					shape="circle"
 					size="large"
 				/>
-				
+
 				<p-button
 					icon="pi pi-sign-out"
 					[text]="true"
@@ -56,6 +56,15 @@
 			>
 				<i class="pi pi-calendar"></i>
 				Gestione Disponibilità
+			</a>
+			<a
+				routerLink="/about"
+				routerLinkActive="bg-violet-50 text-violet-600"
+				class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-violet-50 transition-all font-medium"
+				(click)="isSidebarVisible.set(false)"
+			>
+				<i class="pi pi-user"></i>
+				About
 			</a>
 		</div>
 	</p-drawer>

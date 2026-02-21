@@ -25,6 +25,11 @@ export const routes: Routes = [
 			)
 	},
 	{
+		path: "about",
+		canActivate: [adminGuard],
+		loadComponent: () => import("./pages/about/about").then(m => m.About)
+	},
+	{
 		path: "**",
 		redirectTo: ""
 	}
