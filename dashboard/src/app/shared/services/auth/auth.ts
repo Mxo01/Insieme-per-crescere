@@ -18,19 +18,26 @@ import { Whitelist } from "../whitelist/whitelist";
 })
 export class AuthService {
 	private readonly whitelistService = inject(Whitelist);
-
 	private readonly auth = inject(Auth);
 
 	public user = signal<User | null>(null);
+	public isAuthLoading = signal(true);
+
+	readonly authReady: Promise<void>;
 
 	constructor() {
-		this.checkSessionPersistence();
-	}
-
-	private checkSessionPersistence() {
-		authState(this.auth)
-			.pipe(take(1))
-			.subscribe({ next: user => this.validateUser(user) });
+		this.authReady = new Promise(resolve => {
+			authState(this.auth)
+				.pipe(take(1))
+				.subscribe({
+					next: user => {
+						this.validateUser(user).finally(() => {
+							this.isAuthLoading.set(false);
+							resolve();
+						});
+					}
+				});
+		});
 	}
 
 	public async signInWithGoogle() {

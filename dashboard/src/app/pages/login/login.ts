@@ -1,4 +1,4 @@
-import { Component, inject } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { ButtonModule } from "primeng/button";
 import { AuthService } from "../../shared/services/auth/auth";
@@ -8,11 +8,12 @@ import { AuthService } from "../../shared/services/auth/auth";
 	imports: [ButtonModule],
 	templateUrl: "./login.html"
 })
-export class Login {
+export class Login implements OnInit {
 	private readonly authService = inject(AuthService);
 	private readonly router = inject(Router);
 
-	ngOnInit() {
+	async ngOnInit() {
+		await this.authService.authReady;
 		if (this.authService.user()) this.router.navigate(["/home"]);
 	}
 
