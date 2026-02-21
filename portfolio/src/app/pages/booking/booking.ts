@@ -24,16 +24,16 @@ import { Tag } from "primeng/tag";
 @Component({
 	selector: "app-booking",
 	imports: [
-    DatePicker,
-    ButtonModule,
-    InputText,
-    Textarea,
-    Toast,
-    ReactiveFormsModule,
-    FormsModule,
-    RouterLink,
-    Tag
-],
+		DatePicker,
+		ButtonModule,
+		InputText,
+		Textarea,
+		Toast,
+		ReactiveFormsModule,
+		FormsModule,
+		RouterLink,
+		Tag
+	],
 	providers: [MessageService],
 	templateUrl: "./booking.html",
 	styleUrl: "./booking.scss",
@@ -65,9 +65,9 @@ export class Booking {
 
 	readonly availableTimes = computed(() => {
 		const selectedDate = this.selectedDate()?.toLocaleDateString();
-		const availableTimeSlots = this.availableDates().find(
-			day => day.date === selectedDate
-		)?.availableTimeSlots;
+		const availableTimeSlots = this.availableDates()
+			.find(day => day.date === selectedDate)
+			?.availableTimeSlots.toSorted();
 		return !selectedDate || !availableTimeSlots ? [] : availableTimeSlots;
 	});
 
