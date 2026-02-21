@@ -2,13 +2,14 @@ import { Component, inject, signal, effect } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { DatePicker } from "primeng/datepicker";
-import { MultiSelect } from "primeng/multiselect";
+import { MultiSelect, MultiSelectRemoveEvent } from "primeng/multiselect";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
 import { ToastModule } from "primeng/toast";
 import { MessageService } from "primeng/api";
 import { Dates } from "../../shared/services/dates/dates";
 import { timeOptions } from "../../shared/utils/constants";
+import { TimeOption } from "src/app/shared/models/time-option.model";
 
 @Component({
 	selector: "app-availability-management",
@@ -29,7 +30,7 @@ export class AvailabilityManagement {
 	private readonly datesService = inject(Dates);
 	private readonly messageService = inject(MessageService);
 
-	timeOptions = signal(timeOptions);
+	timeOptions = signal<TimeOption[]>(timeOptions);
 
 	selectedDate = signal<Date | null>(null);
 	selectedTimeSlots = signal<string[]>([]);
@@ -46,6 +47,12 @@ export class AvailabilityManagement {
 					date.toLocaleDateString()
 				);
 				this.selectedTimeSlots.set(existingAvailability?.availableTimeSlots ?? []);
+				this.timeOptions.update(options =>
+					options.map(option => ({
+						...option,
+						isBooked: existingAvailability?.bookedTimeSlots.includes(option.value)
+					}))
+				);
 			}
 		});
 	}

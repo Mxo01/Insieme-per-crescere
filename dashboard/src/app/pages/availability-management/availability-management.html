@@ -50,10 +50,13 @@
 						</p>
 
 						<p-multiselect
-							[options]="timeOptions()"
 							[(ngModel)]="selectedTimeSlots"
+							[options]="timeOptions()"
 							showClear
 							placeholder="Scegli gli orari..."
+							optionDisabled="isBooked"
+							optionLabel="label"
+							optionValue="value"
 							class="w-full"
 							appendTo="body"
 							display="chip"

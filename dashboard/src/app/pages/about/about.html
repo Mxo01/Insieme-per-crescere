@@ -8,69 +8,69 @@
 		</p>
 	</header>
 
-	<p-card class="shadow-sm border border-stone-100 rounded-3xl overflow-hidden h-full">
-		<div class="flex flex-col gap-6 p-2 h-full">
-			<div class="flex items-center gap-4">
-				<div
-					class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center"
-				>
-					<i class="pi pi-file-pdf text-xl!"></i>
+		<p-card class="shadow-sm border border-stone-100 rounded-3xl overflow-hidden h-full">
+			<div class="flex flex-col gap-6 p-2 h-full">
+				<div class="flex items-center gap-4">
+					<div
+						class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center"
+					>
+						<i class="pi pi-file-pdf text-xl!"></i>
+					</div>
+					<div>
+						<h2 class="text-xl font-bold text-gray-900">Curriculum Vitae</h2>
+						<p class="text-sm text-gray-500">Il tuo CV in formato PDF.</p>
+					</div>
 				</div>
-				<div>
-					<h2 class="text-xl font-bold text-gray-900">Curriculum Vitae</h2>
-					<p class="text-sm text-gray-500">Il tuo CV in formato PDF.</p>
-				</div>
-			</div>
 
-			<div
+				<div
 				class="flex flex-col items-center justify-center p-8 bg-stone-50 rounded-2xl border border-dashed border-stone-200 gap-6 flex-1"
-			>
-				@if (assets()?.cvUrl) {
-					<div class="flex flex-col items-center gap-3">
-						<div
-							class="w-30 h-40 bg-white rounded-lg shadow-sm border border-stone-100 flex flex-col items-center justify-center relative group"
-						>
-							<i class="pi pi-file-pdf text-4xl! text-red-500"></i>
+				>
+					@if (assets()?.cvUrl) {
+						<div class="flex flex-col items-center gap-3">
+							<div
+								class="w-30 h-40 bg-white rounded-lg shadow-sm border border-stone-100 flex flex-col items-center justify-center relative group"
+							>
+								<i class="pi pi-file-pdf text-4xl! text-red-500"></i>
 							<div class="absolute -top-3 -right-3 bg-violet-500 text-white rounded-full py-1 px-2">
-								<i class="pi pi-check text-[10px]"></i>
+									<i class="pi pi-check text-[10px]"></i>
+								</div>
 							</div>
 						</div>
-					</div>
-				} @else {
-					<div class="w-30 h-40 bg-stone-100 rounded-lg flex items-center justify-center">
-						<i class="pi pi-file text-4xl! text-stone-300"></i>
-					</div>
-				}
-
-				<div class="flex items-center gap-4 whitespace-nowrap">
-					@if (assets()?.cvUrl) {
-						<p-button
-							label="Rimuovi CV"
-							icon="pi pi-trash"
-							[text]="true"
-							severity="danger"
-							[loading]="isCvLoading()"
-							[rounded]="true"
-							(onClick)="onRemoveCv()"
-						/>
+					} @else {
+						<div class="w-30 h-40 bg-stone-100 rounded-lg flex items-center justify-center">
+							<i class="pi pi-file text-4xl! text-stone-300"></i>
+						</div>
 					}
 
-					<p-fileupload
-						mode="basic"
-						name="cv"
-						accept="application/pdf"
-						[maxFileSize]="10000000"
-						(onSelect)="onUploadCv($event)"
-						[auto]="true"
-						[chooseButtonProps]="{
-							loading: isCvLoading(),
-							rounded: true
-						}"
-						chooseLabel="Carica CV"
-						chooseIcon="pi pi-upload"
-					/>
+					<div class="flex items-center gap-4 whitespace-nowrap">
+						@if (assets()?.cvUrl) {
+							<p-button
+								label="Rimuovi CV"
+								icon="pi pi-trash"
+								[text]="true"
+								severity="danger"
+								[loading]="isCvLoading()"
+								[rounded]="true"
+								(onClick)="onRemoveCv()"
+							/>
+						}
+
+						<p-fileupload
+							mode="basic"
+							name="cv"
+							accept="application/pdf"
+							[maxFileSize]="10000000"
+							(onSelect)="onUploadCv($event)"
+							[auto]="true"
+							[chooseButtonProps]="{
+								loading: isCvLoading(),
+								rounded: true
+							}"
+							chooseLabel="Carica CV"
+							chooseIcon="pi pi-upload"
+						/>
+					</div>
 				</div>
 			</div>
-		</div>
-	</p-card>
+		</p-card>
 </div>

@@ -86,7 +86,7 @@
 					</h2>
 
 					@if (selectedDate()) {
-						@if (!availableTimes().length) {
+						@if (!availableTimeSlots().length) {
 							<div
 								class="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-stone-200 rounded-3xl p-6 sm:p-8 text-center bg-stone-50/50 min-h-40 sm:min-h-50"
 							>
@@ -97,7 +97,7 @@
 							</div>
 						} @else {
 							<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-								@for (time of availableTimes(); track time) {
+								@for (time of availableTimeSlots(); track time) {
 									<button
 										type="button"
 										class="py-3 sm:py-4 px-3 sm:px-4 rounded-2xl border-2 font-semibold transition-all text-center text-base sm:text-lg cursor-pointer"

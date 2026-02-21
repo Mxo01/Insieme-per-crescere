@@ -63,7 +63,7 @@ export class Booking {
 
 	private readonly availableDates = this.datesService.getAvailableDates();
 
-	readonly availableTimes = computed(() => {
+	readonly availableTimeSlots = computed(() => {
 		const selectedDate = this.selectedDate()?.toLocaleDateString();
 		const availableTimeSlots = this.availableDates()
 			.find(day => day.date === selectedDate)
