@@ -19,7 +19,6 @@ import { RouterLink } from "@angular/router";
 import { Dates } from "src/app/shared/services/dates/dates";
 import { Bookings } from "src/app/shared/services/bookings/bookings";
 import { BookingDto } from "src/app/shared/services/bookings/bookings.model";
-import { v4 as uuid } from "uuid";
 import { Tag } from "primeng/tag";
 
 @Component({
@@ -128,7 +127,6 @@ export class Booking {
 		this.isSubmitting.set(true);
 
 		const booking: BookingDto = {
-			id: uuid(),
 			name: this.bookingForm.value.name!,
 			lastName: this.bookingForm.value.lastName!,
 			email: this.bookingForm.value.email!,

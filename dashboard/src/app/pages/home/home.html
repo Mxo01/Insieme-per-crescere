@@ -1,0 +1,236 @@
+<p-toast />
+<p-confirmdialog />
+
+<div class="flex flex-col gap-8">
+	<header>
+		<h1 class="text-3xl font-bold text-gray-900">Prenotazioni</h1>
+		<p class="text-gray-500">Gestisci le richieste di consulenza e gli appuntamenti.</p>
+	</header>
+
+	<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+		<p-card class="border bg-violet-50! border-violet-500">
+			<div class="flex items-center gap-4">
+				<i
+					class="pi pi-calendar text-2xl! text-violet-600 bg-violet-200 rounded-full py-3 px-4"
+				></i>
+				<div>
+					<p class="font-medium text-violet-600 whitespace-nowrap">Totale Prenotazioni</p>
+					<p class="text-2xl font-bold text-violet-600">{{ totalBookings() }}</p>
+				</div>
+			</div>
+		</p-card>
+
+		<p-card class="border bg-amber-50! border-amber-500">
+			<div class="flex items-center gap-4">
+				<i class="pi pi-clock text-2xl! text-amber-600 bg-amber-200 rounded-full py-3 px-4"></i>
+				<div>
+					<p class="text-sm font-medium text-amber-600 whitespace-nowrap">In Attesa</p>
+					<p class="text-2xl font-bold text-amber-600">{{ pendingBookings() }}</p>
+				</div>
+			</div>
+		</p-card>
+
+		<p-card class="border bg-emerald-50! border-emerald-500">
+			<div class="flex items-center gap-4">
+				<i
+					class="pi pi-check-circle text-2xl! text-emerald-600 bg-emerald-200 rounded-full py-3 px-4"
+				></i>
+				<div>
+					<p class="text-sm font-medium text-emerald-600 whitespace-nowrap">Confermate</p>
+					<p class="text-2xl font-bold text-emerald-600">{{ acceptedBookings() }}</p>
+				</div>
+			</div>
+		</p-card>
+	</div>
+
+	<div class="bg-white rounded-2xl shadow-sm overflow-hidden">
+		<p-table
+			[value]="bookings()"
+			stripedRows
+			[rows]="10"
+		>
+			<ng-template #header>
+				<tr>
+					<th style="width: 5rem">Azioni</th>
+					<th>Stato</th>
+					<th>Data</th>
+					<th>Ora</th>
+					<th>Cliente</th>
+					<th>Email</th>
+					<th>Telefono</th>
+					<th>Note</th>
+				</tr>
+				<tr>
+					<th></th>
+					<th>
+						<p-columnFilter
+							type="boolean"
+							field="isAccepted"
+						></p-columnFilter>
+					</th>
+					<th>
+						<p-columnFilter
+							type="text"
+							field="date"
+							ariaLabel="Filter Date"
+							filterOn="input"
+						></p-columnFilter>
+					</th>
+					<th>
+						<p-columnFilter
+							type="text"
+							field="time"
+							ariaLabel="Filter Time"
+							filterOn="input"
+						></p-columnFilter>
+					</th>
+					<th>
+						<p-columnFilter
+							type="text"
+							field="name"
+							ariaLabel="Filter Name"
+							filterOn="input"
+						></p-columnFilter>
+					</th>
+					<th>
+						<p-columnFilter
+							type="text"
+							field="email"
+							ariaLabel="Filter email"
+							filterOn="input"
+						></p-columnFilter>
+					</th>
+					<th></th>
+					<th></th>
+				</tr>
+			</ng-template>
+			<ng-template
+				#body
+				let-booking
+			>
+				<tr class="[&>td]:text-sm">
+					<td>
+						<p-button
+							icon="pi pi-ellipsis-v"
+							[rounded]="true"
+							[text]="true"
+							severity="secondary"
+							(click)="onRowActionsClick($event, booking)"
+						/>
+					</td>
+					<td class="whitespace-nowrap">
+						<p-tag
+							[severity]="booking.isAccepted ? 'success' : 'warn'"
+							[value]="booking.isAccepted ? 'Accettata' : 'In attesa'"
+							[rounded]="true"
+						/>
+					</td>
+					<td>{{ booking.date }}</td>
+					<td>{{ booking.time }}</td>
+					<td>{{ booking.name }} {{ booking.lastName }}</td>
+					<td>{{ booking.email }}</td>
+					<td>{{ booking.phone }}</td>
+					<td>
+						@if (booking.notes) {
+							<p-button
+								icon="pi pi-info-circle"
+								[rounded]="true"
+								[text]="true"
+								severity="secondary"
+								(click)="onViewNotes(booking)"
+							/>
+						} @else {
+							<small class="italic whitespace-nowrap text-stone-400">Nessuna nota</small>
+						}
+					</td>
+				</tr>
+			</ng-template>
+			<ng-template #emptymessage>
+				<tr>
+					<td
+						colspan="8"
+						class="text-center py-12"
+					>
+						<div class="flex flex-col items-center gap-4 text-stone-400">
+							<i class="pi pi-inbox text-4xl"></i>
+							<p>Nessuna prenotazione trovata.</p>
+						</div>
+					</td>
+				</tr>
+			</ng-template>
+		</p-table>
+	</div>
+</div>
+
+<p-menu
+	#menu
+	[model]="menuItems()"
+	[popup]="true"
+	appendTo="body"
+/>
+
+<p-dialog
+	header="Note del cliente"
+	[focusOnShow]="false"
+	(onHide)="selectedBooking.set(null)"
+	[(visible)]="isNotesDialogVisible"
+>
+	<p class="py-5">{{ selectedBooking()?.notes }}</p>
+</p-dialog>
+
+<p-dialog
+	header="Modifica la data della prenotazione"
+	[focusOnShow]="false"
+	(onHide)="onEditDateDialogHide()"
+	[(visible)]="isDateEditVisible"
+>
+	<div class="flex-auto mb-5">
+		<label
+			for="date"
+			class="font-bold block mb-2"
+		>
+			Data
+		</label>
+		<p-date-picker
+			fluid
+			appendTo="body"
+			dateFormat="dd/mm/yy"
+			showIcon
+			iconDisplay="input"
+			inputId="date"
+			[(ngModel)]="selectedDate"
+		/>
+	</div>
+	<div class="flex-auto">
+		<label
+			for="time"
+			class="font-bold block mb-2"
+		>
+			Ora
+		</label>
+		<p-select
+			[options]="timeOptions()"
+			fluid
+			appendTo="body"
+			inputId="time"
+			[(ngModel)]="selectedTime"
+		/>
+	</div>
+
+	<hr class="my-8 text-gray-200" />
+
+	<div class="flex justify-end gap-2">
+		<p-button
+			label="Annulla"
+			severity="secondary"
+			[rounded]="true"
+			(click)="isDateEditVisible.set(false)"
+		/>
+		<p-button
+			label="Conferma"
+			[rounded]="true"
+			[loading]="isDateEditLoading()"
+			(click)="onSaveDate()"
+		/>
+	</div>
+</p-dialog>
