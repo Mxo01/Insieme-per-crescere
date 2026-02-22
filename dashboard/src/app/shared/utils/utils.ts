@@ -1,3 +1,39 @@
+import { BookingDto } from "../services/bookings/bookings.model";
+
+export function sendConfirmationEmail(booking: BookingDto) {
+	const googleCalendarLink = generateGoogleCalendarLink(booking);
+	const subject = encodeURIComponent(`Conferma appuntamento: ${booking.date}`);
+	const body = encodeURIComponent(
+		`Gentile ${booking.name} ${booking.lastName},\n\n` +
+			`La sua richiesta di consulenza è stata confermata.\n\n` +
+			`📅 Data: ${booking.date}\n` +
+			`🕐 Ora: ${booking.time}\n\n` +
+			`Aggiungi a Google Calendar: ${googleCalendarLink}\n\n` +
+			`A presto,\n` +
+			`Insieme per Crescere`
+	);
+	const gmailUrl = `https://mail.google.com/mail/?view=cm&to=${encodeURIComponent(booking.email)}&su=${subject}&body=${body}`;
+
+	window.open(gmailUrl, "_blank");
+}
+
+export function generateGoogleCalendarLink(booking: BookingDto) {
+	const [day, month, year] = booking.date.split("/").map(Number);
+	const [hours, minutes] = booking.time.split(":").map(Number);
+	const start = new Date(year, month - 1, day, hours, minutes, 0);
+	const end = new Date(start.getTime() + 45 * 60 * 1000);
+	const formatDate = (d: Date) => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+
+	const googleUrl =
+		`https://www.google.com/calendar/render?action=TEMPLATE` +
+		`&text=${encodeURIComponent(`Consulenza Pedagogica - ${booking.name} ${booking.lastName}`)}` +
+		`&dates=${formatDate(start)}/${formatDate(end)}` +
+		`&add=${encodeURIComponent(booking.email)}` +
+		`&conference=true`;
+
+	return googleUrl;
+}
+
 export function convertFileToBase64(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();

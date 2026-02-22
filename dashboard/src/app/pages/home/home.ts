@@ -1,4 +1,4 @@
-import { Component, inject, computed, signal, viewChild, ElementRef, effect } from "@angular/core";
+import { Component, inject, computed, signal, viewChild, effect } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { TableModule } from "primeng/table";
 import { CardModule } from "primeng/card";
@@ -16,6 +16,8 @@ import { Select } from "primeng/select";
 import { timeOptions } from "src/app/shared/utils/constants";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { Dates } from "src/app/shared/services/dates/dates";
+import { AuthService } from "../../shared/services/auth/auth";
+import { generateGoogleCalendarLink, sendConfirmationEmail } from "src/app/shared/utils/utils";
 
 @Component({
 	imports: [
@@ -50,7 +52,7 @@ export class Home {
 		const date = new Date();
 		date.setHours(0, 0, 0, 0);
 		return date;
-	})
+	});
 	readonly maxDate = computed(() => {
 		const date = new Date();
 		date.setHours(23, 59, 59, 999);
@@ -70,6 +72,7 @@ export class Home {
 	readonly isDateEditVisible = signal(false);
 	readonly isDateEditLoading = signal(false);
 	readonly isDeleteLoading = signal(false);
+	readonly isAcceptLoading = signal(false);
 
 	readonly menuItems = computed<MenuItem[]>(() => {
 		const booking = this.selectedBooking();
@@ -80,11 +83,12 @@ export class Home {
 			{
 				label: booking.isAccepted ? "Metti in attesa" : "Accetta",
 				icon: booking.isAccepted ? "pi pi-clock" : "pi pi-check-circle",
-				command: () => this.toggleBookingStatus(booking)
+				command: event => this.confirmAcceptBooking(event.originalEvent, booking)
 			},
 			{
 				label: "Modifica data",
 				icon: "pi pi-calendar",
+				disabled: booking.isAccepted,
 				command: () => this.openDateEdit(booking)
 			},
 			{
@@ -150,6 +154,38 @@ export class Home {
 					detail: "Impossibile cambiare lo stato della prenotazione"
 				})
 			);
+	}
+
+	private confirmAcceptBooking(event: Event | undefined, booking: BookingDto) {
+		if (booking.isAccepted) {
+			this.toggleBookingStatus(booking);
+			return;
+		}
+
+		if (!booking.id || !event) return;
+
+		this.confirmationService.confirm({
+			target: event.currentTarget as EventTarget,
+			header: "Conferma prenotazione",
+			message: "Vuoi inviare una mail di conferma al cliente?",
+			icon: "pi pi-envelope",
+			acceptIcon: "pi pi-send",
+			closable: false,
+			acceptButtonProps: {
+				label: "Sì, invia",
+				rounded: true
+			},
+			rejectButtonProps: {
+				label: "No, accetta senza inviare",
+				severity: "secondary",
+				rounded: true
+			},
+			accept: () => {
+				sendConfirmationEmail(booking);
+				this.toggleBookingStatus(booking);
+			},
+			reject: () => this.toggleBookingStatus(booking)
+		});
 	}
 
 	private deleteBooking(event: Event | undefined, booking: BookingDto) {
