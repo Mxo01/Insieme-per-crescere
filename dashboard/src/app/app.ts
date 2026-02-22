@@ -5,6 +5,7 @@ import { ButtonModule } from "primeng/button";
 import { AvatarModule } from "primeng/avatar";
 import { AuthService } from "./shared/services/auth/auth";
 import { CommonModule } from "@angular/common";
+import { environment } from "src/environments/environment.development";
 
 @Component({
 	selector: "app-root",
@@ -25,7 +26,9 @@ export class App {
 
 	private readonly router = inject(Router);
 
-	isSidebarVisible = signal<boolean>(false);
+	readonly isSidebarVisible = signal<boolean>(false);
+
+	protected readonly portfolioUrl = environment.portfolioUrl;
 
 	user = this.authService.user;
 	isAuthenticated = computed(() => this.user() !== null);
