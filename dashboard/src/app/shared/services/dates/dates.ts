@@ -3,6 +3,7 @@ import { query, where, getDocs, addDoc, updateDoc, doc, deleteDoc } from "@angul
 import { Database } from "../database";
 import { AvailableDateDto } from "./dates.model";
 import { BookingDto } from "../bookings/bookings.model";
+import { formatDateToISODateString, getOneMonthFromNowRange } from "../../utils/utils";
 
 @Injectable({
 	providedIn: "root"
@@ -10,10 +11,12 @@ import { BookingDto } from "../bookings/bookings.model";
 export class Dates {
 	private db = inject(Database);
 
-	async saveAvailability(date: string, availableTimeSlots: string[]) {
+	async saveAvailability(date: Date, availableTimeSlots: string[]) {
+		const dateStr = formatDateToISODateString(date);
+
 		await this.cleanupOldDates();
 
-		const q = query(this.db.datesCollection, where("date", "==", date));
+		const q = query(this.db.datesCollection, where("date", "==", dateStr));
 		const querySnapshot = await getDocs(q);
 
 		if (!querySnapshot.empty) {
@@ -23,34 +26,28 @@ export class Dates {
 			return noOneTimeSlotsSelected ? deleteDoc(docRef) : updateDoc(docRef, { availableTimeSlots });
 		} else {
 			return addDoc(this.db.datesCollection, {
-				date,
+				date: dateStr,
 				availableTimeSlots
 			});
 		}
 	}
 
 	private async cleanupOldDates() {
-		const today = new Date();
-		today.setHours(0, 0, 0, 0);
+		const { start } = getOneMonthFromNowRange();
 
-		const querySnapshot = await getDocs(this.db.datesCollection);
-
-		const deletePromises = querySnapshot.docs
-			.filter(doc => {
-				const data = doc.data() as AvailableDateDto;
-				const [day, month, year] = data.date.split("/").map(Number);
-				const date = new Date(year, month - 1, day);
-				return date < today;
-			})
-			.map(doc => deleteDoc(doc.ref));
-
+		const querySnapshot = await getDocs(
+			query(this.db.datesCollection, where("date", "<", formatDateToISODateString(start)))
+		);
+		const deletePromises = querySnapshot.docs.map(doc => deleteDoc(doc.ref));
+		
 		return Promise.all(deletePromises);
 	}
 
 	async getAvailabilityByDate(
-		date: string
+		date: Date
 	): Promise<(AvailableDateDto & { bookedTimeSlots: string[] }) | null> {
-		const bookingsQuery = query(this.db.bookingsCollection, where("date", "==", date));
+		const dateStr = formatDateToISODateString(date);
+		const bookingsQuery = query(this.db.bookingsCollection, where("date", "==", dateStr));
 		const bookingsSnapshot = await getDocs(bookingsQuery);
 
 		let bookedTimeSlots: string[] = [];
@@ -61,12 +58,14 @@ export class Dates {
 				.map(({ time }) => time);
 		}
 
-		const datesQuery = query(this.db.datesCollection, where("date", "==", date));
+		const datesQuery = query(this.db.datesCollection, where("date", "==", dateStr));
 		const querySnapshot = await getDocs(datesQuery);
 
 		if (!querySnapshot.empty) {
 			const data = querySnapshot.docs[0].data() as AvailableDateDto;
-			data.availableTimeSlots.sort();
+			data.availableTimeSlots = data.availableTimeSlots
+				.filter(time => !bookedTimeSlots.includes(time))
+				.toSorted();
 			return { ...data, id: querySnapshot.docs[0].id, bookedTimeSlots };
 		}
 

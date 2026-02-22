@@ -20,6 +20,7 @@ import { Dates } from "src/app/shared/services/dates/dates";
 import { Bookings } from "src/app/shared/services/bookings/bookings";
 import { BookingDto } from "src/app/shared/services/bookings/bookings.model";
 import { Tag } from "primeng/tag";
+import { formatDateToISODateString, getOneMonthFromNowRange } from "src/app/shared/utils/utils";
 
 @Component({
 	selector: "app-booking",
@@ -53,18 +54,7 @@ export class Booking {
 
 	readonly selectedDate = signal<Date | null>(null);
 	readonly selectedTime = signal<string | null>(null);
-
-	readonly minDate = computed(() => {
-		const date = new Date();
-		date.setHours(0, 0, 0, 0);
-		return date;
-	});
-	readonly maxDate = computed(() => {
-		const date = new Date();
-		date.setHours(23, 59, 59, 999);
-		date.setMonth(date.getMonth() + 1);
-		return date;
-	});
+	readonly monthRange = computed(() => getOneMonthFromNowRange());
 
 	private readonly availableDates = this.datesService.getAvailableDates();
 
@@ -80,8 +70,8 @@ export class Booking {
 		const availableDates = this.availableDates().map(({ date }) => date);
 		const disabledDates: Date[] = [];
 
-		const start = new Date(this.minDate());
-		const end = new Date(this.maxDate());
+		const start = new Date(this.monthRange().start);
+		const end = new Date(this.monthRange().end);
 
 		for (let day = new Date(start); day <= end; day.setDate(day.getDate() + 1)) {
 			const dateStr = day.toLocaleDateString();
@@ -137,7 +127,7 @@ export class Booking {
 			email: this.bookingForm.value.email!,
 			phone: this.bookingForm.value.phone!,
 			notes: this.bookingForm.value.notes,
-			date: this.selectedDate()!.toLocaleDateString(),
+			date: formatDateToISODateString(this.selectedDate()!),
 			time: this.selectedTime()!,
 			isAccepted: false
 		};

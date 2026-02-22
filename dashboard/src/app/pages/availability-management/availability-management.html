@@ -24,7 +24,7 @@
 				<p-datepicker
 					[(ngModel)]="selectedDate"
 					inline
-					[minDate]="minDate()"
+					[minDate]="monthRange().start"
 					class="overflow-auto"
 					panelStyleClass="border-none! bg-transparent! p-0!"
 				/>
@@ -65,6 +65,7 @@
 							class="w-full"
 							appendTo="body"
 							display="chip"
+							[loading]="isFetching()"
 							[maxSelectedLabels]="10"
 						/>
 
@@ -85,6 +86,7 @@
 								[rounded]="true"
 								(onClick)="onSave()"
 								[loading]="isSaving()"
+								[disabled]="isFetching()"
 							/>
 						</div>
 					</div>

@@ -1,4 +1,4 @@
-import { Component, inject, signal, effect } from "@angular/core";
+import { Component, inject, signal, effect, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { DatePicker } from "primeng/datepicker";
@@ -10,6 +10,7 @@ import { MessageService } from "primeng/api";
 import { Dates } from "../../shared/services/dates/dates";
 import { timeOptions } from "../../shared/utils/constants";
 import { TimeOption } from "src/app/shared/models/time-option.model";
+import { getOneMonthFromNowRange } from "src/app/shared/utils/utils";
 
 @Component({
 	selector: "app-availability-management",
@@ -30,20 +31,15 @@ export class AvailabilityManagement {
 	private readonly datesService = inject(Dates);
 	private readonly messageService = inject(MessageService);
 
-	timeOptions = signal<TimeOption[]>(timeOptions);
+	readonly timeOptions = signal<TimeOption[]>(timeOptions);
 
-	selectedDate = signal<Date | null>(null);
-	selectedTimeSlots = signal<string[]>([]);
+	readonly selectedDate = signal<Date | null>(null);
+	readonly selectedTimeSlots = signal<string[]>([]);
 
-	isSaving = signal(false);
+	readonly isSaving = signal(false);
+	readonly isFetching = signal(false);
 
-	minDate = signal<Date>(
-		(() => {
-			const d = new Date();
-			d.setHours(0, 0, 0, 0);
-			return d;
-		})()
-	);
+	readonly monthRange = computed(() => getOneMonthFromNowRange());
 
 	constructor() {
 		effect(async () => {
@@ -51,9 +47,12 @@ export class AvailabilityManagement {
 			this.selectedTimeSlots.set([]);
 
 			if (date) {
-				const existingAvailability = await this.datesService.getAvailabilityByDate(
-					date.toLocaleDateString()
-				);
+				this.isFetching.set(true);
+
+				const existingAvailability = await this.datesService.getAvailabilityByDate(date);
+
+				this.isFetching.set(false);
+
 				this.selectedTimeSlots.set(existingAvailability?.availableTimeSlots ?? []);
 				this.timeOptions.update(options =>
 					options.map(option => ({
@@ -79,7 +78,7 @@ export class AvailabilityManagement {
 		this.isSaving.set(true);
 
 		this.datesService
-			.saveAvailability(this.selectedDate()!.toLocaleDateString(), this.selectedTimeSlots())
+			.saveAvailability(this.selectedDate()!, this.selectedTimeSlots())
 			.then(() =>
 				this.messageService.add({
 					severity: "success",

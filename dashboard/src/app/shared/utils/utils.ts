@@ -22,7 +22,7 @@ export function generateGoogleCalendarLink(booking: BookingDto) {
 	const [hours, minutes] = booking.time.split(":").map(Number);
 	const start = new Date(year, month - 1, day, hours, minutes, 0);
 	const end = new Date(start.getTime() + 45 * 60 * 1000);
-	const formatDate = (d: Date) => d.toISOString().replace(/[-:]/g, "").split(".")[0] + "Z";
+	const formatDate = (d: Date) => formatDateToISODateString(d).replace(/[-:]/g, "").split(".")[0] + "Z";
 
 	const googleUrl =
 		`https://www.google.com/calendar/render?action=TEMPLATE` +
@@ -72,4 +72,20 @@ export function base64ToBlob(base64: string): Blob {
 	}
 
 	return new Blob(byteArrays, { type: contentType });
+}
+
+export function getOneMonthFromNowRange() {
+	const start = new Date();
+	start.setHours(0, 0, 0, 0);
+	const end = new Date();
+	end.setHours(23, 59, 59, 999);
+	end.setMonth(end.getMonth() + 1);
+
+	return { start, end };
+}
+
+export function formatDateToISODateString(date: Date): string {
+	const offset = date.getTimezoneOffset();
+	const localDate = new Date(date.getTime() - offset * 60 * 1000);
+	return localDate.toISOString().split("T")[0];
 }

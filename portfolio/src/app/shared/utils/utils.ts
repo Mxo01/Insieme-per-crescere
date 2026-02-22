@@ -20,3 +20,20 @@ export function base64ToBlob(base64: string): Blob {
 
 	return new Blob(byteArrays, { type: contentType });
 }
+
+export function getOneMonthFromNowRange() {
+	const start = new Date();
+	start.setHours(0, 0, 0, 0);
+	
+	const end = new Date();
+	end.setHours(23, 59, 59, 999);
+	end.setMonth(end.getMonth() + 1);
+
+	return { start, end };
+}
+
+export function formatDateToISODateString(date: Date): string {
+	const offset = date.getTimezoneOffset();
+	const localDate = new Date(date.getTime() - offset * 60 * 1000);
+	return localDate.toISOString().split("T")[0];
+}

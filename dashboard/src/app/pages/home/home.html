@@ -186,7 +186,7 @@
 			showIcon
 			iconDisplay="input"
 			inputId="date"
-			[minDate]="minDate()"
+			[minDate]="monthRange().start"
 			[(ngModel)]="selectedDate"
 		/>
 	</div>

@@ -59,8 +59,8 @@
 						Seleziona un giorno
 					</h2>
 					<p-datepicker
-						[minDate]="minDate()"
-						[maxDate]="maxDate()"
+						[minDate]="monthRange().start"
+						[maxDate]="monthRange().end"
 						[disabledDates]="disabledDates()"
 						[ngModel]="selectedDate()"
 						(ngModelChange)="onDateChange($event)"

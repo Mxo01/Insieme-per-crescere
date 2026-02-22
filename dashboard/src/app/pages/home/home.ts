@@ -16,8 +16,8 @@ import { Select } from "primeng/select";
 import { timeOptions } from "src/app/shared/utils/constants";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { Dates } from "src/app/shared/services/dates/dates";
-import { AuthService } from "../../shared/services/auth/auth";
-import { generateGoogleCalendarLink, sendConfirmationEmail } from "src/app/shared/utils/utils";
+import { sendConfirmationEmail } from "src/app/shared/utils/utils";
+import { getOneMonthFromNowRange } from "src/app/shared/utils/utils";
 
 @Component({
 	imports: [
@@ -48,17 +48,7 @@ export class Home {
 	readonly timeOptions = signal(timeOptions);
 	readonly bookings = this.bookingsService.getBookings();
 
-	readonly minDate = computed(() => {
-		const date = new Date();
-		date.setHours(0, 0, 0, 0);
-		return date;
-	});
-	readonly maxDate = computed(() => {
-		const date = new Date();
-		date.setHours(23, 59, 59, 999);
-		date.setMonth(date.getMonth() + 1);
-		return date;
-	});
+	readonly monthRange = computed(() => getOneMonthFromNowRange());
 
 	readonly totalBookings = computed(() => this.bookings().length);
 	readonly pendingBookings = computed(() => this.bookings().filter(b => !b.isAccepted).length);
@@ -113,9 +103,7 @@ export class Home {
 			this.selectedTime.set(null);
 
 			if (date) {
-				const existingAvailability = await this.datesService.getAvailabilityByDate(
-					date.toLocaleDateString()
-				);
+				const existingAvailability = await this.datesService.getAvailabilityByDate(date);
 				this.timeOptions.update(options =>
 					options.map(option => ({
 						...option,
@@ -256,7 +244,7 @@ export class Home {
 		this.bookingsService
 			.updateBookingDate(
 				this.selectedBooking()!.id!,
-				this.selectedDate()!.toLocaleDateString(),
+				this.selectedDate()!,
 				this.selectedTime()!
 			)
 			.then(() => {
