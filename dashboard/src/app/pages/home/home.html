@@ -221,6 +221,7 @@
 		<p-button
 			label="Conferma"
 			[rounded]="true"
+			[disabled]="!selectedDate() || !selectedTime()"
 			[loading]="isDateEditLoading()"
 			(click)="onSaveDate()"
 		/>

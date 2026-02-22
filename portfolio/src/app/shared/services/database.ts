@@ -5,8 +5,8 @@ import { Firestore, collection } from "@angular/fire/firestore";
 	providedIn: "root"
 })
 export class Database {
-	private _db = inject(Firestore);
-	public assetsCollection = collection(this._db, "assets");
-	public datesCollection = collection(this._db, "dates");
-	public bookingsCollection = collection(this._db, "bookings");
+	readonly firestore = inject(Firestore);
+	readonly assetsCollection = collection(this.firestore, "assets");
+	readonly datesCollection = collection(this.firestore, "dates");
+	readonly bookingsCollection = collection(this.firestore, "bookings");
 }

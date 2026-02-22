@@ -145,11 +145,11 @@ export class Booking {
 
 				this.resetBooking();
 			})
-			.catch(() => {
+			.catch((error: Error) => {
 				this.messageService.add({
 					severity: "error",
 					summary: "Errore",
-					detail: "Errore durante la prenotazione. Riprova più tardi."
+					detail: error.message
 				});
 			})
 			.finally(() => this.isSubmitting.set(false));
