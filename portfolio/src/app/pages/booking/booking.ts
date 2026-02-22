@@ -53,12 +53,12 @@ export class Booking {
 
 	readonly selectedDate = signal<Date | null>(null);
 	readonly selectedTime = signal<string | null>(null);
-	
+
 	readonly minDate = computed(() => {
 		const date = new Date();
 		date.setHours(0, 0, 0, 0);
 		return date;
-	})
+	});
 	readonly maxDate = computed(() => {
 		const date = new Date();
 		date.setHours(23, 59, 59, 999);
@@ -148,7 +148,9 @@ export class Booking {
 				this.messageService.add({
 					severity: "success",
 					summary: "Prenotazione effettuata",
-					detail: "La tua prenotazione è stata confermata."
+					detail:
+						"La tua prenotazione è stata inoltrata! Riceverai una mail di conferma appena possibile.",
+					life: 10000
 				});
 
 				this.resetBooking();
