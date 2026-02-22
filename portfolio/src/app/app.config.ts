@@ -11,6 +11,7 @@ import { initializeApp, provideFirebaseApp } from "@angular/fire/app";
 import { getFirestore, provideFirestore } from "@angular/fire/firestore";
 import { routes } from "./app.routes";
 import { firebaseConfig } from "shared/firebase.config";
+import { provideAppCheck, initializeAppCheck, ReCaptchaV3Provider } from "@angular/fire/app-check";
 
 const primengPreset = definePreset(Aura, {
 	semantic: {
@@ -44,6 +45,12 @@ export const appConfig: ApplicationConfig = {
 			}
 		}),
 		provideFirebaseApp(() => initializeApp(firebaseConfig)),
-		provideFirestore(() => getFirestore())
+		provideFirestore(() => getFirestore()),
+		provideAppCheck(() =>
+			initializeAppCheck(undefined, {
+				provider: new ReCaptchaV3Provider("6LeKfXQsAAAAAKMj4s3N_WcmO5UFQRjqEu8pHqyx"),
+				isTokenAutoRefreshEnabled: true
+			})
+		)
 	]
 };

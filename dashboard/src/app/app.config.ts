@@ -13,6 +13,7 @@ import { routes } from "./app.routes";
 import { firebaseConfig } from "shared/firebase.config";
 import { getAuth, provideAuth } from "@angular/fire/auth";
 import { ConfirmationService } from "primeng/api";
+import { provideAppCheck, initializeAppCheck, ReCaptchaV3Provider } from "@angular/fire/app-check";
 
 const primengPreset = definePreset(Aura, {
 	semantic: {
@@ -48,6 +49,12 @@ export const appConfig: ApplicationConfig = {
 		provideFirebaseApp(() => initializeApp(firebaseConfig)),
 		provideFirestore(() => getFirestore()),
 		provideAuth(() => getAuth()),
+		provideAppCheck(() =>
+			initializeAppCheck(undefined, {
+				provider: new ReCaptchaV3Provider("6LeDfnQsAAAAACc06L9kvs3aWmYSizPIS4qKnzLz"),
+				isTokenAutoRefreshEnabled: true
+			})
+		),
 		ConfirmationService
 	]
 };
