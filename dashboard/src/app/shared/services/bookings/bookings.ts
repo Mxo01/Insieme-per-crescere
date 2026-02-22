@@ -77,9 +77,10 @@ export class Bookings {
 	}
 
 	async updateBookingDate(bookingId: string, date: Date, time: string) {
+		const dateStr = formatDateToISODateString(date)
 		const docRef = doc(this.db.bookingsCollection, bookingId);
 
-		const q = query(this.db.datesCollection, where("date", "==", formatDateToISODateString(date)));
+		const q = query(this.db.datesCollection, where("date", "==", dateStr));
 		const querySnapshot = await getDocs(q);
 
 		if (!querySnapshot.empty) {
@@ -91,6 +92,6 @@ export class Bookings {
 			await updateDoc(docRef, { availableTimeSlots });
 		}
 
-		await updateDoc(docRef, { date, time });
+		await updateDoc(docRef, { date: dateStr, time });
 	}
 }
