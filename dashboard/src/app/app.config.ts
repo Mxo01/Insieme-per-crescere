@@ -47,14 +47,14 @@ export const appConfig: ApplicationConfig = {
 			}
 		}),
 		provideFirebaseApp(() => initializeApp(firebaseConfig)),
-		provideFirestore(() => getFirestore()),
-		provideAuth(() => getAuth()),
 		provideAppCheck(() =>
 			initializeAppCheck(undefined, {
 				provider: new ReCaptchaV3Provider("6LeDfnQsAAAAACc06L9kvs3aWmYSizPIS4qKnzLz"),
 				isTokenAutoRefreshEnabled: true
 			})
 		),
+		provideFirestore(() => getFirestore()),
+		provideAuth(() => getAuth()),
 		ConfirmationService
 	]
 };
