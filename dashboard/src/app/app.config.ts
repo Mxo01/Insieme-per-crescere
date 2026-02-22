@@ -51,7 +51,7 @@ export const appConfig: ApplicationConfig = {
 		provideAuth(() => getAuth()),
 		provideAppCheck(() =>
 			initializeAppCheck(undefined, {
-				provider: new ReCaptchaV3Provider("6LeDfnQsAAAAACc06L9kvs3aWmYSizPIS4qKnzLz"),
+				provider: new ReCaptchaV3Provider("6LeDfnQsAAAAAKpbxH9QFiYcr_nrqYrLFb3FZE24"),
 				isTokenAutoRefreshEnabled: true
 			})
 		),
