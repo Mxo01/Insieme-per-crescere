@@ -17,9 +17,10 @@ export class Dates {
 		const querySnapshot = await getDocs(q);
 
 		if (!querySnapshot.empty) {
+			const noOneTimeSlotsSelected = !availableTimeSlots?.length;
 			const existingDoc = querySnapshot.docs[0];
 			const docRef = doc(this.db.datesCollection, existingDoc.id);
-			return updateDoc(docRef, { availableTimeSlots });
+			return noOneTimeSlotsSelected ? deleteDoc(docRef) : updateDoc(docRef, { availableTimeSlots });
 		} else {
 			return addDoc(this.db.datesCollection, {
 				date,
