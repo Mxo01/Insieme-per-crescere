@@ -48,7 +48,7 @@ export const appConfig: ApplicationConfig = {
 		provideFirebaseApp(() => initializeApp(firebaseConfig)),
 		provideAppCheck(() =>
 			initializeAppCheck(getApp(), {
-				provider: new ReCaptchaV3Provider("6Le8knUsAAAAADjLGHgjcpxSYCxkMRByTEa2uC28"),
+				provider: new ReCaptchaV3Provider("6LeKfXQsAAAAAKMj4s3N_WcmO5UFQRjqEu8pHqyx"),
 				isTokenAutoRefreshEnabled: true
 			})
 		),
