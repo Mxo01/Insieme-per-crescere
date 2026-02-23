@@ -7,7 +7,7 @@ import { provideRouter } from "@angular/router";
 import { providePrimeNG } from "primeng/config";
 import Aura from "@primeuix/themes/aura";
 import { definePreset } from "@primeuix/themes";
-import { initializeApp, provideFirebaseApp } from "@angular/fire/app";
+import { getApp, initializeApp, provideFirebaseApp } from "@angular/fire/app";
 import { getFirestore, provideFirestore } from "@angular/fire/firestore";
 import { routes } from "./app.routes";
 import { firebaseConfig } from "shared/firebase.config";
@@ -48,7 +48,7 @@ export const appConfig: ApplicationConfig = {
 		}),
 		provideFirebaseApp(() => initializeApp(firebaseConfig)),
 		provideAppCheck(() =>
-			initializeAppCheck(undefined, {
+			initializeAppCheck(getApp(), {
 				provider: new ReCaptchaV3Provider("6LeDfnQsAAAAACc06L9kvs3aWmYSizPIS4qKnzLz"),
 				isTokenAutoRefreshEnabled: true
 			})
