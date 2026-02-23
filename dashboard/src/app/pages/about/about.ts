@@ -2,7 +2,6 @@ import { Component, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { Card } from "primeng/card";
 import { FileSelectEvent, FileUpload } from "primeng/fileupload";
-import { Toast } from "primeng/toast";
 import { MessageService } from "primeng/api";
 import { Assets } from "../../shared/services/assets/assets";
 import { convertFileToBase64 } from "src/app/shared/utils/utils";
@@ -10,8 +9,7 @@ import { Button } from "primeng/button";
 
 @Component({
 	selector: "app-about",
-	imports: [CommonModule, Card, FileUpload, Toast, Button],
-	providers: [MessageService],
+	imports: [CommonModule, Card, FileUpload, Button],
 	templateUrl: "./about.html",
 	styleUrl: "./about.scss"
 })

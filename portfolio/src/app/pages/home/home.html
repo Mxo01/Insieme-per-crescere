@@ -63,7 +63,8 @@
 					, ponendo le basi per comprendere le sfumature dello sviluppo infantile.
 				</p>
 				<p class="text-lg text-gray-600 leading-relaxed">
-					Successivamente, per arricchire ulteriormente le mie competenze, ho conseguito la Laurea Magistrale in
+					Successivamente, per arricchire ulteriormente le mie competenze, ho conseguito la Laurea
+					Magistrale in
 					<strong>Scienze Pedagogiche</strong>
 					. Oggi unisco questa solida preparazione teorica a tanta empatia, per supportare l'intero
 					nucleo familiare.
@@ -152,5 +153,51 @@
 			<i class="pi pi-calendar mr-2"></i>
 			<span class="font-bold text-lg">Trova il tuo momento</span>
 		</a>
+	</section>
+
+	<section class="max-w-5xl mx-auto px-6 py-16 md:py-24 border-t border-stone-100">
+		<div
+			class="bg-violet-50 rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-16 flex flex-col lg:flex-row items-center gap-10 md:gap-12"
+		>
+			<div class="w-full lg:flex-1 text-center lg:text-left">
+				<span
+					class="inline-flex items-center gap-2 text-violet-600 font-bold tracking-widest uppercase text-xs md:text-sm mb-4"
+				>
+					<i class="pi pi-envelope text-xs"></i>
+					Mettiamoci in contatto
+				</span>
+
+				<h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6 leading-tight">
+					Hai qualche dubbio o curiosità?
+				</h2>
+
+				<p class="text-base md:text-lg text-gray-600 mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0">
+					Se preferisci scrivermi un messaggio diretto o hai bisogno di informazioni specifiche
+					sulle modalità delle consulenze, non esitare a contattarmi via email.
+				</p>
+
+				<div
+					class="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 md:p-4 rounded-2xl bg-white border border-violet-100 shadow-sm"
+				>
+					<span class="text-sm md:text-base font-medium text-gray-700 break-all px-2 md:whitespace-nowrap">
+						{{ email() }}
+					</span>
+					<p-button
+						icon="pi pi-copy"
+						[rounded]="true"
+						[text]="true"
+						class="flex-none"
+						(onClick)="onCopyEmail()"
+					/>
+				</div>
+			</div>
+
+			<div class="hidden lg:flex lg:flex-1 justify-center">
+				<div class="relative">
+					<div class="absolute -inset-4 bg-violet-200/50 rounded-full blur-2xl"></div>
+					<i class="pi pi-comments text-[6rem]! xl:text-[8rem]! text-violet-300 relative z-10"></i>
+				</div>
+			</div>
+		</div>
 	</section>
 </div>

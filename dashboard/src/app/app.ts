@@ -6,7 +6,9 @@ import { AvatarModule } from "primeng/avatar";
 import { AuthService } from "./shared/services/auth/auth";
 import { CommonModule } from "@angular/common";
 import { environment } from "src/environments/environment.development";
-
+import { ConfirmDialog } from "primeng/confirmdialog";
+import { MessageService, ConfirmationService } from "primeng/api";
+import { ToastModule } from "primeng/toast";
 @Component({
 	selector: "app-root",
 	imports: [
@@ -16,8 +18,11 @@ import { environment } from "src/environments/environment.development";
 		ButtonModule,
 		AvatarModule,
 		RouterLink,
-		RouterLinkActive
+		RouterLinkActive,
+		ConfirmDialog,
+		ToastModule
 	],
+	providers: [MessageService, ConfirmationService],
 	templateUrl: "./app.html",
 	styleUrl: "./app.scss"
 })

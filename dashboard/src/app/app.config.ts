@@ -12,7 +12,6 @@ import { getFirestore, provideFirestore } from "@angular/fire/firestore";
 import { routes } from "./app.routes";
 import { firebaseConfig } from "shared/firebase.config";
 import { getAuth, provideAuth } from "@angular/fire/auth";
-import { ConfirmationService } from "primeng/api";
 import { provideAppCheck, initializeAppCheck, ReCaptchaV3Provider } from "@angular/fire/app-check";
 
 const primengPreset = definePreset(Aura, {
@@ -54,7 +53,6 @@ export const appConfig: ApplicationConfig = {
 			})
 		),
 		provideFirestore(() => getFirestore()),
-		provideAuth(() => getAuth()),
-		ConfirmationService
+		provideAuth(() => getAuth())
 	]
 };

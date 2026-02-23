@@ -5,7 +5,6 @@ import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { Menu, MenuModule } from "primeng/menu";
-import { ToastModule } from "primeng/toast";
 import { MessageService, MenuItem, ConfirmationService } from "primeng/api";
 import { Bookings } from "../../shared/services/bookings/bookings";
 import { BookingDto } from "../../shared/services/bookings/bookings.model";
@@ -27,14 +26,13 @@ import { getOneMonthFromNowRange } from "src/app/shared/utils/utils";
 		ButtonModule,
 		TagModule,
 		MenuModule,
-		ToastModule,
 		FormsModule,
 		DialogModule,
 		DatePicker,
 		Select,
 		ConfirmDialogModule
 	],
-	providers: [MessageService],
+	providers: [ConfirmationService],
 	templateUrl: "./home.html"
 })
 export class Home {

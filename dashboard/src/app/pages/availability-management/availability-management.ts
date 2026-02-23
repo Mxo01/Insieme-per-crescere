@@ -2,10 +2,9 @@ import { Component, inject, signal, effect, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { DatePicker } from "primeng/datepicker";
-import { MultiSelect, MultiSelectRemoveEvent } from "primeng/multiselect";
+import { MultiSelect } from "primeng/multiselect";
 import { ButtonModule } from "primeng/button";
 import { CardModule } from "primeng/card";
-import { ToastModule } from "primeng/toast";
 import { MessageService } from "primeng/api";
 import { Dates } from "../../shared/services/dates/dates";
 import { timeOptions } from "../../shared/utils/constants";
@@ -21,9 +20,7 @@ import { getOneMonthFromNowRange } from "src/app/shared/utils/utils";
 		MultiSelect,
 		ButtonModule,
 		CardModule,
-		ToastModule
 	],
-	providers: [MessageService],
 	templateUrl: "./availability-management.html",
 	styleUrl: "./availability-management.scss"
 })

@@ -12,7 +12,6 @@ import { DatePicker } from "primeng/datepicker";
 import { ButtonModule } from "primeng/button";
 import { InputText } from "primeng/inputtext";
 import { Textarea } from "primeng/textarea";
-import { Toast } from "primeng/toast";
 import { MessageService } from "primeng/api";
 import { FormBuilder, ReactiveFormsModule, Validators, FormsModule } from "@angular/forms";
 import { RouterLink } from "@angular/router";
@@ -29,13 +28,11 @@ import { formatDateToISODateString, getOneMonthFromNowRange } from "src/app/shar
 		ButtonModule,
 		InputText,
 		Textarea,
-		Toast,
 		ReactiveFormsModule,
 		FormsModule,
 		RouterLink,
 		Tag
 	],
-	providers: [MessageService],
 	templateUrl: "./booking.html",
 	styleUrl: "./booking.scss",
 	changeDetection: ChangeDetectionStrategy.OnPush
