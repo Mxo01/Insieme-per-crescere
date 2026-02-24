@@ -176,20 +176,13 @@
 					sulle modalità delle consulenze, non esitare a contattarmi via email.
 				</p>
 
-				<div
-					class="flex flex-col sm:flex-row items-center justify-between gap-3 p-3 md:p-4 rounded-2xl bg-white border border-violet-100 shadow-sm"
-				>
-					<span class="text-sm md:text-base font-medium text-gray-700 break-all px-2 md:whitespace-nowrap">
-						{{ email() }}
-					</span>
-					<p-button
-						icon="pi pi-copy"
-						[rounded]="true"
-						[text]="true"
-						class="flex-none"
-						(onClick)="onCopyEmail()"
-					/>
-				</div>
+				<p-button
+					icon="pi pi-copy"
+					[rounded]="true"
+					class="flex-none"
+					label="Copia email"
+					(onClick)="onCopyEmail()"
+				/>
 			</div>
 
 			<div class="hidden lg:flex lg:flex-1 justify-center">
