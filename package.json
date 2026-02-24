@@ -7,6 +7,9 @@
 		"prepare": "husky",
 		"start": "concurrently -n \"DASHBOARD,PORTFOLIO\" -c \"blue,magenta\" \"npm run start:dashboard\" \"npm run start:portfolio\"",
 		"start:dashboard": "cd dashboard && npm run start -- --port 4201",
-		"start:portfolio": "cd portfolio && npm run start -- --port 4200"
+		"start:portfolio": "cd portfolio && npm run start -- --port 4200",
+		"format": "cd dashboard && npm run format && cd .. && cd portfolio && npm run format",
+		"lint": "cd dashboard && npm run lint && cd .. && cd portfolio && npm run lint",
+		"clean-code": "npm run format && npm run lint"
 	}
 }

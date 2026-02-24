@@ -7,8 +7,9 @@
 		"build": "ng build",
 		"watch": "ng build --watch --configuration development",
 		"test": "ng test",
-		"format": "prettier --write \"*/**/*.{js,ts,html,css,scss,json}\"",
-		"lint": "eslint --fix \"*/**/*.{js,ts,html,css,scss,json}\""
+		"format": "prettier . --write",
+		"lint": "eslint . --fix",
+		"clean-code": "npm run format && npm run lint"
 	},
 	"private": true,
 	"dependencies": {
