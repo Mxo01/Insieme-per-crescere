@@ -6,7 +6,6 @@
 		"start": "ng serve --hmr",
 		"build": "ng build",
 		"watch": "ng build --watch --configuration development",
-		"prepare": "husky",
 		"format": "prettier . --write",
 		"lint": "eslint . --fix"
 	},
