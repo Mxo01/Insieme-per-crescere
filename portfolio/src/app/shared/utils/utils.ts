@@ -24,7 +24,7 @@ export function base64ToBlob(base64: string): Blob {
 export function getOneMonthFromNowRange() {
 	const start = new Date();
 	start.setHours(0, 0, 0, 0);
-	
+
 	const end = new Date();
 	end.setHours(23, 59, 59, 999);
 	end.setMonth(end.getMonth() + 1);

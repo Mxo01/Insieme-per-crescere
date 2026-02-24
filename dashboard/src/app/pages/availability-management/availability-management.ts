@@ -13,14 +13,7 @@ import { getOneMonthFromNowRange } from "src/app/shared/utils/utils";
 
 @Component({
 	selector: "app-availability-management",
-	imports: [
-		CommonModule,
-		FormsModule,
-		DatePicker,
-		MultiSelect,
-		ButtonModule,
-		CardModule,
-	],
+	imports: [CommonModule, FormsModule, DatePicker, MultiSelect, ButtonModule, CardModule],
 	templateUrl: "./availability-management.html",
 	styleUrl: "./availability-management.scss"
 })

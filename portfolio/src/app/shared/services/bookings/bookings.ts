@@ -30,7 +30,7 @@ export class Bookings {
 
 				transaction.set(newBookingRef, booking);
 			});
-		} catch (error) {
+		} catch {
 			throw new Error("Errore durante la prenotazione. Riprova più tardi.");
 		}
 	}

@@ -23,3 +23,7 @@ pnpm-debug.log*
 # System
 .DS_Store
 Thumbs.db
+
+# Husky
+.husky/_
+

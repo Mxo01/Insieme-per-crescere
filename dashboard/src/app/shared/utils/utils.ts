@@ -22,7 +22,8 @@ export function generateGoogleCalendarLink(booking: BookingDto) {
 	const [hours, minutes] = booking.time.split(":").map(Number);
 	const start = new Date(year, month - 1, day, hours, minutes, 0);
 	const end = new Date(start.getTime() + 45 * 60 * 1000);
-	const formatDate = (d: Date) => formatDateToISODateString(d).replace(/[-:]/g, "").split(".")[0] + "Z";
+	const formatDate = (d: Date) =>
+		formatDateToISODateString(d).replace(/[-:]/g, "").split(".")[0] + "Z";
 
 	const googleUrl =
 		`https://www.google.com/calendar/render?action=TEMPLATE` +

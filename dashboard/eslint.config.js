@@ -22,7 +22,7 @@ module.exports = tseslint.config(
 		]
 	},
 	{
-		files: ["/*.ts"],
+		files: ["**/*.ts"],
 		plugins: {
 			import: importPlugin,
 			"unused-imports": eslintUnusedImports
@@ -82,7 +82,7 @@ module.exports = tseslint.config(
 		}
 	},
 	{
-		files: ["/*.html"],
+		files: ["**/*.html"],
 		extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
 		rules: {
 			"@angular-eslint/template/prefer-self-closing-tags": "error",

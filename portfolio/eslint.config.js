@@ -22,7 +22,7 @@ module.exports = tseslint.config(
 		]
 	},
 	{
-		files: ["/*.ts"],
+		files: ["**/*.ts"],
 		plugins: {
 			import: importPlugin,
 			"unused-imports": eslintUnusedImports
@@ -62,7 +62,7 @@ module.exports = tseslint.config(
 			"@angular-eslint/prefer-standalone": "error",
 			"@angular-eslint/prefer-inject": "error",
 			"@angular-eslint/no-output-on-prefix": "error",
-			eqeqeq: "true",
+			eqeqeq: "error",
 			"@angular-eslint/directive-selector": [
 				"error",
 				{
@@ -82,7 +82,7 @@ module.exports = tseslint.config(
 		}
 	},
 	{
-		files: ["/*.html"],
+		files: ["**/*.html"],
 		extends: [...angular.configs.templateRecommended, ...angular.configs.templateAccessibility],
 		rules: {
 			"@angular-eslint/template/prefer-self-closing-tags": "error",
@@ -90,7 +90,7 @@ module.exports = tseslint.config(
 			"@angular-eslint/template/click-events-have-key-events": "off",
 			"@angular-eslint/template/interactive-supports-focus": "off",
 			"@angular-eslint/template/alt-text": "error",
-			"@angular-eslint/template/eqeqeq": "true"
+			"@angular-eslint/template/eqeqeq": "error"
 		}
 	}
 );

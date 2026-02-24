@@ -39,7 +39,7 @@ export class Dates {
 			query(this.db.datesCollection, where("date", "<", formatDateToISODateString(start)))
 		);
 		const deletePromises = querySnapshot.docs.map(doc => deleteDoc(doc.ref));
-		
+
 		return Promise.all(deletePromises);
 	}
 

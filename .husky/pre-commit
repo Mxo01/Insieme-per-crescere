@@ -1,0 +1,2 @@
+cd dashboard && npx lint-staged && cd ..
+cd portfolio && npx lint-staged && cd ..

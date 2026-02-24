@@ -15,8 +15,7 @@ import { Select } from "primeng/select";
 import { timeOptions } from "src/app/shared/utils/constants";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { Dates } from "src/app/shared/services/dates/dates";
-import { sendConfirmationEmail } from "src/app/shared/utils/utils";
-import { getOneMonthFromNowRange } from "src/app/shared/utils/utils";
+import { sendConfirmationEmail, getOneMonthFromNowRange } from "src/app/shared/utils/utils";
 
 @Component({
 	imports: [
@@ -240,11 +239,7 @@ export class Home {
 		this.isDateEditLoading.set(true);
 
 		this.bookingsService
-			.updateBookingDate(
-				this.selectedBooking()!.id!,
-				this.selectedDate()!,
-				this.selectedTime()!
-			)
+			.updateBookingDate(this.selectedBooking()!.id!, this.selectedDate()!, this.selectedTime()!)
 			.then(() => {
 				this.messageService.add({
 					severity: "success",
