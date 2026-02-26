@@ -1,9 +1,5 @@
-# 1. Load NVM into this shell session
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
-
-# 2. Verify node is found (optional, for debugging)
-# which node
 
 echo "--- Checking Dashboard ---"
 (cd dashboard && npx lint-staged)
