@@ -173,16 +173,30 @@
 
 				<p class="text-base md:text-lg text-gray-600 mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0">
 					Se preferisci scrivermi un messaggio diretto o hai bisogno di informazioni specifiche
-					sulle modalità delle consulenze, non esitare a contattarmi via email.
+					sulle modalità delle consulenze, non esitare a contattarmi via email o su instagram.
 				</p>
 
-				<p-button
-					icon="pi pi-copy"
-					[rounded]="true"
-					class="flex-none"
-					label="Copia email"
-					(onClick)="onCopyEmail()"
-				/>
+				<div class="flex flex-wrap justify-center lg:justify-start gap-4">
+					<p-button
+						icon="pi pi-copy"
+						[rounded]="true"
+						class="flex-none"
+						label="Copia email"
+						(onClick)="onCopyEmail()"
+					/>
+					<a
+						href="https://www.instagram.com/pedagogista.insiemepercrescere/"
+						target="_blank"
+						rel="noopener noreferrer"
+						pButton
+						[rounded]="true"
+						label="Instagram"
+						[text]="true"
+						severity="contrast"
+						icon="pi pi-instagram"
+						title="Seguici su Instagram"
+					></a>
+				</div>
 			</div>
 
 			<div class="hidden lg:flex lg:flex-1 justify-center">
