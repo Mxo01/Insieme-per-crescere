@@ -1,0 +1,17 @@
+{
+	"version": "0.0.1",
+	"configurations": [
+		{
+			"name": "portfolio",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": ["run", "start:portfolio"],
+			"port": 4200
+		},
+		{
+			"name": "dashboard",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": ["run", "start:dashboard"],
+			"port": 4201
+		}
+	]
+}
