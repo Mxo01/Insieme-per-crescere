@@ -31,7 +31,6 @@ import { sendConfirmationEmail, getOneMonthFromNowRange } from "src/app/shared/u
 		Select,
 		ConfirmDialogModule
 	],
-	providers: [ConfirmationService],
 	templateUrl: "./home.html"
 })
 export class Home {
