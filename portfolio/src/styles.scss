@@ -1,7 +1,228 @@
 @import "primeicons/primeicons.css";
 
+:root {
+	--g: #f7f2ec;
+	--surface: #ffffff;
+	--ink: #241634;
+	--ink60: #5c4b6b;
+	--ink40: #8a7c96;
+	--v900: #24123b;
+	--v700: #47207f;
+	--v600: #5d2b9e;
+	--v500: #7237be;
+	--v300: #b58be8;
+	--v100: #eadff9;
+	--v50: #f6f1fc;
+	--teal: #2c9e9a;
+	--tealsoft: #e0f1f0;
+	--ochre: #e8a03c;
+	--ochresoft: #fbeeda;
+	--coral: #ef6f84;
+	--coralsoft: #fce4e8;
+	--line: rgba(36, 22, 52, 0.08);
+	--shs: 0 2px 8px rgba(36, 22, 52, 0.06);
+	--shm: 0 14px 34px -10px rgba(36, 22, 52, 0.16);
+	--shl: 0 30px 64px -18px rgba(71, 32, 127, 0.32);
+}
+
+html {
+	overflow-x: hidden;
+}
+
 html,
 body {
 	margin: 0;
-	font-family: "Poppins", sans-serif;
+	font-family: "DM Sans", system-ui, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	color: var(--ink);
+	background-color: var(--g);
+	background-image:
+		radial-gradient(circle at 1px 1px, rgba(93, 43, 158, 0.11) 1px, transparent 0),
+		radial-gradient(1200px 640px at 88% -6%, rgba(234, 223, 249, 0.8), transparent 62%),
+		radial-gradient(1000px 560px at -12% 38%, rgba(224, 241, 240, 0.55), transparent 62%),
+		radial-gradient(900px 520px at 110% 88%, rgba(251, 238, 218, 0.6), transparent 62%);
+	background-size:
+		26px 26px,
+		auto,
+		auto,
+		auto;
+	background-attachment: fixed, fixed, fixed, fixed;
+}
+
+h1,
+h2,
+h3,
+h4 {
+	font-family: "Outfit", system-ui, sans-serif;
+	font-weight: 700;
+	letter-spacing: -0.02em;
+}
+
+::selection {
+	background: var(--v100);
+}
+
+:focus-visible {
+	outline: 2px solid var(--v500);
+	outline-offset: 3px;
+}
+
+@keyframes fade {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
+
+@keyframes pop {
+	0% {
+		opacity: 0;
+		transform: scale(0.94) translateY(12px);
+	}
+	100% {
+		opacity: 1;
+		transform: none;
+	}
+}
+
+@keyframes flt {
+	0%,
+	100% {
+		transform: translate3d(0, 0, 0) rotate(0);
+	}
+	50% {
+		transform: translate3d(0, -18px, 0) rotate(6deg);
+	}
+}
+
+@keyframes flt2 {
+	0%,
+	100% {
+		transform: translate3d(0, 0, 0);
+	}
+	50% {
+		transform: translate3d(14px, 10px, 0);
+	}
+}
+
+@keyframes spin-slow {
+	to {
+		transform: rotate(360deg);
+	}
+}
+
+@keyframes bounceIn {
+	0% {
+		transform: scale(0);
+	}
+	60% {
+		transform: scale(1.15);
+	}
+	100% {
+		transform: scale(1);
+	}
+}
+
+@keyframes drift {
+	0%,
+	100% {
+		transform: translate3d(0, 0, 0);
+	}
+	50% {
+		transform: translate3d(0, -6px, 0);
+	}
+}
+
+@keyframes dashmove {
+	to {
+		stroke-dashoffset: -44;
+	}
+}
+
+.reveal {
+	animation: pop 0.7s cubic-bezier(0.16, 0.84, 0.28, 1) both;
+}
+
+.float-slow {
+	animation: flt 13s ease-in-out infinite;
+}
+
+.float-slow-alt {
+	animation: flt2 11s ease-in-out infinite;
+}
+
+.spin-slow {
+	animation: spin-slow 60s linear infinite;
+}
+
+.dash-line {
+	animation: dashmove 2.6s linear infinite;
+}
+
+// PrimeNG datepicker, reskinned to match the design's pill-day calendar —
+// global (not component-scoped) so it also reaches popup instances rendered
+// via `appendTo="body"`.
+p-datepicker {
+	.p-motion {
+		display: flex !important;
+		flex: 1 !important;
+	}
+
+	.p-datepicker-header {
+		background: transparent;
+	}
+
+	.p-datepicker-title,
+	.p-datepicker-select-month,
+	.p-datepicker-select-year {
+		font-family: "Outfit", system-ui, sans-serif;
+		font-weight: 700;
+		color: var(--ink);
+	}
+
+	.p-datepicker-prev-button,
+	.p-datepicker-next-button {
+		border-radius: 999px;
+		color: var(--ink40);
+	}
+
+	.p-datepicker-prev-button:hover,
+	.p-datepicker-next-button:hover {
+		background: var(--v50);
+		color: var(--v600);
+	}
+
+	.p-datepicker-day-view th span {
+		color: var(--ink40);
+		font-weight: 700;
+		font-size: 11.5px;
+		text-transform: uppercase;
+	}
+
+	.p-datepicker-day {
+		border-radius: 999px;
+		font-weight: 700;
+		transition:
+			transform 0.18s cubic-bezier(0.2, 0.9, 0.3, 1.5),
+			background 0.2s,
+			color 0.2s;
+	}
+
+	.p-datepicker-day:not(.p-disabled):hover {
+		background: var(--v50);
+		color: var(--v600);
+	}
+
+	.p-datepicker-day-selected {
+		background: linear-gradient(140deg, var(--v500), var(--v700)) !important;
+		color: #fff !important;
+		box-shadow: 0 10px 22px -8px rgba(71, 32, 127, 0.8);
+		transform: scale(1.08);
+	}
+
+	.p-datepicker-today > .p-datepicker-day {
+		border: 1.5px solid var(--v300);
+	}
 }
