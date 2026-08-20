@@ -56,7 +56,7 @@
 			></div>
 		</div>
 
-		<div class="relative grid items-center gap-14 md:grid-cols-2">
+		<div class="relative grid items-center gap-10 md:grid-cols-[1.05fr_0.95fr]">
 			<div class="reveal flex flex-col items-start gap-5">
 				<p-tag
 					[style]="{
@@ -93,29 +93,29 @@
 				<div class="mt-2 flex flex-wrap gap-3.5">
 					<a
 						routerLink="/booking"
-						class="inline-flex items-center gap-2.5 rounded-full bg-[linear-gradient(135deg,var(--v500),var(--v700))] px-7.5 py-4 text-base font-bold text-white shadow-[var(--shl)] transition-all hover:-translate-y-0.5 hover:scale-102 active:scale-97"
+						class="inline-flex items-center gap-2.5 rounded-full bg-[linear-gradient(135deg,var(--v500),var(--v700))] px-6.5 py-4 text-base font-bold text-white shadow-[var(--shl)] transition-all hover:-translate-y-0.5 hover:scale-102 active:scale-97"
 					>
 						<i class="pi pi-calendar text-[19px]"></i>
 						Prenota una consulenza
 					</a>
-					<p-button
-						label="Visualizza il mio CV"
-						icon="pi pi-file-pdf"
-						[rounded]="true"
-						size="large"
+					<button
+						type="button"
 						[disabled]="!assets()?.cvUrl"
-						(onClick)="onViewCV()"
-						styleClass="!bg-[var(--surface)] !text-[var(--v700)] !border-[1.5px] !border-[var(--v100)] !shadow-[var(--shs)] !font-bold hover:!bg-[var(--v50)] hover:!border-[var(--v300)]"
-					/>
+						(click)="onViewCV()"
+						class="inline-flex cursor-pointer items-center gap-2.5 rounded-full border-[1.5px] border-[var(--v100)] bg-[var(--surface)] px-6.5 py-4 text-base font-bold text-[var(--v700)] shadow-[var(--shs)] transition-all hover:-translate-y-0.5 hover:border-[var(--v300)] hover:bg-[var(--v50)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:border-[var(--v100)] disabled:hover:bg-[var(--surface)]"
+					>
+						<i class="pi pi-file-pdf text-[19px]"></i>
+						Visualizza il mio CV
+					</button>
 				</div>
 			</div>
 
-			<div class="reveal relative flex justify-center">
+			<div class="reveal relative mx-auto w-full max-w-[420px]">
 				<div
-					class="float-slow absolute aspect-square w-[118%] rounded-full bg-[linear-gradient(150deg,var(--v100),var(--tealsoft))] opacity-85"
+					class="float-slow absolute inset-0 m-auto aspect-square w-[118%] rounded-full bg-[linear-gradient(150deg,var(--v100),var(--tealsoft))] opacity-85"
 				></div>
 				<div
-					class="relative aspect-square w-full max-w-[420px] overflow-hidden shadow-[var(--shl)] transition-all duration-500 [border-radius:46%_54%_52%_48%/48%_46%_54%_52%] hover:scale-102 hover:[border-radius:38px] hover:rotate-0"
+					class="relative aspect-square w-full overflow-hidden shadow-[var(--shl)] transition-all duration-500 [border-radius:46%_54%_52%_48%/48%_46%_54%_52%] hover:scale-102 hover:[border-radius:38px] hover:rotate-0"
 					style="transform: rotate(3deg)"
 				>
 					<img
@@ -370,13 +370,14 @@
 					sulle modalità delle consulenze, non esitare a contattarmi via email o su instagram.
 				</p>
 				<div class="mt-2 flex flex-wrap gap-3.5">
-					<p-button
-						label="Copia email"
-						icon="pi pi-copy"
-						[rounded]="true"
-						(onClick)="onCopyEmail()"
-						styleClass="!bg-[var(--v500)] !text-white !font-bold !shadow-[0_10px_24px_-10px_rgba(114,55,190,0.8)] hover:!bg-[var(--v600)]"
-					/>
+					<button
+						type="button"
+						(click)="onCopyEmail()"
+						class="inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-[var(--v500)] px-5.5 py-3.5 text-[15.5px] font-bold text-white shadow-[0_10px_24px_-10px_rgba(114,55,190,0.8)] transition-all hover:-translate-y-0.5 hover:bg-[var(--v600)]"
+					>
+						<i class="pi pi-copy text-lg"></i>
+						Copia email
+					</button>
 					<a
 						href="https://www.instagram.com/pedagogista.insiemepercrescere/"
 						target="_blank"

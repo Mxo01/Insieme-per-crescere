@@ -3,7 +3,7 @@ import {
 	provideBrowserGlobalErrorListeners,
 	provideZonelessChangeDetection
 } from "@angular/core";
-import { provideRouter } from "@angular/router";
+import { provideRouter, withInMemoryScrolling } from "@angular/router";
 import { providePrimeNG } from "primeng/config";
 import Aura from "@primeuix/themes/aura";
 import { definePreset } from "@primeuix/themes";
@@ -36,7 +36,10 @@ export const appConfig: ApplicationConfig = {
 	providers: [
 		provideBrowserGlobalErrorListeners(),
 		provideZonelessChangeDetection(),
-		provideRouter(routes),
+		provideRouter(
+			routes,
+			withInMemoryScrolling({ anchorScrolling: "enabled", scrollPositionRestoration: "enabled" })
+		),
 		providePrimeNG({
 			theme: {
 				preset: primengPreset,

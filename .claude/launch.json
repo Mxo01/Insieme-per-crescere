@@ -12,6 +12,12 @@
 			"runtimeExecutable": "npm",
 			"runtimeArgs": ["run", "start:dashboard"],
 			"port": 4201
+		},
+		{
+			"name": "portfolio-preview",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": ["--prefix", "portfolio", "run", "start", "--", "--port", "4202"],
+			"port": 4202
 		}
 	]
 }
