@@ -74,10 +74,14 @@ export const appConfig: ApplicationConfig = {
 	providers: [
 		provideBrowserGlobalErrorListeners(),
 		provideZonelessChangeDetection(),
-		provideRouter(
-			routes,
-			withInMemoryScrolling({ anchorScrolling: "enabled", scrollPositionRestoration: "enabled" })
-		),
+		// `anchorScrolling` is deliberately left off: the in-page nav links
+		// (#chi-sono, #consulenze, #contatti) are handled manually in
+		// `Home.scrollToSection` with a native `scrollIntoView`, which starts
+		// from the current scroll position. Letting the router also react to
+		// the fragment change caused a double scroll — first to the stored
+		// position (or the top), then to the anchor — which showed up as a
+		// jarring flicker/"refresh" on every in-page nav click.
+		provideRouter(routes, withInMemoryScrolling({ scrollPositionRestoration: "enabled" })),
 		providePrimeNG({
 			theme: {
 				preset: primengPreset,

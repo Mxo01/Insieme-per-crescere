@@ -18,18 +18,21 @@
 			>
 				<a
 					href="#chi-sono"
+					(click)="scrollToSection($event, 'chi-sono')"
 					class="transition-colors hover:text-[var(--v500)]"
 				>
 					Chi sono
 				</a>
 				<a
 					href="#consulenze"
+					(click)="scrollToSection($event, 'consulenze')"
 					class="transition-colors hover:text-[var(--v500)]"
 				>
 					Consulenze
 				</a>
 				<a
 					href="#contatti"
+					(click)="scrollToSection($event, 'contatti')"
 					class="transition-colors hover:text-[var(--v500)]"
 				>
 					Contatti
