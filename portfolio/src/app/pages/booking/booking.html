@@ -57,7 +57,7 @@
 			[class.hidden]="verificationState() === 'confirming'"
 		>
 			<div class="flex flex-col gap-10 md:flex-row md:gap-12">
-				<div class="flex flex-col gap-5 sm:gap-5.5">
+				<div class="flex flex-col gap-5 sm:gap-5.5 md:w-[340px] md:flex-none">
 					<h2 class="flex items-center gap-3 text-xl whitespace-nowrap sm:text-[21px]">
 						<span
 							class="grid h-8 min-w-8 place-items-center rounded-full bg-[var(--v100)] font-['DM_Sans'] text-sm font-bold text-[var(--v700)]"
@@ -76,6 +76,24 @@
 						class="overflow-auto"
 						panelStyleClass="!border-none !bg-transparent !p-0"
 					/>
+					<div
+						class="flex flex-col gap-2.25 rounded-3xl bg-[var(--v50)] px-4.5 py-4 text-[13px] font-semibold text-[var(--ink60)]"
+					>
+						<span class="flex items-center gap-2.25">
+							<span class="h-3 w-3 rounded-full bg-[var(--v500)]"></span>
+							Giorno selezionato
+						</span>
+						<span class="flex items-center gap-2.25">
+							<span
+								class="h-3 w-3 rounded-full border-[1.5px] border-[var(--v300)] bg-white"
+							></span>
+							Disponibile
+						</span>
+						<span class="flex items-center gap-2.25">
+							<span class="h-3 w-3 rounded-full bg-[rgba(36,22,52,0.08)]"></span>
+							Non disponibile
+						</span>
+					</div>
 				</div>
 
 				<div

@@ -47,7 +47,7 @@
 
 	<!-- Hero -->
 	<header class="relative mx-auto max-w-6xl px-6 pt-20 pb-20 md:pt-24 md:pb-24">
-		<div class="pointer-events-none absolute inset-0 overflow-hidden">
+		<div class="pointer-events-none absolute inset-0">
 			<div
 				class="float-slow absolute top-10 right-[-60px] h-85 w-85 rounded-full bg-[radial-gradient(circle_at_30%_30%,var(--v100),rgba(234,223,249,0))]"
 			></div>
@@ -102,7 +102,7 @@
 						type="button"
 						[disabled]="!assets()?.cvUrl"
 						(click)="onViewCV()"
-						class="inline-flex cursor-pointer items-center gap-2.5 rounded-full border-[1.5px] border-[var(--v100)] bg-[var(--surface)] px-6.5 py-4 text-base font-bold text-[var(--v700)] shadow-[var(--shs)] transition-all hover:-translate-y-0.5 hover:border-[var(--v300)] hover:bg-[var(--v50)] disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:border-[var(--v100)] disabled:hover:bg-[var(--surface)]"
+						class="inline-flex cursor-pointer items-center gap-2.5 rounded-full border-[1.5px] border-[var(--v100)] bg-[var(--surface)] px-6.5 py-4 text-base font-bold text-[var(--v700)] shadow-[var(--shs)] transition-all hover:-translate-y-0.5 hover:border-[var(--v300)] hover:bg-[var(--v50)] active:scale-97 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:border-[var(--v100)] disabled:hover:bg-[var(--surface)] disabled:active:scale-100"
 					>
 						<i class="pi pi-file-pdf text-[19px]"></i>
 						Visualizza il mio CV
@@ -110,7 +110,7 @@
 				</div>
 			</div>
 
-			<div class="reveal relative mx-auto w-full max-w-[420px]">
+			<div class="reveal relative mx-auto mt-6 w-full max-w-[420px] md:mt-0">
 				<div
 					class="float-slow absolute inset-0 m-auto aspect-square w-[118%] rounded-full bg-[linear-gradient(150deg,var(--v100),var(--tealsoft))] opacity-85"
 				></div>
@@ -373,7 +373,7 @@
 					<button
 						type="button"
 						(click)="onCopyEmail()"
-						class="inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-[var(--v500)] px-5.5 py-3.5 text-[15.5px] font-bold text-white shadow-[0_10px_24px_-10px_rgba(114,55,190,0.8)] transition-all hover:-translate-y-0.5 hover:bg-[var(--v600)]"
+						class="inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-[var(--v500)] px-5.5 py-3.5 text-[15.5px] font-bold text-white shadow-[0_10px_24px_-10px_rgba(114,55,190,0.8)] transition-all hover:-translate-y-0.5 hover:bg-[var(--v600)] active:scale-96"
 					>
 						<i class="pi pi-copy text-lg"></i>
 						Copia email

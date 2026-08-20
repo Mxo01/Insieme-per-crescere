@@ -113,7 +113,7 @@
 					@for (booking of agendaPagedBookings(); track booking.id) {
 						<button
 							type="button"
-							class="flex cursor-pointer items-center gap-4 rounded-[22px] bg-[var(--g)] p-3.5 text-left transition-all hover:translate-x-1 hover:bg-[var(--v50)]"
+							class="flex cursor-pointer items-center gap-4 rounded-[22px] bg-[var(--g)] p-3.5 text-left transition-all hover:translate-x-1 hover:bg-[var(--v50)] active:scale-98"
 							(click)="openBookingNotes(booking)"
 						>
 							<div class="w-13 flex-none rounded-2xl bg-white py-2 text-center shadow-[var(--shs)]">
@@ -151,7 +151,7 @@
 						@for (page of agendaPageIndexes(); track page) {
 							<button
 								type="button"
-								class="h-2 cursor-pointer rounded-full transition-all"
+								class="h-2 cursor-pointer rounded-full transition-all active:scale-90"
 								[class]="
 									page === agendaPage() ? 'w-5.5 bg-[var(--v500)]' : 'w-2 bg-[rgba(36,22,52,0.16)]'
 								"
@@ -164,14 +164,14 @@
 					<div class="flex gap-1.5">
 						<button
 							type="button"
-							class="grid h-8 w-8 cursor-pointer place-items-center rounded-full border border-[var(--line)] bg-white text-[var(--ink40)] transition-colors hover:bg-[var(--v50)] hover:text-[var(--v600)]"
+							class="grid h-8 w-8 cursor-pointer place-items-center rounded-full border border-[var(--line)] bg-white text-[var(--ink40)] transition-all hover:bg-[var(--v50)] hover:text-[var(--v600)] active:scale-90"
 							(click)="agendaPrevPage()"
 						>
 							<i class="pi pi-chevron-left text-xs"></i>
 						</button>
 						<button
 							type="button"
-							class="grid h-8 w-8 cursor-pointer place-items-center rounded-full border border-[var(--line)] bg-white text-[var(--ink40)] transition-colors hover:bg-[var(--v50)] hover:text-[var(--v600)]"
+							class="grid h-8 w-8 cursor-pointer place-items-center rounded-full border border-[var(--line)] bg-white text-[var(--ink40)] transition-all hover:bg-[var(--v50)] hover:text-[var(--v600)] active:scale-90"
 							(click)="agendaNextPage()"
 						>
 							<i class="pi pi-chevron-right text-xs"></i>
@@ -185,7 +185,7 @@
 	<div class="-mb-2 flex justify-end">
 		<button
 			type="button"
-			class="inline-flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-[14px] font-bold text-[var(--ink60)] transition-colors hover:bg-[var(--v50)] hover:text-[var(--v600)]"
+			class="inline-flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-[14px] font-bold text-[var(--ink60)] transition-all hover:bg-[var(--v50)] hover:text-[var(--v600)] active:scale-96"
 			(click)="toggleAgenda()"
 		>
 			<i class="pi pi-calendar"></i>

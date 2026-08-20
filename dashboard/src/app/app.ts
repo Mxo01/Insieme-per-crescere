@@ -1,4 +1,4 @@
-import { Component, inject, signal, computed } from "@angular/core";
+import { ApplicationRef, Component, DestroyRef, inject, signal, computed } from "@angular/core";
 import { RouterOutlet, RouterLink, RouterLinkActive, Router } from "@angular/router";
 import { DrawerModule } from "primeng/drawer";
 import { ButtonModule } from "primeng/button";
@@ -58,6 +58,26 @@ export class App {
 
 	user = this.authService.user;
 	isAuthenticated = computed(() => this.user() !== null);
+
+	// p-toast and p-confirm-dialog update their own state correctly off
+	// MessageService/ConfirmationService's RxJS subjects (confirmed via
+	// direct inspection: `markForCheck()` runs, their internal state
+	// updates), but nothing schedules a render pass for them under zoneless
+	// change detection, so they never actually appear. Forcing a tick after
+	// every emission keeps every call site working without patching each
+	// one individually.
+	constructor() {
+		const messageService = inject(MessageService);
+		const confirmationService = inject(ConfirmationService);
+		const appRef = inject(ApplicationRef);
+		const destroyRef = inject(DestroyRef);
+
+		const subscriptions = [
+			messageService.messageObserver.subscribe(() => appRef.tick()),
+			confirmationService.requireConfirmation$.subscribe(() => appRef.tick())
+		];
+		destroyRef.onDestroy(() => subscriptions.forEach(s => s.unsubscribe()));
+	}
 
 	toggleSidebar() {
 		this.isSidebarVisible.update(isVisible => !isVisible);

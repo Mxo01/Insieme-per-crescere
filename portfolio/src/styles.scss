@@ -216,13 +216,19 @@ p-datepicker {
 		display: flex;
 		align-items: center;
 		justify-content: center;
+		border: 1.5px solid transparent;
 		border-radius: 999px;
 		font-weight: 700;
 		font-size: 14.5px;
 		transition:
 			transform 0.18s cubic-bezier(0.2, 0.9, 0.3, 1.5),
 			background 0.2s,
+			border-color 0.2s,
 			color 0.2s;
+	}
+
+	.p-datepicker-day:not(.p-disabled) {
+		border-color: var(--v300);
 	}
 
 	.p-datepicker-day:not(.p-disabled):hover {
@@ -230,14 +236,19 @@ p-datepicker {
 		color: var(--v600);
 	}
 
+	.p-datepicker-day:not(.p-disabled):active {
+		transform: scale(0.9);
+	}
+
 	.p-datepicker-day-selected {
+		border-color: transparent !important;
 		background: linear-gradient(140deg, var(--v500), var(--v700)) !important;
 		color: #fff !important;
 		box-shadow: 0 10px 22px -8px rgba(71, 32, 127, 0.8);
 		transform: scale(1.08);
 	}
 
-	.p-datepicker-today > .p-datepicker-day {
-		border: 1.5px solid var(--v300);
+	.p-datepicker-today > .p-datepicker-day:not(.p-datepicker-day-selected) {
+		border-color: var(--v500);
 	}
 }
