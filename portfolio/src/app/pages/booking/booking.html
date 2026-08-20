@@ -73,7 +73,6 @@
 						[ngModel]="selectedDate()"
 						(ngModelChange)="onDateChange($event)"
 						inline
-						class="overflow-auto"
 						panelStyleClass="!border-none !bg-transparent !p-0"
 					/>
 					<div
@@ -130,11 +129,11 @@
 								@for (time of availableTimeSlots(); track time) {
 									<button
 										type="button"
-										class="cursor-pointer rounded-[22px] border-[1.5px] px-3 py-4 text-center text-base font-bold transition-all sm:px-2 sm:text-base"
+										class="cursor-pointer rounded-[22px] border-[1.5px] bg-white px-3 py-4 text-center text-base font-bold transition-all sm:px-2 sm:text-base"
 										[class]="
 											selectedTime() === time
-												? 'border-[var(--v500)] bg-[var(--v50)] text-[var(--v700)] shadow-[0_12px_26px_-12px_rgba(114,55,190,0.8)] -translate-y-0.5'
-												: 'border-[var(--line)] bg-white text-[var(--ink60)] hover:border-[var(--v300)]'
+												? 'border-[var(--v500)] text-[var(--v700)] shadow-[0_0_0_3px_var(--v100)] -translate-y-0.5'
+												: 'border-[var(--line)] text-[var(--ink60)] hover:border-[var(--v300)]'
 										"
 										(click)="onTimeSelect(time)"
 									>
