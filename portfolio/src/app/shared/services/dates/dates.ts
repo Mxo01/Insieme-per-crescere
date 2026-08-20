@@ -13,6 +13,32 @@ export class Dates {
 	private db = inject(Database);
 
 	getAvailableDates() {
+		// TEMP-MOCK-DO-NOT-COMMIT-PERMANENTLY — left in on request, for manual
+		// testing while local Firestore is unreachable. Remove once confirmed.
+		const mock: AvailableDateDto[] = [];
+		for (let i = 1; i < 28; i++) {
+			if (i % 3 === 0) continue;
+			const d = new Date();
+			d.setDate(d.getDate() + i);
+			const all = ["09:00", "10:00", "11:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
+			mock.push({
+				id: formatDateToISODateString(d),
+				date: formatDateToISODateString(d),
+				availableTimeSlots: all.filter((_, idx) => (i + idx) % 4 !== 0)
+			});
+		}
+		return toSignal(
+			of(
+				mock.map(m => ({
+					...m,
+					date: new Date(m.date).toLocaleDateString(),
+					availableTimeSlots: m.availableTimeSlots.toSorted()
+				}))
+			),
+			{ initialValue: [] }
+		);
+		// END TEMP-MOCK
+
 		const { start, end } = getOneMonthFromNowRange();
 		const startStr = formatDateToISODateString(start);
 		const endStr = formatDateToISODateString(end);
