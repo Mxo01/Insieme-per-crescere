@@ -27,3 +27,6 @@ Thumbs.db
 # Husky
 .husky/_
 
+# Firebase CLI
+.firebase/
+
