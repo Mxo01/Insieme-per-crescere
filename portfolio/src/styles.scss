@@ -25,6 +25,50 @@
 	--shl: 0 30px 64px -18px rgba(71, 32, 127, 0.32);
 }
 
+// PrimeNG's own `.p-inputtext`/`.p-textarea` rules read these design tokens
+// directly, so setting them is the only override that reliably wins: plain
+// Tailwind utilities on the input (even with `!important`) lost to
+// PrimeNG's own same-specificity rules, and redefining the tokens on
+// `:root` also lost, since PrimeNG's theme injects its own `:root` rule
+// later in the stylesheet — same specificity, later wins the tie. Scoping
+// the redefinition directly on the elements that consume them sidesteps
+// that ordering fight entirely.
+//
+// The token *definitions* alias to a semantic `form.field.*` path (e.g.
+// `background: "{form.field.background}"`), but the theme compiles that
+// down to a component-scoped custom property — `--p-inputtext-background`,
+// not `--p-form-field-background` — so that's the one to redefine per
+// component (`--p-form-field-*` is set too, for anything that does read
+// the semantic alias directly).
+@mixin form-field-tokens($prefix) {
+	--p-form-field-background: var(--g);
+	--p-form-field-border-color: var(--line);
+	--p-form-field-hover-border-color: var(--v300);
+	--p-form-field-focus-border-color: var(--v500);
+	--p-form-field-color: var(--ink);
+	--p-form-field-focus-ring-width: 4px;
+	--p-form-field-focus-ring-style: solid;
+	--p-form-field-focus-ring-color: var(--v50);
+	--p-form-field-focus-ring-offset: 0px;
+	--p-#{$prefix}-background: var(--g);
+	--p-#{$prefix}-border-color: var(--line);
+	--p-#{$prefix}-hover-border-color: var(--v300);
+	--p-#{$prefix}-focus-border-color: var(--v500);
+	--p-#{$prefix}-color: var(--ink);
+	--p-#{$prefix}-focus-ring-width: 4px;
+	--p-#{$prefix}-focus-ring-style: solid;
+	--p-#{$prefix}-focus-ring-color: var(--v50);
+	--p-#{$prefix}-focus-ring-offset: 0px;
+}
+
+.p-inputtext {
+	@include form-field-tokens("inputtext");
+}
+
+.p-textarea {
+	@include form-field-tokens("textarea");
+}
+
 html {
 	overflow-x: hidden;
 	scroll-behavior: smooth;
@@ -216,7 +260,18 @@ p-datepicker {
 		background: var(--v50);
 		color: var(--v600);
 	}
+}
 
+// PrimeNG's prev/next buttons ignore minDate/maxDate — they only gray out
+// individual days, so without this the user could page back indefinitely
+// into fully-past months. Booking sets this class once the viewed month is
+// the earliest one with any selectable day left (see Booking.isPrevMonthDisabled).
+p-datepicker.prev-locked .p-datepicker-prev-button {
+	pointer-events: none;
+	opacity: 0.35;
+}
+
+p-datepicker {
 	.p-datepicker-day-view th span {
 		color: var(--ink40);
 		font-weight: 700;

@@ -72,6 +72,8 @@
 						[disabledDates]="disabledDates()"
 						[ngModel]="selectedDate()"
 						(ngModelChange)="onDateChange($event)"
+						(onMonthChange)="onMonthChange($event)"
+						[class.prev-locked]="isPrevMonthDisabled()"
 						inline
 						panelStyleClass="!border-none !bg-transparent !p-0"
 					/>
@@ -111,37 +113,26 @@
 					</h2>
 
 					@if (selectedDate()) {
-						@if (!availableTimeSlots().length) {
-							<div
-								class="flex min-h-40 flex-1 flex-col items-center justify-center rounded-3xl border-2 border-dashed border-[var(--line)] bg-[var(--g)]/60 p-6 text-center sm:min-h-52.5 sm:p-8"
-							>
-								<div
-									class="mb-3.5 grid h-14 w-14 place-items-center rounded-full bg-[var(--v50)] sm:mb-4"
+						<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-3.5">
+							@for (time of allTimeSlots; track time) {
+								@let isAvailable = availableTimeSlots().includes(time);
+								<button
+									type="button"
+									class="rounded-[22px] border-[1.5px] px-3 py-4 text-center text-base font-bold transition-all sm:px-2 sm:text-base"
+									[class]="
+										selectedTime() === time
+											? 'cursor-pointer bg-white border-[var(--v500)] text-[var(--v700)] shadow-[0_0_14px_2px_rgba(114,55,190,0.28)] -translate-y-0.5'
+											: isAvailable
+												? 'cursor-pointer bg-white border-[var(--line)] text-[var(--ink60)] hover:border-[var(--v300)]'
+												: 'cursor-not-allowed bg-[rgba(36,22,52,0.06)] border-transparent text-[var(--ink40)] line-through'
+									"
+									[disabled]="!isAvailable"
+									(click)="onTimeSelect(time)"
 								>
-									<i class="pi pi-clock text-2xl text-[var(--v300)]"></i>
-								</div>
-								<p class="max-w-xs text-sm font-semibold text-[var(--ink40)] sm:text-base">
-									Non ci sono orari disponibili per la data selezionata.
-								</p>
-							</div>
-						} @else {
-							<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-3.5">
-								@for (time of availableTimeSlots(); track time) {
-									<button
-										type="button"
-										class="cursor-pointer rounded-[22px] border-[1.5px] bg-white px-3 py-4 text-center text-base font-bold transition-all sm:px-2 sm:text-base"
-										[class]="
-											selectedTime() === time
-												? 'border-[var(--v500)] text-[var(--v700)] shadow-[0_0_0_3px_var(--v100)] -translate-y-0.5'
-												: 'border-[var(--line)] text-[var(--ink60)] hover:border-[var(--v300)]'
-										"
-										(click)="onTimeSelect(time)"
-									>
-										{{ time }}
-									</button>
-								}
-							</div>
-						}
+									{{ time }}
+								</button>
+							}
+						</div>
 					} @else {
 						<div
 							class="flex min-h-40 flex-1 flex-col items-center justify-center rounded-3xl border-2 border-dashed border-[var(--line)] bg-[var(--g)]/60 p-6 text-center sm:min-h-52.5 sm:p-8"
@@ -267,7 +258,7 @@
 										id="name"
 										formControlName="name"
 										placeholder="Il tuo nome"
-										class="w-full rounded-full border-[1.5px] border-[var(--line)] bg-[var(--g)] px-5 py-3.5 font-['DM_Sans'] text-[15px] font-medium text-[var(--ink)] transition-colors hover:border-[var(--v300)] focus:border-[var(--v500)]! focus:bg-white focus:shadow-[0_0_0_4px_var(--v50)]"
+										class="w-full rounded-full border-[1.5px] px-5 py-3.5 font-['DM_Sans'] text-[15px] font-medium transition-colors"
 										[class.border-red-500]="isNameErrorVisible"
 									/>
 									@if (isNameErrorVisible) {
@@ -287,7 +278,7 @@
 										id="lastName"
 										formControlName="lastName"
 										placeholder="Il tuo cognome"
-										class="w-full rounded-full border-[1.5px] border-[var(--line)] bg-[var(--g)] px-5 py-3.5 font-['DM_Sans'] text-[15px] font-medium text-[var(--ink)] transition-colors hover:border-[var(--v300)] focus:border-[var(--v500)]! focus:bg-white focus:shadow-[0_0_0_4px_var(--v50)]"
+										class="w-full rounded-full border-[1.5px] px-5 py-3.5 font-['DM_Sans'] text-[15px] font-medium transition-colors"
 										[class.border-red-500]="isLastNameErrorVisible"
 									/>
 									@if (isLastNameErrorVisible) {
@@ -308,7 +299,7 @@
 										type="email"
 										formControlName="email"
 										placeholder="La tua email"
-										class="w-full rounded-full border-[1.5px] border-[var(--line)] bg-[var(--g)] px-5 py-3.5 font-['DM_Sans'] text-[15px] font-medium text-[var(--ink)] transition-colors hover:border-[var(--v300)] focus:border-[var(--v500)]! focus:bg-white focus:shadow-[0_0_0_4px_var(--v50)]"
+										class="w-full rounded-full border-[1.5px] px-5 py-3.5 font-['DM_Sans'] text-[15px] font-medium transition-colors"
 										[class.border-red-500]="isEmailErrorVisible"
 									/>
 									@if (isEmailErrorVisible) {
@@ -329,7 +320,7 @@
 										type="tel"
 										formControlName="phone"
 										placeholder="Il tuo numero"
-										class="w-full rounded-full border-[1.5px] border-[var(--line)] bg-[var(--g)] px-5 py-3.5 font-['DM_Sans'] text-[15px] font-medium text-[var(--ink)] transition-colors hover:border-[var(--v300)] focus:border-[var(--v500)]! focus:bg-white focus:shadow-[0_0_0_4px_var(--v50)]"
+										class="w-full rounded-full border-[1.5px] px-5 py-3.5 font-['DM_Sans'] text-[15px] font-medium transition-colors"
 										[class.border-red-500]="isPhoneErrorVisible"
 									/>
 									@if (isPhoneErrorVisible) {
@@ -359,7 +350,7 @@
 									formControlName="notes"
 									rows="4"
 									placeholder="Raccontami di cosa hai bisogno: l'argomento della consulenza, le tue necessità o qualsiasi dettaglio tu voglia anticiparmi."
-									class="w-full resize-none rounded-3xl border-[1.5px] border-[var(--line)] bg-[var(--g)] px-5 py-4 font-['DM_Sans'] text-[15px] font-medium text-[var(--ink)] transition-colors hover:border-[var(--v300)] focus:border-[var(--v500)]! focus:bg-white focus:shadow-[0_0_0_4px_var(--v50)]"
+									class="w-full resize-none rounded-3xl border-[1.5px] px-5 py-4 font-['DM_Sans'] text-[15px] font-medium transition-colors"
 								></textarea>
 							</div>
 

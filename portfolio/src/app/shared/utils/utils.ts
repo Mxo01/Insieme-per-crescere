@@ -48,7 +48,9 @@ export async function copyTextToClipboard(text: string): Promise<void> {
 }
 
 export function getOneMonthFromNowRange() {
+	// Booking closes for today: the earliest bookable day is tomorrow.
 	const start = new Date();
+	start.setDate(start.getDate() + 1);
 	start.setHours(0, 0, 0, 0);
 
 	const end = new Date();
