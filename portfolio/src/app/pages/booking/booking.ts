@@ -6,7 +6,9 @@ import {
 	computed,
 	viewChild,
 	ElementRef,
-	effect
+	effect,
+	OnInit,
+	DestroyRef
 } from "@angular/core";
 import { DatePicker } from "primeng/datepicker";
 import { ButtonModule } from "primeng/button";
@@ -18,8 +20,11 @@ import { RouterLink } from "@angular/router";
 import { Dates } from "src/app/shared/services/dates/dates";
 import { Bookings } from "src/app/shared/services/bookings/bookings";
 import { BookingDto } from "src/app/shared/services/bookings/bookings.model";
+import { AuthService } from "src/app/shared/services/auth/auth";
 import { Tag } from "primeng/tag";
 import { formatDateToISODateString, getOneMonthFromNowRange } from "src/app/shared/utils/utils";
+
+type VerificationState = "idle" | "confirming" | "awaiting-email";
 
 @Component({
 	selector: "app-booking",
@@ -37,14 +42,23 @@ import { formatDateToISODateString, getOneMonthFromNowRange } from "src/app/shar
 	styleUrl: "./booking.scss",
 	changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class Booking {
+export class Booking implements OnInit {
 	private readonly datesService = inject(Dates);
 	private readonly bookingsService = inject(Bookings);
+	private readonly authService = inject(AuthService);
 	private readonly messageService = inject(MessageService);
+	private readonly destroyRef = inject(DestroyRef);
 
 	private readonly fb = inject(FormBuilder);
 
 	readonly isSubmitting = signal<boolean>(false);
+
+	// Anti-flooding: before writing to Firestore, whoever is booking must
+	// prove they actually own the email they entered, by clicking a link
+	// Firebase Auth sends them (no cost, no Cloud Function).
+	readonly verificationState = signal<VerificationState>("idle");
+	readonly pendingEmail = signal<string | null>(null);
+	readonly resendCooldown = signal(0);
 
 	timeSection = viewChild<ElementRef<HTMLDivElement>>("timeSection");
 	detailsSection = viewChild<ElementRef<HTMLDivElement>>("detailsSection");
@@ -55,12 +69,14 @@ export class Booking {
 
 	private readonly availableDates = this.datesService.getAvailableDates();
 
-	readonly availableTimeSlots = computed(() => {
+	private readonly selectedAvailableDate = computed(() => {
 		const selectedDate = this.selectedDate()?.toLocaleDateString();
-		const availableTimeSlots = this.availableDates()
-			.find(day => day.date === selectedDate)
-			?.availableTimeSlots.toSorted();
-		return !selectedDate || !availableTimeSlots ? [] : availableTimeSlots;
+		return this.availableDates().find(day => day.date === selectedDate);
+	});
+
+	readonly availableTimeSlots = computed(() => {
+		const availableTimeSlots = this.selectedAvailableDate()?.availableTimeSlots.toSorted();
+		return !this.selectedDate() || !availableTimeSlots ? [] : availableTimeSlots;
 	});
 
 	readonly disabledDates = computed(() => {
@@ -94,6 +110,45 @@ export class Booking {
 		});
 	}
 
+	async ngOnInit() {
+		if (!this.authService.isReturningFromEmailLink) return;
+
+		this.verificationState.set("confirming");
+
+		const confirmedEmail = await this.authService.completeSignInFromEmailLink();
+
+		// Clean up the URL from the link's query params (mode, oobCode, ...)
+		// regardless of the outcome, so a refresh doesn't retry the sign-in.
+		window.history.replaceState({}, "", window.location.pathname);
+
+		if (!confirmedEmail) {
+			this.verificationState.set("idle");
+			this.messageService.add({
+				severity: "error",
+				summary: "Link non valido",
+				detail:
+					"Il link di conferma non è valido, è scaduto, oppure è stato aperto su un altro dispositivo. Ripeti la prenotazione.",
+				life: 10000
+			});
+			return;
+		}
+
+		const pending = this.bookingsService.getPendingBooking();
+
+		if (pending && pending.booking.email === confirmedEmail) {
+			await this.completeBooking(pending.booking, pending.dateDocId);
+			this.bookingsService.clearPendingBooking();
+		} else {
+			this.verificationState.set("idle");
+			this.messageService.add({
+				severity: "success",
+				summary: "Email confermata",
+				detail: "La tua email è stata verificata. Completa di nuovo la prenotazione qui sotto.",
+				life: 10000
+			});
+		}
+	}
+
 	onDateChange(date: Date) {
 		this.selectedDate.set(date);
 		this.selectedTime.set(null);
@@ -106,7 +161,9 @@ export class Booking {
 	}
 
 	onConfirmBooking() {
-		if (this.bookingForm.invalid || !this.selectedDate() || !this.selectedTime()) {
+		const dateDocId = this.selectedAvailableDate()?.id;
+
+		if (this.bookingForm.invalid || !this.selectedDate() || !this.selectedTime() || !dateDocId) {
 			this.messageService.add({
 				severity: "error",
 				summary: "Errore",
@@ -116,12 +173,10 @@ export class Booking {
 			return;
 		}
 
-		this.isSubmitting.set(true);
-
 		const booking: BookingDto = {
 			name: this.bookingForm.value.name!,
 			lastName: this.bookingForm.value.lastName!,
-			email: this.bookingForm.value.email!,
+			email: this.bookingForm.value.email!.trim().toLowerCase(),
 			phone: this.bookingForm.value.phone!,
 			notes: this.bookingForm.value.notes,
 			date: formatDateToISODateString(this.selectedDate()!),
@@ -129,31 +184,105 @@ export class Booking {
 			isAccepted: false
 		};
 
-		this.bookingsService
-			.addBooking(booking)
-			.then(() => {
-				this.messageService.add({
-					severity: "success",
-					summary: "Prenotazione effettuata",
-					detail:
-						"La tua prenotazione è stata inoltrata! Riceverai una mail di conferma appena possibile.",
-					life: 10000
-				});
+		if (this.authService.isVerifiedFor(booking.email)) {
+			this.isSubmitting.set(true);
+			this.completeBooking(booking, dateDocId).finally(() => this.isSubmitting.set(false));
+			return;
+		}
 
-				this.resetBooking();
+		this.isSubmitting.set(true);
+
+		this.bookingsService.savePendingBooking(booking, dateDocId);
+
+		this.authService
+			.sendVerificationLink(booking.email)
+			.then(() => {
+				this.pendingEmail.set(booking.email);
+				this.verificationState.set("awaiting-email");
+				this.startResendCooldown();
 			})
-			.catch((error: Error) => {
+			.catch(() => {
+				this.bookingsService.clearPendingBooking();
 				this.messageService.add({
 					severity: "error",
 					summary: "Errore",
-					detail: error.message
+					detail: "Impossibile inviare l'email di conferma. Riprova più tardi."
 				});
 			})
 			.finally(() => this.isSubmitting.set(false));
 	}
 
+	onResendVerificationLink() {
+		const email = this.pendingEmail();
+		if (!email || this.resendCooldown() > 0) return;
+
+		this.authService
+			.sendVerificationLink(email)
+			.then(() => {
+				this.messageService.add({
+					severity: "success",
+					summary: "Email inviata",
+					detail: "Ti abbiamo inviato di nuovo il link di conferma."
+				});
+				this.startResendCooldown();
+			})
+			.catch(() => {
+				this.messageService.add({
+					severity: "error",
+					summary: "Errore",
+					detail: "Impossibile inviare l'email di conferma. Riprova più tardi."
+				});
+			});
+	}
+
+	onCancelVerification() {
+		this.bookingsService.clearPendingBooking();
+		this.pendingEmail.set(null);
+		this.verificationState.set("idle");
+	}
+
 	onCancelBooking() {
 		this.resetBooking();
+	}
+
+	private async completeBooking(booking: BookingDto, dateDocId: string) {
+		try {
+			await this.bookingsService.addBooking(booking, dateDocId);
+
+			this.messageService.add({
+				severity: "success",
+				summary: "Prenotazione effettuata",
+				detail:
+					"La tua prenotazione è stata inoltrata! Riceverai una mail di conferma appena possibile.",
+				life: 10000
+			});
+
+			this.verificationState.set("idle");
+			this.pendingEmail.set(null);
+			this.resetBooking();
+		} catch (error) {
+			this.messageService.add({
+				severity: "error",
+				summary: "Errore",
+				detail: (error as Error).message
+			});
+		}
+	}
+
+	private startResendCooldown(seconds = 30) {
+		this.resendCooldown.set(seconds);
+
+		const intervalId = setInterval(() => {
+			this.resendCooldown.update(remaining => {
+				if (remaining <= 1) {
+					clearInterval(intervalId);
+					return 0;
+				}
+				return remaining - 1;
+			});
+		}, 1000);
+
+		this.destroyRef.onDestroy(() => clearInterval(intervalId));
 	}
 
 	private resetBooking() {

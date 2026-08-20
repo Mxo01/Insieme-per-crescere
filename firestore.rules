@@ -1,0 +1,96 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    // "Admin" = a signed-in user whose uid is in the whitelist, managed by
+    // hand from the Firebase console. No Cloud Function needed: get()/exists()
+    // inside rules fall within Firestore's free read quota.
+    function isAdmin() {
+      return isSignedIn()
+        && exists(/databases/$(database)/documents/whitelist/whitelistIds)
+        && request.auth.uid in
+           get(/databases/$(database)/documents/whitelist/whitelistIds).data.whitelistIds;
+    }
+
+    // Whitelist: readable by anyone signed in (the app needs this to figure
+    // out whether the user is authorized), never writable from the client:
+    // it's managed by hand from the Firebase console.
+    match /whitelist/{docId} {
+      allow read: if isSignedIn();
+      allow write: if false;
+    }
+
+    // Public info (e.g. the CV url/base64). Public read, admin-only write.
+    match /assets/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Availability calendar. Public read (needed by the booking page). The
+    // admin can write everything; the public can ONLY remove a slot from
+    // availableTimeSlots (never add one, never touch other fields) — that's
+    // what happens when someone books.
+    match /dates/{dateId} {
+      allow read: if true;
+      allow create, delete: if isAdmin();
+      allow update: if isAdmin() || isValidSlotRemoval();
+
+      function isValidSlotRemoval() {
+        let before = resource.data.availableTimeSlots;
+        let after = request.resource.data.availableTimeSlots;
+        return request.resource.data.diff(resource.data).affectedKeys().hasOnly(["availableTimeSlots"])
+          && after.size() == before.size() - 1
+          && after.hasOnly(before);
+      }
+    }
+
+    // Bookings: contain PII (name, email, phone, notes) → NEVER
+    // readable/updatable/deletable by the public, admin only. The public can
+    // ONLY create a new booking, with a deterministic id ("date_time"): this
+    // makes Firestore itself atomically reject a second booking on the same
+    // slot (it sees it as an "update" on a document that already exists,
+    // not as a "create").
+    //
+    // Anti-flooding, two layers:
+    // 1) whoever creates the booking must have a Firebase Auth session with
+    //    a verified email (via email-link, see AuthService on the
+    //    portfolio) matching the booking's email: a script can no longer
+    //    create bookings in a loop without actually checking a real mailbox
+    //    on every attempt.
+    // 2) it's not enough for date/time to have the right format: a
+    //    /dates/{date} document (id = the date itself) must really exist
+    //    and include that time among the availableTimeSlots the admin
+    //    published, so the maximum number of bookings stays bounded to the
+    //    slots that were actually opened.
+    match /bookings/{bookingId} {
+      allow read, update, delete: if isAdmin();
+      allow create: if isValidPublicBooking();
+
+      function isValidPublicBooking() {
+        let data = request.resource.data;
+        let dateDocPath = /databases/$(database)/documents/dates/$(data.date);
+        return request.auth != null
+          && request.auth.token.email_verified == true
+          && request.auth.token.email == data.email
+          && bookingId == (data.date + "_" + data.time)
+          && data.keys().hasOnly(["name", "lastName", "email", "phone", "notes", "date", "time", "isAccepted"])
+          && data.isAccepted == false
+          && data.name is string && data.name.size() > 0 && data.name.size() < 100
+          && data.lastName is string && data.lastName.size() > 0 && data.lastName.size() < 100
+          && data.email is string && data.email.size() < 200
+          && data.email.matches('^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$')
+          && data.phone is string && data.phone.size() > 0 && data.phone.size() < 30
+          && (!("notes" in data) || (data.notes is string && data.notes.size() < 1000))
+          && data.date is string && data.date.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+          && data.time is string && data.time.matches('^[0-9]{2}:[0-9]{2}$')
+          && exists(dateDocPath)
+          && get(dateDocPath).data.availableTimeSlots.hasAny([data.time]);
+      }
+    }
+  }
+}

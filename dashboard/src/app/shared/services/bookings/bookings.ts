@@ -2,17 +2,16 @@ import { inject, Injectable } from "@angular/core";
 import {
 	collectionData,
 	doc,
+	getDoc,
 	updateDoc,
-	deleteDoc,
-	getDocs,
-	query,
-	where
+	writeBatch,
+	arrayUnion,
+	arrayRemove
 } from "@angular/fire/firestore";
 import { Observable, map } from "rxjs";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { Database } from "../database";
 import { BookingDto } from "./bookings.model";
-import { AvailableDateDto } from "../dates/dates.model";
 import { formatDateToISODateString } from "../../utils/utils";
 
 @Injectable({
@@ -39,59 +38,86 @@ export class Bookings {
 		);
 	}
 
+	// The slot is already removed from `dates.availableTimeSlots` when the
+	// booking is created (see Bookings.addBooking on the portfolio), so
+	// accepting or putting a booking back on hold no longer needs to touch
+	// `dates`.
 	async toggleBookingStatus(booking: BookingDto) {
 		const bookingsDocRef = doc(this.db.bookingsCollection, booking.id);
-		const newStatus = !booking.isAccepted;
-
-		await updateDoc(bookingsDocRef, { isAccepted: newStatus });
-
-		if (newStatus) {
-			const [day, month, year] = booking.date.split("/");
-			const date = new Date(
-				Number.parseInt(year),
-				Number.parseInt(month) - 1,
-				Number.parseInt(day)
-			);
-			const q = query(
-				this.db.datesCollection,
-				where("date", "==", formatDateToISODateString(date))
-			);
-			const querySnapshot = await getDocs(q);
-
-			if (!querySnapshot.empty) {
-				const docId = querySnapshot.docs[0].id;
-				const existingDoc = querySnapshot.docs[0].data() as AvailableDateDto;
-				const availableTimeSlots = existingDoc.availableTimeSlots.filter(
-					slot => slot !== booking.time
-				);
-
-				const datesDocRef = doc(this.db.datesCollection, docId);
-				await updateDoc(datesDocRef, { availableTimeSlots });
-			}
-		}
+		await updateDoc(bookingsDocRef, { isAccepted: !booking.isAccepted });
 	}
 
-	async deleteBooking(bookingId: string) {
-		const docRef = doc(this.db.bookingsCollection, bookingId);
-		await deleteDoc(docRef);
+	// Deleting/rejecting a booking must give the slot back to public
+	// availability.
+	async deleteBooking(booking: BookingDto) {
+		if (!booking.id) return;
+
+		const bookingRef = doc(this.db.bookingsCollection, booking.id);
+		const dateDocRef = await this.findDateDocRef(booking.date);
+
+		const batch = writeBatch(this.db.firestore);
+		batch.delete(bookingRef);
+		if (dateDocRef) batch.update(dateDocRef, { availableTimeSlots: arrayUnion(booking.time) });
+
+		await batch.commit();
 	}
 
-	async updateBookingDate(bookingId: string, date: Date, time: string) {
-		const dateStr = formatDateToISODateString(date);
-		const docRef = doc(this.db.bookingsCollection, bookingId);
+	// The document id is "date_time": moving a booking means recreating it
+	// with a new id, giving back the old slot and taking the new one.
+	async updateBookingDate(booking: BookingDto, newDate: Date, newTime: string) {
+		if (!booking.id) return;
 
-		const q = query(this.db.datesCollection, where("date", "==", dateStr));
-		const querySnapshot = await getDocs(q);
+		const newDateStr = formatDateToISODateString(newDate);
+		const newBookingRef = doc(this.db.bookingsCollection, `${newDateStr}_${newTime}`);
 
-		if (!querySnapshot.empty) {
-			const docId = querySnapshot.docs[0].id;
-			const existingDoc = querySnapshot.docs[0].data() as AvailableDateDto;
-			const availableTimeSlots = existingDoc.availableTimeSlots.filter(slot => slot !== time);
-
-			const docRef = doc(this.db.datesCollection, docId);
-			await updateDoc(docRef, { availableTimeSlots });
+		const existing = await getDoc(newBookingRef);
+		if (existing.exists()) {
+			throw new Error("Lo slot scelto è già occupato da un'altra prenotazione.");
 		}
 
-		await updateDoc(docRef, { date: dateStr, time });
+		const oldBookingRef = doc(this.db.bookingsCollection, booking.id);
+		const oldDateDocRef = await this.findDateDocRef(booking.date);
+		const newDateDocRef = await this.findDateDocRef(newDateStr);
+
+		const newBookingData: BookingDto = {
+			name: booking.name,
+			lastName: booking.lastName,
+			email: booking.email,
+			phone: booking.phone,
+			notes: booking.notes,
+			date: newDateStr,
+			time: newTime,
+			isAccepted: booking.isAccepted
+		};
+
+		const batch = writeBatch(this.db.firestore);
+		batch.delete(oldBookingRef);
+		batch.set(newBookingRef, newBookingData);
+		if (oldDateDocRef)
+			batch.update(oldDateDocRef, { availableTimeSlots: arrayUnion(booking.time) });
+		if (newDateDocRef) batch.update(newDateDocRef, { availableTimeSlots: arrayRemove(newTime) });
+
+		await batch.commit();
+	}
+
+	// `booking.date` here is already in local format ("dd/mm/yyyy", see
+	// getBookings) or ISO ("yyyy-mm-dd", when it comes from
+	// updateBookingDate): we normalize it before looking up the matching
+	// `dates` document, whose id is that same date in ISO format.
+	private async findDateDocRef(bookingDate: string) {
+		const dateStr = /^\d{4}-\d{2}-\d{2}$/.test(bookingDate)
+			? bookingDate
+			: this.localDateStringToISO(bookingDate);
+
+		const dateDocRef = doc(this.db.datesCollection, dateStr);
+		const dateDoc = await getDoc(dateDocRef);
+
+		return dateDoc.exists() ? dateDocRef : null;
+	}
+
+	private localDateStringToISO(localDate: string) {
+		const [day, month, year] = localDate.split("/");
+		const date = new Date(Number.parseInt(year), Number.parseInt(month) - 1, Number.parseInt(day));
+		return formatDateToISODateString(date);
 	}
 }

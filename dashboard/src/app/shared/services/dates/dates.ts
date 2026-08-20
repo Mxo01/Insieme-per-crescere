@@ -1,5 +1,5 @@
 import { inject, Injectable } from "@angular/core";
-import { query, where, getDocs, addDoc, updateDoc, doc, deleteDoc } from "@angular/fire/firestore";
+import { query, where, getDocs, getDoc, setDoc, doc, deleteDoc } from "@angular/fire/firestore";
 import { Database } from "../database";
 import { AvailableDateDto } from "./dates.model";
 import { BookingDto } from "../bookings/bookings.model";
@@ -11,25 +11,22 @@ import { formatDateToISODateString, getOneMonthFromNowRange } from "../../utils/
 export class Dates {
 	private db = inject(Database);
 
+	// The document id is the date itself ("yyyy-mm-dd"), no longer
+	// auto-generated: this lets the Firestore Security Rules verify with a
+	// direct get() (no query) that a slot booked by the public matches a
+	// slot that was really published, preventing fake bookings on
+	// made-up dates/times.
 	async saveAvailability(date: Date, availableTimeSlots: string[]) {
 		const dateStr = formatDateToISODateString(date);
 
 		await this.cleanupOldDates();
 
-		const q = query(this.db.datesCollection, where("date", "==", dateStr));
-		const querySnapshot = await getDocs(q);
+		const docRef = doc(this.db.datesCollection, dateStr);
+		const noTimeSlotsSelected = !availableTimeSlots?.length;
 
-		if (!querySnapshot.empty) {
-			const noOneTimeSlotsSelected = !availableTimeSlots?.length;
-			const existingDoc = querySnapshot.docs[0];
-			const docRef = doc(this.db.datesCollection, existingDoc.id);
-			return noOneTimeSlotsSelected ? deleteDoc(docRef) : updateDoc(docRef, { availableTimeSlots });
-		} else {
-			return addDoc(this.db.datesCollection, {
-				date: dateStr,
-				availableTimeSlots
-			});
-		}
+		return noTimeSlotsSelected
+			? deleteDoc(docRef)
+			: setDoc(docRef, { date: dateStr, availableTimeSlots });
 	}
 
 	private async cleanupOldDates() {
@@ -58,15 +55,14 @@ export class Dates {
 				.map(({ time }) => time);
 		}
 
-		const datesQuery = query(this.db.datesCollection, where("date", "==", dateStr));
-		const querySnapshot = await getDocs(datesQuery);
+		const dateDoc = await getDoc(doc(this.db.datesCollection, dateStr));
 
-		if (!querySnapshot.empty) {
-			const data = querySnapshot.docs[0].data() as AvailableDateDto;
+		if (dateDoc.exists()) {
+			const data = dateDoc.data() as AvailableDateDto;
 			data.availableTimeSlots = data.availableTimeSlots
 				.filter(time => !bookedTimeSlots.includes(time))
 				.toSorted();
-			return { ...data, id: querySnapshot.docs[0].id, bookedTimeSlots };
+			return { ...data, id: dateDoc.id, bookedTimeSlots };
 		}
 
 		return null;

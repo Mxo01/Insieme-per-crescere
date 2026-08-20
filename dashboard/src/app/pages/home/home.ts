@@ -195,7 +195,7 @@ export class Home {
 				this.isDeleteLoading.set(true);
 
 				this.bookingsService
-					.deleteBooking(booking.id!)
+					.deleteBooking(booking)
 					.then(() =>
 						this.messageService.add({
 							severity: "success",
@@ -239,7 +239,7 @@ export class Home {
 		this.isDateEditLoading.set(true);
 
 		this.bookingsService
-			.updateBookingDate(this.selectedBooking()!.id!, this.selectedDate()!, this.selectedTime()!)
+			.updateBookingDate(this.selectedBooking()!, this.selectedDate()!, this.selectedTime()!)
 			.then(() => {
 				this.messageService.add({
 					severity: "success",
@@ -249,11 +249,11 @@ export class Home {
 
 				this.isDateEditVisible.set(false);
 			})
-			.catch(() =>
+			.catch((error: Error) =>
 				this.messageService.add({
 					severity: "error",
 					summary: "Errore",
-					detail: "Impossibile modificare la data	della prenotazione"
+					detail: error.message || "Impossibile modificare la data della prenotazione"
 				})
 			)
 			.finally(() => this.isDateEditLoading.set(false));

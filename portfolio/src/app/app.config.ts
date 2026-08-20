@@ -9,6 +9,7 @@ import Aura from "@primeuix/themes/aura";
 import { definePreset } from "@primeuix/themes";
 import { getApp, initializeApp, provideFirebaseApp } from "@angular/fire/app";
 import { getFirestore, provideFirestore } from "@angular/fire/firestore";
+import { getAuth, provideAuth } from "@angular/fire/auth";
 import { routes } from "./app.routes";
 import { firebaseConfig } from "shared/firebase.config";
 import { provideAppCheck, initializeAppCheck, ReCaptchaV3Provider } from "@angular/fire/app-check";
@@ -51,6 +52,7 @@ export const appConfig: ApplicationConfig = {
 				provider: new ReCaptchaV3Provider("6LeKfXQsAAAAAKMj4s3N_WcmO5UFQRjqEu8pHqyx"),
 				isTokenAutoRefreshEnabled: true
 			})
-		)
+		),
+		provideAuth(() => getAuth())
 	]
 };
