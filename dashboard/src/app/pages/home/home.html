@@ -90,14 +90,23 @@
 				<h2 class="text-[19px]">Prenotazioni nel tempo</h2>
 				<span class="text-[13px] font-bold text-[var(--ink40)]">Ultimi 12 mesi</span>
 			</div>
-			<div class="h-52">
-				<p-chart
-					type="bar"
-					[data]="chartData()"
-					[options]="chartOptions"
-					height="100%"
-				/>
-			</div>
+			@if (hasChartData()) {
+				<div class="h-52">
+					<p-chart
+						type="bar"
+						[data]="chartData()"
+						[options]="chartOptions"
+						height="100%"
+					/>
+				</div>
+			} @else {
+				<div class="flex h-52 flex-col items-center justify-center gap-4 text-[var(--ink40)]">
+					<div class="grid h-16 w-16 place-items-center rounded-full bg-[var(--g)]">
+						<i class="pi pi-chart-bar text-2xl"></i>
+					</div>
+					<p class="m-0 text-center font-semibold">Nessuna prenotazione negli ultimi 12 mesi.</p>
+				</div>
+			}
 		</div>
 
 		@if (agendaOpen()) {
@@ -137,47 +146,56 @@
 							</span>
 						</button>
 					} @empty {
-						<p class="py-8 text-center text-sm font-semibold text-[var(--ink40)]">
-							Nessun appuntamento confermato in programma.
-						</p>
+						<div class="flex flex-col items-center justify-center gap-4 py-8 text-[var(--ink40)]">
+							<div class="grid h-16 w-16 place-items-center rounded-full bg-[var(--g)]">
+								<i class="pi pi-calendar text-2xl"></i>
+							</div>
+							<p class="m-0 text-center font-semibold">
+								Nessun appuntamento confermato in programma.
+							</p>
+						</div>
 					}
 				</div>
 
-				<div class="mt-auto flex items-center justify-between border-t border-[var(--line)] pt-4">
-					<span class="text-[13px] font-bold text-[var(--ink40)]">
-						Pagina {{ agendaPage() + 1 }} di {{ agendaTotalPages() }}
-					</span>
-					<div class="flex items-center gap-2">
-						@for (page of agendaPageIndexes(); track page) {
+				@if (agendaTotalPages() > 1) {
+					<div class="mt-auto flex items-center justify-between border-t border-[var(--line)] pt-4">
+						<span class="text-[13px] font-bold text-[var(--ink40)]">
+							Pagina {{ agendaPage() + 1 }} di {{ agendaTotalPages() }}
+						</span>
+						<div class="flex items-center gap-2">
+							@for (page of agendaPageIndexes(); track page) {
+								<button
+									type="button"
+									class="h-2 cursor-pointer rounded-full transition-all active:scale-90"
+									[class]="
+										page === agendaPage()
+											? 'w-5.5 bg-[var(--v500)]'
+											: 'w-2 bg-[rgba(36,22,52,0.16)]'
+									"
+									(click)="agendaGoToPage(page)"
+								>
+									<span class="sr-only">Pagina {{ page + 1 }}</span>
+								</button>
+							}
+						</div>
+						<div class="flex gap-1.5">
 							<button
 								type="button"
-								class="h-2 cursor-pointer rounded-full transition-all active:scale-90"
-								[class]="
-									page === agendaPage() ? 'w-5.5 bg-[var(--v500)]' : 'w-2 bg-[rgba(36,22,52,0.16)]'
-								"
-								(click)="agendaGoToPage(page)"
+								class="grid h-8 w-8 cursor-pointer place-items-center rounded-full border border-[var(--line)] bg-white text-[var(--ink40)] transition-all hover:bg-[var(--v50)] hover:text-[var(--v600)] active:scale-90"
+								(click)="agendaPrevPage()"
 							>
-								<span class="sr-only">Pagina {{ page + 1 }}</span>
+								<i class="pi pi-chevron-left text-xs"></i>
 							</button>
-						}
+							<button
+								type="button"
+								class="grid h-8 w-8 cursor-pointer place-items-center rounded-full border border-[var(--line)] bg-white text-[var(--ink40)] transition-all hover:bg-[var(--v50)] hover:text-[var(--v600)] active:scale-90"
+								(click)="agendaNextPage()"
+							>
+								<i class="pi pi-chevron-right text-xs"></i>
+							</button>
+						</div>
 					</div>
-					<div class="flex gap-1.5">
-						<button
-							type="button"
-							class="grid h-8 w-8 cursor-pointer place-items-center rounded-full border border-[var(--line)] bg-white text-[var(--ink40)] transition-all hover:bg-[var(--v50)] hover:text-[var(--v600)] active:scale-90"
-							(click)="agendaPrevPage()"
-						>
-							<i class="pi pi-chevron-left text-xs"></i>
-						</button>
-						<button
-							type="button"
-							class="grid h-8 w-8 cursor-pointer place-items-center rounded-full border border-[var(--line)] bg-white text-[var(--ink40)] transition-all hover:bg-[var(--v50)] hover:text-[var(--v600)] active:scale-90"
-							(click)="agendaNextPage()"
-						>
-							<i class="pi pi-chevron-right text-xs"></i>
-						</button>
-					</div>
-				</div>
+				}
 			</div>
 		}
 	</div>
@@ -294,7 +312,7 @@
 							<div class="grid h-16 w-16 place-items-center rounded-full bg-[var(--g)]">
 								<i class="pi pi-inbox text-2xl"></i>
 							</div>
-							<p class="m-0 font-semibold">Nessuna prenotazione trovata.</p>
+							<p class="m-0 text-center font-semibold">Nessuna prenotazione trovata.</p>
 						</div>
 					</td>
 				</tr>

@@ -63,6 +63,9 @@ export class Home {
 	readonly monthlyBookingCounts = computed(() => getMonthlyBookingCounts(this.bookings()));
 	readonly chartData = computed(() => getBookingsChartData(this.monthlyBookingCounts()));
 	readonly chartOptions = bookingsChartOptions;
+	readonly hasChartData = computed(() =>
+		this.monthlyBookingCounts().some(month => month.count > 0)
+	);
 
 	// "Prossimi appuntamenti": shown 3-at-a-time.
 	readonly agendaOpen = signal(true);
