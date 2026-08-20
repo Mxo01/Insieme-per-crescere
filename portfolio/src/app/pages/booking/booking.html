@@ -53,7 +53,7 @@
 		}
 
 		<div
-			class="relative overflow-hidden rounded-3xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[var(--shm)] transition-all duration-500 sm:p-8 md:rounded-[40px] md:p-11"
+			class="relative rounded-3xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[var(--shm)] transition-all duration-500 sm:p-8 md:rounded-[40px] md:p-11"
 			[class.hidden]="verificationState() === 'confirming'"
 		>
 			<div class="flex flex-col gap-10 md:flex-row md:gap-12">
@@ -118,10 +118,10 @@
 								@let isAvailable = availableTimeSlots().includes(time);
 								<button
 									type="button"
-									class="rounded-[22px] border-[1.5px] px-3 py-4 text-center text-base font-bold transition-all sm:px-2 sm:text-base"
+									class="rounded-full border-[1.5px] px-3 py-4 text-center text-base font-bold transition-all sm:px-2 sm:text-base"
 									[class]="
 										selectedTime() === time
-											? 'cursor-pointer bg-white border-[var(--v500)] text-[var(--v700)] shadow-[0_0_14px_2px_rgba(114,55,190,0.28)] -translate-y-0.5'
+											? 'cursor-pointer border-transparent bg-[linear-gradient(140deg,var(--v500),var(--v700))] text-white shadow-[0_14px_28px_-10px_rgba(114,55,190,0.75)] -translate-y-0.5'
 											: isAvailable
 												? 'cursor-pointer bg-white border-[var(--line)] text-[var(--ink60)] hover:border-[var(--v300)]'
 												: 'cursor-not-allowed bg-[rgba(36,22,52,0.06)] border-transparent text-[var(--ink40)] line-through'
