@@ -16,21 +16,12 @@ import { timeOptions } from "src/app/shared/utils/constants";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { Dates } from "src/app/shared/services/dates/dates";
 import { sendConfirmationEmail, getOneMonthFromNowRange } from "src/app/shared/utils/utils";
-
-const MONTH_LABELS_IT = [
-	"Gen",
-	"Feb",
-	"Mar",
-	"Apr",
-	"Mag",
-	"Giu",
-	"Lug",
-	"Ago",
-	"Set",
-	"Ott",
-	"Nov",
-	"Dic"
-];
+import {
+	getBookingsChartData,
+	getMonthlyBookingCounts,
+	getUpcomingConfirmedBookings,
+	bookingsChartOptions
+} from "./home.utils";
 
 const AGENDA_PAGE_SIZE = 3;
 
@@ -67,90 +58,19 @@ export class Home {
 	readonly pendingBookings = computed(() => this.bookings().filter(b => !b.isAccepted).length);
 	readonly acceptedBookings = computed(() => this.bookings().filter(b => b.isAccepted).length);
 
-	// "Prenotazioni nel tempo": bookings grouped into the last 12 calendar
-	// months (oldest → newest, current month last), rendered with PrimeNG's
-	// p-chart (Chart.js).
-	readonly monthlyBookingCounts = computed(() => {
-		const now = new Date();
-		const months = Array.from({ length: 12 }, (_, i) => {
-			const d = new Date(now.getFullYear(), now.getMonth() - (11 - i), 1);
-			return {
-				year: d.getFullYear(),
-				month: d.getMonth(),
-				label: MONTH_LABELS_IT[d.getMonth()],
-				count: 0
-			};
-		});
+	// See home.utils.ts for how the chart's months/counts and the agenda's
+	// filtered+sorted booking list are actually derived.
+	readonly monthlyBookingCounts = computed(() => getMonthlyBookingCounts(this.bookings()));
+	readonly chartData = computed(() => getBookingsChartData(this.monthlyBookingCounts()));
+	readonly chartOptions = bookingsChartOptions;
 
-		for (const booking of this.bookings()) {
-			const [day, month, year] = booking.date.split("/").map(Number);
-			if (!day || !month || !year) continue;
-
-			const entry = months.find(m => m.year === year && m.month === month - 1);
-			if (entry) entry.count++;
-		}
-
-		return months;
-	});
-
-	readonly chartData = computed(() => {
-		const months = this.monthlyBookingCounts();
-		const lastIndex = months.length - 1;
-
-		return {
-			labels: months.map(m => m.label),
-			datasets: [
-				{
-					label: "Prenotazioni",
-					data: months.map(m => m.count),
-					backgroundColor: months.map((_, i) => (i === lastIndex ? "#5D2B9E" : "#EADFF9")),
-					borderRadius: 10,
-					maxBarThickness: 34
-				}
-			]
-		};
-	});
-
-	readonly chartOptions = {
-		responsive: true,
-		maintainAspectRatio: false,
-		plugins: { legend: { display: false } },
-		scales: {
-			x: {
-				grid: { display: false },
-				ticks: { color: "#8A7C96", font: { weight: 700, size: 12 } }
-			},
-			y: {
-				beginAtZero: true,
-				ticks: { precision: 0, color: "#8A7C96" },
-				grid: { color: "rgba(36,22,52,0.06)" }
-			}
-		}
-	};
-
-	// "Prossimi appuntamenti": accepted bookings from today onward, soonest
-	// first, shown 3-at-a-time.
+	// "Prossimi appuntamenti": shown 3-at-a-time.
 	readonly agendaOpen = signal(true);
 	readonly agendaPage = signal(0);
 
-	readonly upcomingConfirmedBookings = computed(() => {
-		const today = new Date();
-		today.setHours(0, 0, 0, 0);
-
-		return this.bookings()
-			.filter(b => b.isAccepted)
-			.map(b => {
-				const [day, month, year] = b.date.split("/").map(Number);
-				return { booking: b, dateValue: new Date(year, month - 1, day) };
-			})
-			.filter(({ dateValue }) => dateValue >= today)
-			.sort(
-				(a, b) =>
-					a.dateValue.getTime() - b.dateValue.getTime() ||
-					a.booking.time.localeCompare(b.booking.time)
-			)
-			.map(({ booking }) => booking);
-	});
+	readonly upcomingConfirmedBookings = computed(() =>
+		getUpcomingConfirmedBookings(this.bookings())
+	);
 
 	readonly agendaTotalPages = computed(() =>
 		Math.max(1, Math.ceil(this.upcomingConfirmedBookings().length / AGENDA_PAGE_SIZE))

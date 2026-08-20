@@ -7,6 +7,6 @@
 		"rootDir": "../",
 		"types": []
 	},
-	"include": ["src/**/*.ts", "../firebase.config.ts"],
+	"include": ["src/**/*.ts", "../firebase.config.ts", "../primeng.config.ts"],
 	"exclude": ["src/**/*.spec.ts"]
 }

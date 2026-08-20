@@ -11,64 +11,16 @@ import { getApp, initializeApp, provideFirebaseApp } from "@angular/fire/app";
 import { getFirestore, provideFirestore } from "@angular/fire/firestore";
 import { getAuth, provideAuth } from "@angular/fire/auth";
 import { routes } from "./app.routes";
-import { firebaseConfig } from "shared/firebase.config";
+import { firebaseConfig, recaptchaSiteKey } from "shared/firebase.config";
+import { primengColors, italianTranslation } from "shared/primeng.config";
 import { provideAppCheck, initializeAppCheck, ReCaptchaV3Provider } from "@angular/fire/app-check";
 
+// `primengColors`/`italianTranslation` are shared with the dashboard (see
+// shared/primeng.config); `definePreset`/`Aura` stay local to each app
+// since the shared file lives outside either app's node_modules.
 const primengPreset = definePreset(Aura, {
-	semantic: {
-		primary: {
-			50: "#f6f1fc",
-			100: "#eadff9",
-			200: "#d9c3f3",
-			300: "#b58be8",
-			400: "#8a58d1",
-			500: "#7237be",
-			600: "#5d2b9e",
-			700: "#47207f",
-			800: "#341864",
-			900: "#24123b",
-			950: "#180c28"
-		}
-	}
+	semantic: { primary: primengColors }
 });
-
-const italianTranslation = {
-	dayNames: ["Domenica", "Lunedì", "Martedì", "Mercoledì", "Giovedì", "Venerdì", "Sabato"],
-	dayNamesShort: ["Dom", "Lun", "Mar", "Mer", "Gio", "Ven", "Sab"],
-	dayNamesMin: ["Do", "Lu", "Ma", "Me", "Gi", "Ve", "Sa"],
-	monthNames: [
-		"Gennaio",
-		"Febbraio",
-		"Marzo",
-		"Aprile",
-		"Maggio",
-		"Giugno",
-		"Luglio",
-		"Agosto",
-		"Settembre",
-		"Ottobre",
-		"Novembre",
-		"Dicembre"
-	],
-	monthNamesShort: [
-		"Gen",
-		"Feb",
-		"Mar",
-		"Apr",
-		"Mag",
-		"Giu",
-		"Lug",
-		"Ago",
-		"Set",
-		"Ott",
-		"Nov",
-		"Dic"
-	],
-	firstDayOfWeek: 1,
-	today: "Oggi",
-	clear: "Cancella",
-	weekHeader: "Sett"
-};
 
 export const appConfig: ApplicationConfig = {
 	providers: [
@@ -95,7 +47,7 @@ export const appConfig: ApplicationConfig = {
 		provideFirestore(() => getFirestore()),
 		provideAppCheck(() =>
 			initializeAppCheck(getApp(), {
-				provider: new ReCaptchaV3Provider("6LeKfXQsAAAAAKMj4s3N_WcmO5UFQRjqEu8pHqyx"),
+				provider: new ReCaptchaV3Provider(recaptchaSiteKey),
 				isTokenAutoRefreshEnabled: true
 			})
 		),
