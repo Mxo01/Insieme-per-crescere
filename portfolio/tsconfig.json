@@ -14,9 +14,9 @@
 		"importHelpers": true,
 		"target": "ES2024",
 		"module": "preserve",
-		"baseUrl": ".",
 		"paths": {
-			"shared/firebase.config": ["../firebase.config.ts"]
+			"shared/firebase.config": ["../firebase.config.ts"],
+			"src/*": ["./src/*"]
 		}
 	},
 	"angularCompilerOptions": {
