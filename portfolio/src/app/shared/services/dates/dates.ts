@@ -1,10 +1,9 @@
 import { inject, Injectable } from "@angular/core";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { collectionData, query, where } from "@angular/fire/firestore";
-import { combineLatest, map, Observable } from "rxjs";
+import { map, Observable } from "rxjs";
 import { AvailableDateDto } from "./dates.model";
 import { Database } from "../database";
-import { BookingDto } from "../bookings/bookings.model";
 import { getOneMonthFromNowRange, formatDateToISODateString } from "../../utils/utils";
 
 @Injectable({
@@ -25,34 +24,21 @@ export class Dates {
 		);
 		const dates$ = collectionData(datesQuery, { idField: "id" }) as Observable<AvailableDateDto[]>;
 
-		const bookingsQuery = query(
-			this.db.bookingsCollection,
-			where("date", ">=", startStr),
-			where("date", "<=", endStr)
-		);
-		const bookings$ = collectionData(bookingsQuery) as Observable<BookingDto[]>;
-
-		const merged$ = combineLatest([dates$, bookings$]).pipe(
-			map(([dates, bookings]) => {
-				const availableDates = dates.map(availableDate => {
-					const bookedTimeSlots = new Set(
-						bookings.filter(booking => booking.date === availableDate.date).map(({ time }) => time)
-					);
-					const availableTimeSlots = availableDate.availableTimeSlots
-						.filter(time => !bookedTimeSlots.has(time))
-						.toSorted();
-
-					return {
-						...availableDate,
-						date: new Date(availableDate.date).toLocaleDateString(),
-						availableTimeSlots
-					};
-				});
-
-				return availableDates;
-			})
+		// `dates.availableTimeSlots` is the only source of truth for free
+		// slots: when a booking is created, the slot is removed from here in
+		// a single atomic batch (see Bookings.addBooking). No need to read
+		// the `bookings` collection anymore, which is no longer publicly
+		// readable (it contains PII).
+		const availableDates$ = dates$.pipe(
+			map(dates =>
+				dates.map(availableDate => ({
+					...availableDate,
+					date: new Date(availableDate.date).toLocaleDateString(),
+					availableTimeSlots: availableDate.availableTimeSlots.toSorted()
+				}))
+			)
 		);
 
-		return toSignal(merged$, { initialValue: [] });
+		return toSignal(availableDates$, { initialValue: [] });
 	}
 }

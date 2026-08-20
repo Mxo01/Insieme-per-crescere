@@ -44,8 +44,20 @@
 			</p-tag>
 		</header>
 
+		@if (verificationState() === "confirming") {
+			<div
+				class="flex flex-col items-center text-center gap-3 bg-white rounded-3xl p-8 sm:p-12 shadow-sm border border-stone-100 mb-6"
+			>
+				<i class="pi pi-spin pi-spinner text-3xl text-violet-500"></i>
+				<p class="text-base sm:text-lg font-semibold text-gray-800">
+					Stiamo confermando la tua email...
+				</p>
+			</div>
+		}
+
 		<div
 			class="bg-white rounded-3xl md:rounded-4xl p-6 sm:p-8 md:p-12 shadow-sm border border-stone-100 relative overflow-hidden transition-all duration-500"
+			[class.hidden]="verificationState() === 'confirming'"
 		>
 			<div class="flex flex-col md:flex-row gap-10 md:gap-12">
 				<div class="flex flex-col gap-4 sm:gap-6">
@@ -145,154 +157,191 @@
 						I tuoi dettagli
 					</h2>
 
-					<form
-						[formGroup]="bookingForm"
-						(ngSubmit)="onConfirmBooking()"
-					>
-						@let isNameErrorVisible =
-							bookingForm.controls.name.invalid &&
-							bookingForm.controls.name.touched &&
-							bookingForm.controls.name.dirty;
-						@let isLastNameErrorVisible =
-							bookingForm.controls.lastName.invalid &&
-							bookingForm.controls.lastName.touched &&
-							bookingForm.controls.lastName.dirty;
-						@let isEmailErrorVisible =
-							bookingForm.controls.email.invalid &&
-							bookingForm.controls.email.touched &&
-							bookingForm.controls.email.dirty;
-						@let isPhoneErrorVisible =
-							bookingForm.controls.phone.invalid &&
-							bookingForm.controls.phone.touched &&
-							bookingForm.controls.phone.dirty;
+					@if (verificationState() === "awaiting-email") {
+						<div
+							class="flex flex-col items-center text-center gap-4 border-2 border-dashed border-violet-200 rounded-3xl p-6 sm:p-10 bg-violet-50/50"
+						>
+							<i class="pi pi-envelope text-4xl text-violet-500"></i>
+							<div>
+								<p class="text-lg font-bold text-gray-900 mb-1">Controlla la tua email</p>
+								<p class="text-sm sm:text-base text-gray-600 max-w-md">
+									Ti abbiamo inviato un link di conferma a
+									<strong>{{ pendingEmail() }}</strong>
+									. Aprilo per completare la prenotazione (controlla anche lo spam).
+								</p>
+							</div>
+							<div class="flex flex-col sm:flex-row gap-3 mt-2">
+								<p-button
+									label="Modifica dati"
+									severity="secondary"
+									[rounded]="true"
+									(onClick)="onCancelVerification()"
+								/>
+								<p-button
+									[label]="
+										resendCooldown() > 0
+											? 'Rinvia email (' + resendCooldown() + 's)'
+											: 'Rinvia email'
+									"
+									severity="secondary"
+									[rounded]="true"
+									[disabled]="resendCooldown() > 0"
+									(onClick)="onResendVerificationLink()"
+								/>
+							</div>
+						</div>
+					} @else {
+						<form
+							[formGroup]="bookingForm"
+							(ngSubmit)="onConfirmBooking()"
+						>
+							@let isNameErrorVisible =
+								bookingForm.controls.name.invalid &&
+								bookingForm.controls.name.touched &&
+								bookingForm.controls.name.dirty;
+							@let isLastNameErrorVisible =
+								bookingForm.controls.lastName.invalid &&
+								bookingForm.controls.lastName.touched &&
+								bookingForm.controls.lastName.dirty;
+							@let isEmailErrorVisible =
+								bookingForm.controls.email.invalid &&
+								bookingForm.controls.email.touched &&
+								bookingForm.controls.email.dirty;
+							@let isPhoneErrorVisible =
+								bookingForm.controls.phone.invalid &&
+								bookingForm.controls.phone.touched &&
+								bookingForm.controls.phone.dirty;
 
-						<div class="grid md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
-							<div class="flex flex-col gap-2">
-								<label
-									for="name"
-									class="font-semibold text-gray-700 text-sm sm:text-base"
-								>
-									Nome
-									<span class="text-red-500">*</span>
-								</label>
-								<input
-									pInputText
-									id="name"
-									formControlName="name"
-									placeholder="Il tuo nome"
-									class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
-									[class.border-red-500]="isNameErrorVisible"
-								/>
+							<div class="grid md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+								<div class="flex flex-col gap-2">
+									<label
+										for="name"
+										class="font-semibold text-gray-700 text-sm sm:text-base"
+									>
+										Nome
+										<span class="text-red-500">*</span>
+									</label>
+									<input
+										pInputText
+										id="name"
+										formControlName="name"
+										placeholder="Il tuo nome"
+										class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
+										[class.border-red-500]="isNameErrorVisible"
+									/>
 
-								@if (isNameErrorVisible) {
-									<small class="text-red-500 pl-2">Il nome è obbligatorio</small>
-								}
-							</div>
-							<div class="flex flex-col gap-2">
-								<label
-									for="lastName"
-									class="font-semibold text-gray-700 text-sm sm:text-base"
-								>
-									Cognome
-									<span class="text-red-500">*</span>
-								</label>
-								<input
-									pInputText
-									id="lastName"
-									formControlName="lastName"
-									placeholder="Il tuo cognome"
-									class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
-									[class.border-red-500]="isLastNameErrorVisible"
-								/>
-								@if (isLastNameErrorVisible) {
-									<small class="text-red-500 pl-2">Il cognome è obbligatorio</small>
-								}
-							</div>
-							<div class="flex flex-col gap-2">
-								<label
-									for="email"
-									class="font-semibold text-gray-700 text-sm sm:text-base"
-								>
-									Email
-									<span class="text-red-500">*</span>
-								</label>
-								<input
-									pInputText
-									id="email"
-									type="email"
-									formControlName="email"
-									placeholder="La tua email"
-									class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
-									[class.border-red-500]="isEmailErrorVisible"
-								/>
-								@if (isEmailErrorVisible) {
-									<small class="text-red-500 pl-2">Inserisci un'email valida</small>
-								}
-							</div>
-							<div class="flex flex-col gap-2">
-								<label
-									for="phone"
-									class="font-semibold text-gray-700 text-sm sm:text-base"
-								>
-									Numero di telefono
-									<span class="text-red-500">*</span>
-								</label>
-								<input
-									pInputText
-									id="phone"
-									type="tel"
-									formControlName="phone"
-									placeholder="Il tuo numero"
-									class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
-									[class.border-red-500]="isPhoneErrorVisible"
-								/>
-								@if (isPhoneErrorVisible) {
-									@if (bookingForm.controls.phone.errors?.["required"]) {
-										<small class="text-red-500 pl-2">Il numero di telefono è obbligatorio</small>
-									} @else {
-										<small class="text-red-500 pl-2">
-											Inserisci un numero italiano valido (solo cifre, senza spazi)
-										</small>
+									@if (isNameErrorVisible) {
+										<small class="text-red-500 pl-2">Il nome è obbligatorio</small>
 									}
-								}
+								</div>
+								<div class="flex flex-col gap-2">
+									<label
+										for="lastName"
+										class="font-semibold text-gray-700 text-sm sm:text-base"
+									>
+										Cognome
+										<span class="text-red-500">*</span>
+									</label>
+									<input
+										pInputText
+										id="lastName"
+										formControlName="lastName"
+										placeholder="Il tuo cognome"
+										class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
+										[class.border-red-500]="isLastNameErrorVisible"
+									/>
+									@if (isLastNameErrorVisible) {
+										<small class="text-red-500 pl-2">Il cognome è obbligatorio</small>
+									}
+								</div>
+								<div class="flex flex-col gap-2">
+									<label
+										for="email"
+										class="font-semibold text-gray-700 text-sm sm:text-base"
+									>
+										Email
+										<span class="text-red-500">*</span>
+									</label>
+									<input
+										pInputText
+										id="email"
+										type="email"
+										formControlName="email"
+										placeholder="La tua email"
+										class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
+										[class.border-red-500]="isEmailErrorVisible"
+									/>
+									@if (isEmailErrorVisible) {
+										<small class="text-red-500 pl-2">Inserisci un'email valida</small>
+									}
+								</div>
+								<div class="flex flex-col gap-2">
+									<label
+										for="phone"
+										class="font-semibold text-gray-700 text-sm sm:text-base"
+									>
+										Numero di telefono
+										<span class="text-red-500">*</span>
+									</label>
+									<input
+										pInputText
+										id="phone"
+										type="tel"
+										formControlName="phone"
+										placeholder="Il tuo numero"
+										class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
+										[class.border-red-500]="isPhoneErrorVisible"
+									/>
+									@if (isPhoneErrorVisible) {
+										@if (bookingForm.controls.phone.errors?.["required"]) {
+											<small class="text-red-500 pl-2">Il numero di telefono è obbligatorio</small>
+										} @else {
+											<small class="text-red-500 pl-2">
+												Inserisci un numero italiano valido (solo cifre, senza spazi)
+											</small>
+										}
+									}
+								</div>
 							</div>
-						</div>
 
-						<div class="flex flex-col gap-2 mb-6 sm:mb-8">
-							<label
-								for="notes"
-								class="font-semibold text-gray-700 text-sm sm:text-base"
+							<div class="flex flex-col gap-2 mb-6 sm:mb-8">
+								<label
+									for="notes"
+									class="font-semibold text-gray-700 text-sm sm:text-base"
+								>
+									Note
+								</label>
+								<textarea
+									pTextarea
+									id="notes"
+									formControlName="notes"
+									rows="4"
+									placeholder="Raccontami di cosa hai bisogno: l'argomento della consulenza, le tue necessità o qualsiasi dettaglio tu voglia anticiparmi."
+									class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 resize-none focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
+								></textarea>
+							</div>
+
+							<div
+								class="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-6 sm:mt-8"
 							>
-								Note
-							</label>
-							<textarea
-								pTextarea
-								id="notes"
-								formControlName="notes"
-								rows="4"
-								placeholder="Raccontami di cosa hai bisogno: l'argomento della consulenza, le tue necessità o qualsiasi dettaglio tu voglia anticiparmi."
-								class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 resize-none focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
-							></textarea>
-						</div>
-
-						<div class="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-6 sm:mt-8">
-							<p-button
-								label="Annulla"
-								severity="secondary"
-								[rounded]="true"
-								styleClass="w-full sm:w-auto"
-								(onClick)="onCancelBooking()"
-							/>
-							<p-button
-								label="Conferma prenotazione"
-								[rounded]="true"
-								type="submit"
-								[disabled]="bookingForm.invalid"
-								styleClass="w-full sm:w-auto"
-								[loading]="isSubmitting()"
-							/>
-						</div>
-					</form>
+								<p-button
+									label="Annulla"
+									severity="secondary"
+									[rounded]="true"
+									styleClass="w-full sm:w-auto"
+									(onClick)="onCancelBooking()"
+								/>
+								<p-button
+									label="Conferma prenotazione"
+									[rounded]="true"
+									type="submit"
+									[disabled]="bookingForm.invalid"
+									styleClass="w-full sm:w-auto"
+									[loading]="isSubmitting()"
+								/>
+							</div>
+						</form>
+					}
 				</div>
 			}
 		</div>
