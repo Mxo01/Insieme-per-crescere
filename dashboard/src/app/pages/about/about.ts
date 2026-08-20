@@ -1,15 +1,13 @@
 import { Component, inject, signal } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Card } from "primeng/card";
 import { FileSelectEvent, FileUpload } from "primeng/fileupload";
 import { MessageService } from "primeng/api";
 import { Assets } from "../../shared/services/assets/assets";
-import { convertFileToBase64 } from "src/app/shared/utils/utils";
-import { Button } from "primeng/button";
+import { convertFileToBase64, resizeImageToBase64 } from "src/app/shared/utils/utils";
 
 @Component({
 	selector: "app-about",
-	imports: [CommonModule, Card, FileUpload, Button],
+	imports: [CommonModule, FileUpload],
 	templateUrl: "./about.html",
 	styleUrl: "./about.scss"
 })
@@ -72,5 +70,31 @@ export class About {
 			.finally(() => {
 				this.isCvLoading.set(false);
 			});
+	}
+
+	async onUploadProfilePic(event: FileSelectEvent) {
+		const file = event.files[0];
+		if (!file) return;
+
+		this.isPicLoading.set(true);
+
+		try {
+			const base64 = await resizeImageToBase64(file);
+			await this.assetsService.updateAssets({ profilePicUrl: base64 });
+
+			this.messageService.add({
+				severity: "success",
+				summary: "Success",
+				detail: "Foto profilo aggiornata con successo"
+			});
+		} catch {
+			this.messageService.add({
+				severity: "error",
+				summary: "Error",
+				detail: "Errore durante l'aggiornamento della foto profilo"
+			});
+		} finally {
+			this.isPicLoading.set(false);
+		}
 	}
 }

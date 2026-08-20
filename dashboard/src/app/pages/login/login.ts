@@ -1,11 +1,9 @@
 import { Component, inject, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { ButtonModule } from "primeng/button";
 import { AuthService } from "../../shared/services/auth/auth";
 
 @Component({
 	selector: "app-login",
-	imports: [ButtonModule],
 	templateUrl: "./login.html"
 })
 export class Login implements OnInit {

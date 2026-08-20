@@ -1,116 +1,300 @@
-<div class="min-h-screen bg-violet-50/40 text-gray-800">
-	<header class="max-w-5xl mx-auto px-6 py-20 md:py-32 flex flex-col items-center text-center">
-		<p-tag
-			[style]="{
-				padding: '0.5rem 1rem',
-				borderRadius: '2rem',
-				border: '1px solid #e9d5ff',
-				marginBottom: '2rem'
-			}"
-			[rounded]="true"
-		>
-			<span class="w-full">Pedagogista 🧸</span>
-		</p-tag>
+<div class="min-h-screen text-[var(--ink)]">
+	<!-- Nav -->
+	<nav class="sticky top-0 z-40 border-b border-[var(--line)] bg-[var(--g)]/90 backdrop-blur-lg">
+		<div class="mx-auto flex max-w-6xl items-center gap-7 px-6 py-3.5">
+			<div class="mr-auto flex items-center gap-2.5">
+				<img
+					src="favicon.ico"
+					alt="Insieme per crescere"
+					class="h-8.5 w-8.5 object-contain"
+				/>
+				<span class="font-['Outfit'] text-[17px] leading-tight font-bold">
+					Insieme per crescere
+				</span>
+			</div>
 
-		<h1 class="text-5xl md:text-7xl font-extrabold text-gray-900 tracking-tight mb-6">
-			Ciao, sono
-			<span class="text-violet-600">Elena Borrometi</span>
-		</h1>
+			<div
+				class="hidden items-center gap-6 text-[14.5px] font-semibold text-[var(--ink60)] sm:flex"
+			>
+				<a
+					href="#chi-sono"
+					(click)="scrollToSection($event, 'chi-sono')"
+					class="transition-colors hover:text-[var(--v500)]"
+				>
+					Chi sono
+				</a>
+				<a
+					href="#consulenze"
+					(click)="scrollToSection($event, 'consulenze')"
+					class="transition-colors hover:text-[var(--v500)]"
+				>
+					Consulenze
+				</a>
+				<a
+					href="#contatti"
+					(click)="scrollToSection($event, 'contatti')"
+					class="transition-colors hover:text-[var(--v500)]"
+				>
+					Contatti
+				</a>
+			</div>
 
-		<p class="text-xl md:text-2xl text-gray-600 max-w-2xl mb-10 leading-relaxed font-medium">
-			Accompagno le famiglie nel meraviglioso viaggio della crescita, con accoglienza, competenza e
-			un sorriso.
-		</p>
-
-		<div class="flex flex-col sm:flex-row items-center justify-center gap-4 w-full">
-			<p-button
-				label="Visualizza il mio CV"
-				icon="pi pi-file-pdf"
-				severity="secondary"
-				[rounded]="true"
-				size="large"
-				[disabled]="!assets()?.cvUrl"
-				(onClick)="onViewCV()"
-			/>
 			<a
 				routerLink="/booking"
-				pButton
-				[rounded]="true"
-				size="large"
+				class="rounded-full bg-[var(--v500)] px-5.5 py-2.5 text-[14.5px] font-bold text-white shadow-[0_8px_20px_-8px_rgba(114,55,190,0.7)] transition-all hover:-translate-y-0.5 hover:bg-[var(--v600)] hover:shadow-[0_14px_26px_-10px_rgba(114,55,190,0.8)] active:scale-96"
 			>
-				<i class="pi pi-calendar mr-2"></i>
-				<span class="font-semibold">Prenota una consulenza</span>
+				Prenota
 			</a>
+		</div>
+	</nav>
+
+	<!-- Hero -->
+	<header class="relative mx-auto max-w-6xl px-6 pt-20 pb-20 md:pt-24 md:pb-24">
+		<div class="pointer-events-none absolute inset-0">
+			<div
+				class="float-slow absolute top-10 right-[-60px] h-85 w-85 rounded-full bg-[radial-gradient(circle_at_30%_30%,var(--v100),rgba(234,223,249,0))]"
+			></div>
+			<div
+				class="float-slow-alt absolute top-30 left-[46%] h-5.5 w-5.5 rounded-full bg-[var(--ochre)] opacity-85"
+			></div>
+		</div>
+
+		<div class="relative grid items-center gap-10 md:grid-cols-[1.05fr_0.95fr]">
+			<div class="reveal flex flex-col items-start gap-5">
+				<p-tag
+					[style]="{
+						padding: '8px 16px',
+						borderRadius: '999px',
+						border: '1px solid var(--v100)',
+						boxShadow: 'var(--shs)',
+						background: 'var(--surface)',
+						color: 'var(--v600)'
+					}"
+					[rounded]="true"
+				>
+					<span class="flex items-center gap-2 text-[13px] font-bold tracking-[0.04em] uppercase">
+						<span class="h-2 w-2 rounded-full bg-[var(--teal)]"></span>
+						Pedagogista
+					</span>
+				</p-tag>
+
+				<h1 class="text-5xl leading-[1.02] md:text-7xl">
+					Ciao, sono
+					<br />
+					<span
+						class="bg-[linear-gradient(105deg,var(--v500),var(--v700)_60%,var(--coral))] bg-clip-text text-transparent"
+					>
+						Elena Borrometi
+					</span>
+				</h1>
+
+				<p class="max-w-[31ch] text-xl leading-relaxed text-[var(--ink60)]">
+					Accompagno le famiglie nel meraviglioso viaggio della crescita, con accoglienza,
+					competenza e un sorriso.
+				</p>
+
+				<div class="mt-2 flex flex-wrap gap-3.5">
+					<a
+						routerLink="/booking"
+						class="inline-flex items-center gap-2.5 rounded-full bg-[linear-gradient(135deg,var(--v500),var(--v700))] px-6.5 py-4 text-base font-bold text-white shadow-[var(--shl)] transition-all hover:-translate-y-0.5 hover:scale-102 active:scale-97"
+					>
+						<i class="pi pi-calendar text-[19px]"></i>
+						Prenota una consulenza
+					</a>
+					<button
+						type="button"
+						[disabled]="!assets()?.cvUrl"
+						(click)="onViewCV()"
+						class="inline-flex cursor-pointer items-center gap-2.5 rounded-full border-[1.5px] border-[var(--v100)] bg-[var(--surface)] px-6.5 py-4 text-base font-bold text-[var(--v700)] shadow-[var(--shs)] transition-all hover:-translate-y-0.5 hover:border-[var(--v300)] hover:bg-[var(--v50)] active:scale-97 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:translate-y-0 disabled:hover:border-[var(--v100)] disabled:hover:bg-[var(--surface)] disabled:active:scale-100"
+					>
+						<i class="pi pi-file-pdf text-[19px]"></i>
+						Visualizza il mio CV
+					</button>
+				</div>
+			</div>
+
+			<div class="reveal relative mx-auto mt-6 w-full max-w-[420px] md:mt-0">
+				<div
+					class="float-slow absolute inset-0 m-auto aspect-square w-[118%] rounded-full bg-[linear-gradient(150deg,var(--v100),var(--tealsoft))] opacity-85"
+				></div>
+				<div
+					class="relative aspect-square w-full overflow-hidden shadow-[var(--shl)] transition-all duration-500 [border-radius:46%_54%_52%_48%/48%_46%_54%_52%] hover:scale-102 hover:[border-radius:38px] hover:rotate-0"
+					style="transform: rotate(3deg)"
+				>
+					<img
+						[src]="assets()?.profilePicUrl || 'images/profile-pic.jpg'"
+						alt="Elena Borrometi"
+						class="h-full w-full object-cover [filter:saturate(0.85)_contrast(0.95)]"
+						(error)="onImageError($event)"
+					/>
+				</div>
+				<div
+					class="float-slow-alt absolute bottom-1.5 left-0 flex items-center gap-2.5 rounded-full bg-[var(--surface)] px-4.5 py-3 shadow-[var(--shm)]"
+				>
+					<span
+						class="grid h-8.5 w-8.5 place-items-center rounded-full bg-[var(--coralsoft)] text-base"
+					>
+						✳
+					</span>
+					<span class="text-[13.5px] leading-tight font-bold">
+						Laurea Magistrale
+						<br />
+						<span class="font-semibold text-[var(--ink40)]">Scienze Pedagogiche</span>
+					</span>
+				</div>
+			</div>
 		</div>
 	</header>
 
-	<section class="bg-white py-20 border-y border-stone-100 shadow-sm">
-		<div class="max-w-5xl mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-			<div class="order-2 md:order-1 flex flex-col gap-6">
+	<!-- Chi sono -->
+	<section
+		id="chi-sono"
+		class="border-y border-[var(--line)] bg-[var(--surface)] py-24"
+	>
+		<div class="mx-auto grid max-w-6xl items-center gap-16 px-6 md:grid-cols-2">
+			<div class="reveal flex flex-col gap-5">
 				<span
-					class="inline-flex items-center gap-2 text-violet-600 font-bold tracking-widest uppercase text-sm mb-2"
+					class="flex items-center gap-2 text-[13px] font-bold tracking-[0.14em] text-[var(--v600)] uppercase"
 				>
 					<i class="pi pi-graduation-cap text-xs"></i>
 					Il mio percorso
 				</span>
-				<h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 leading-tight">
-					Chi sono e cosa ho studiato
-				</h2>
-				<p class="text-lg text-gray-600 leading-relaxed">
+				<h2 class="text-3xl leading-[1.08] md:text-[44px]">Chi sono e cosa ho studiato</h2>
+				<p class="text-[17.5px] leading-[1.72] text-[var(--ink60)]">
 					La mia passione per l'educazione e per il mondo dell'infanzia mi ha guidata in un percorso
 					di studi mirato e profondo. Mi sono laureata con la triennale in
-					<strong>Scienze dell'Educazione e della Formazione</strong>
+					<strong class="text-[var(--ink)]">Scienze dell'Educazione e della Formazione</strong>
 					, ponendo le basi per comprendere le sfumature dello sviluppo infantile.
 				</p>
-				<p class="text-lg text-gray-600 leading-relaxed">
+				<p class="text-[17.5px] leading-[1.72] text-[var(--ink60)]">
 					Successivamente, per arricchire ulteriormente le mie competenze, ho conseguito la Laurea
 					Magistrale in
-					<strong>Scienze Pedagogiche</strong>
+					<strong class="text-[var(--ink)]">Scienze Pedagogiche</strong>
 					. Oggi unisco questa solida preparazione teorica a tanta empatia, per supportare l'intero
 					nucleo familiare.
 				</p>
 			</div>
 
-			<div class="order-1 md:order-2 flex justify-center">
+			<div class="reveal flex flex-col">
 				<div
-					class="w-72 h-72 md:w-96 md:h-96 rounded-[3rem] rotate-3 relative overflow-hidden transition-transform hover:rotate-0 duration-500 shadow-xl"
+					class="flex items-center gap-4.5 rounded-[30px] border border-[var(--v100)] bg-[var(--v50)] p-6 transition-all hover:translate-x-1.5 hover:shadow-[var(--shm)]"
 				>
-					<img
-						src="images/profile-pic.jpg"
-						alt="Profile picture"
-						(error)="onImageError($event)"
-					/>
+					<div
+						class="grid h-14 w-14 flex-none place-items-center rounded-2xl bg-[var(--v500)] font-['Outfit'] text-[19px] font-bold text-white"
+					>
+						01
+					</div>
+					<div>
+						<div class="font-['Outfit'] text-lg font-bold">Laurea Triennale</div>
+						<div class="text-[14.5px] font-semibold text-[var(--ink60)]">
+							Scienze dell'Educazione e della Formazione
+						</div>
+					</div>
+				</div>
+
+				<div class="flex h-18.5 justify-center">
+					<svg
+						width="80"
+						height="74"
+						viewBox="0 0 80 74"
+						fill="none"
+					>
+						<path
+							d="M40 2c0 20-20 28-20 44 0 14 20 18 20 26"
+							stroke="var(--v300)"
+							stroke-width="2.5"
+							stroke-linecap="round"
+							stroke-dasharray="2 9"
+							class="dash-line"
+						/>
+					</svg>
+				</div>
+
+				<div
+					class="flex items-center gap-4.5 rounded-[30px] border border-[rgba(44,158,154,0.18)] bg-[var(--tealsoft)] p-6 transition-all hover:translate-x-1.5 hover:shadow-[var(--shm)]"
+				>
+					<div
+						class="grid h-14 w-14 flex-none place-items-center rounded-2xl bg-[var(--teal)] font-['Outfit'] text-[19px] font-bold text-white"
+					>
+						02
+					</div>
+					<div>
+						<div class="font-['Outfit'] text-lg font-bold">Laurea Magistrale</div>
+						<div class="text-[14.5px] font-semibold text-[var(--ink60)]">Scienze Pedagogiche</div>
+					</div>
+				</div>
+
+				<div class="flex h-18.5 justify-center">
+					<svg
+						width="80"
+						height="74"
+						viewBox="0 0 80 74"
+						fill="none"
+					>
+						<path
+							d="M40 2c0 16 20 20 20 34 0 12-20 16-20 36"
+							stroke="var(--teal)"
+							stroke-width="2.5"
+							stroke-linecap="round"
+							stroke-dasharray="2 9"
+							opacity=".7"
+							class="dash-line"
+						/>
+					</svg>
+				</div>
+
+				<div
+					class="flex items-center gap-4.5 rounded-[30px] border border-[rgba(232,160,60,0.22)] bg-[var(--ochresoft)] p-6 transition-all hover:translate-x-1.5 hover:shadow-[var(--shm)]"
+				>
+					<div
+						class="grid h-14 w-14 flex-none place-items-center rounded-2xl bg-[var(--ochre)] font-['Outfit'] text-[19px] font-bold text-white"
+					>
+						03
+					</div>
+					<div>
+						<div class="font-['Outfit'] text-lg font-bold">Oggi</div>
+						<div class="text-[14.5px] font-semibold text-[var(--ink60)]">
+							Supporto all'intero nucleo familiare
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>
 	</section>
 
-	<section class="max-w-5xl mx-auto px-6 py-24">
-		<div class="text-center mb-16 flex flex-col items-center">
+	<!-- Consulenze -->
+	<section
+		id="consulenze"
+		class="mx-auto max-w-6xl px-6 py-24"
+	>
+		<div class="reveal mb-14 flex flex-col items-center gap-4 text-center">
 			<span
-				class="inline-flex items-center gap-2 text-violet-600 font-bold tracking-widest uppercase text-sm mb-4"
+				class="flex items-center gap-2 text-[13px] font-bold tracking-[0.14em] text-[var(--v600)] uppercase"
 			>
 				<i class="pi pi-compass text-xs"></i>
 				Come posso aiutarti
 			</span>
-			<h2 class="text-3xl md:text-5xl font-extrabold text-gray-900 mb-6">Le mie Consulenze</h2>
-			<p class="text-lg text-gray-600 max-w-2xl mx-auto font-medium">
+			<h2 class="text-4xl leading-[1.06] md:text-[52px]">Le mie Consulenze</h2>
+			<p class="max-w-[56ch] text-lg leading-relaxed text-[var(--ink60)]">
 				Offro percorsi di supporto pedagogico flessibili e personalizzati, pensati per adattarsi
 				alle esigenze uniche dei genitori e dei bambini.
 			</p>
 		</div>
 
-		<div class="grid md:grid-cols-2 gap-8">
+		<div class="grid gap-6.5 md:grid-cols-2">
 			<div
-				class="bg-white rounded-4xl p-10 shadow-sm border border-stone-100 hover:shadow-xl hover:border-violet-200 transition-all duration-300 group"
+				class="group relative overflow-hidden rounded-[36px] border border-[var(--line)] bg-[var(--surface)] p-10 shadow-[var(--shs)] transition-all duration-300 hover:-translate-y-2 hover:border-[rgba(44,158,154,0.35)] hover:shadow-[var(--shm)]"
 			>
 				<div
-					class="w-16 h-16 bg-teal-50 text-teal-600 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-teal-500 group-hover:text-white transition-colors duration-300"
+					class="absolute -top-17.5 -right-17.5 h-47.5 w-47.5 rounded-full bg-[var(--tealsoft)]"
+				></div>
+				<div
+					class="relative mb-6.5 grid h-16.5 w-16.5 place-items-center rounded-3xl bg-[var(--tealsoft)] text-[var(--teal)] transition-transform duration-300 group-hover:-rotate-6 group-hover:scale-108"
 				>
 					<i class="pi pi-home text-3xl"></i>
 				</div>
-				<h3 class="text-2xl font-bold text-gray-900 mb-4">A Domicilio</h3>
-				<p class="text-gray-600 leading-relaxed text-lg">
+				<h3 class="relative mb-3.5 text-2xl">A Domicilio</h3>
+				<p class="relative text-[17px] leading-relaxed text-[var(--ink60)]">
 					Incontro genitori e bambini nel rassicurante calore della loro casa. Questo mi permette di
 					osservare le dinamiche quotidiane e fornire un supporto pratico e concreto proprio dove
 					serve di più, rispettando gli spazi primari del bambino.
@@ -118,15 +302,18 @@
 			</div>
 
 			<div
-				class="bg-white rounded-4xl p-10 shadow-sm border border-stone-100 hover:shadow-xl hover:border-violet-200 transition-all duration-300 group"
+				class="group relative overflow-hidden rounded-[36px] border border-[var(--line)] bg-[var(--surface)] p-10 shadow-[var(--shs)] transition-all duration-300 hover:-translate-y-2 hover:border-[rgba(232,160,60,0.4)] hover:shadow-[var(--shm)]"
 			>
 				<div
-					class="w-16 h-16 bg-blue-50 text-blue-600 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-blue-500 group-hover:text-white transition-colors duration-300"
+					class="absolute -top-17.5 -right-17.5 h-47.5 w-47.5 rounded-full bg-[var(--ochresoft)]"
+				></div>
+				<div
+					class="relative mb-6.5 grid h-16.5 w-16.5 place-items-center rounded-3xl bg-[var(--ochresoft)] text-[var(--ochre)] transition-transform duration-300 group-hover:rotate-6 group-hover:scale-108"
 				>
 					<i class="pi pi-desktop text-3xl"></i>
 				</div>
-				<h3 class="text-2xl font-bold text-gray-900 mb-4">Online</h3>
-				<p class="text-gray-600 leading-relaxed text-lg">
+				<h3 class="relative mb-3.5 text-2xl">Online</h3>
+				<p class="relative text-[17px] leading-relaxed text-[var(--ink60)]">
 					La distanza geografica o i mille impegni lavorativi non devono essere un ostacolo. Offro
 					consulenze a distanza tramite videochiamata, garantendo la stessa presenza, ascolto e
 					professionalità, comodamente dal vostro divano.
@@ -135,74 +322,93 @@
 		</div>
 	</section>
 
-	<section class="bg-linear-to-br from-violet-200 to-violet-700 text-white py-20 text-center px-6">
-		<h2 class="text-3xl md:text-5xl font-extrabold mb-6 drop-shadow-sm">
-			Iniziamo questo cammino insieme?
-		</h2>
-		<p class="text-violet-50 text-xl md:text-2xl mb-10 max-w-2xl mx-auto font-medium">
-			Prenota un primo colloquio conoscitivo per capire insieme come posso esserti d'aiuto nel tuo
-			ruolo genitoriale.
-		</p>
-		<a
-			routerLink="/booking"
-			pButton
-			[rounded]="true"
-			size="large"
-			class="bg-white! text-violet-600! border-none! hover:bg-gray-200! active:bg-gray-300! transition-all transform"
-		>
-			<i class="pi pi-calendar mr-2"></i>
-			<span class="font-bold text-lg">Trova il tuo momento</span>
-		</a>
+	<!-- CTA -->
+	<section
+		class="relative overflow-hidden bg-[linear-gradient(135deg,var(--v600),var(--v900)_70%)] px-6 py-24 text-center text-white"
+	>
+		<div
+			class="float-slow absolute -top-30 -left-20 h-95 w-95 rounded-full bg-[radial-gradient(circle_at_40%_40%,rgba(181,139,232,0.5),rgba(181,139,232,0))]"
+		></div>
+		<div
+			class="spin-slow absolute -right-15 -bottom-35 h-80 w-80 rounded-full border-2 border-white/16"
+		></div>
+		<div class="reveal relative mx-auto flex max-w-3xl flex-col items-center gap-5.5">
+			<h2 class="text-4xl leading-[1.06] md:text-[54px]">Iniziamo questo cammino insieme?</h2>
+			<p class="max-w-[52ch] text-xl leading-relaxed text-white/82">
+				Prenota un primo colloquio conoscitivo per capire insieme come posso esserti d'aiuto nel tuo
+				ruolo genitoriale.
+			</p>
+			<a
+				routerLink="/booking"
+				class="inline-flex items-center gap-2.5 rounded-full bg-white px-8 py-4.5 text-[17px] font-bold text-[var(--v700)] shadow-[0_24px_50px_-16px_rgba(0,0,0,0.5)] transition-all hover:-translate-y-0.5 hover:scale-102 hover:bg-[var(--v50)] active:scale-97"
+			>
+				<i class="pi pi-calendar text-[19px]"></i>
+				Trova il tuo momento
+			</a>
+		</div>
 	</section>
 
-	<section class="max-w-5xl mx-auto px-6 py-16 md:py-24 border-t border-stone-100">
+	<!-- Contatti -->
+	<section
+		id="contatti"
+		class="mx-auto max-w-6xl px-6 py-24"
+	>
 		<div
-			class="bg-violet-50 rounded-[2.5rem] md:rounded-[3rem] p-8 md:p-16 flex flex-col lg:flex-row items-center gap-10 md:gap-12"
+			class="reveal relative grid items-center gap-12 overflow-hidden rounded-[44px] border border-[var(--v100)] bg-[var(--v50)] p-10 md:grid-cols-2 md:p-16"
 		>
-			<div class="w-full lg:flex-1 text-center lg:text-left">
+			<div
+				class="absolute -bottom-22.5 left-[38%] h-60 w-60 rounded-full bg-[radial-gradient(circle,rgba(181,139,232,0.35),rgba(181,139,232,0))]"
+			></div>
+
+			<div class="relative flex flex-col items-start gap-4.5">
 				<span
-					class="inline-flex items-center gap-2 text-violet-600 font-bold tracking-widest uppercase text-xs md:text-sm mb-4"
+					class="flex items-center gap-2 text-[12.5px] font-bold tracking-[0.14em] text-[var(--v600)] uppercase"
 				>
 					<i class="pi pi-envelope text-xs"></i>
 					Mettiamoci in contatto
 				</span>
-
-				<h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-6 leading-tight">
-					Hai qualche dubbio o curiosità?
-				</h2>
-
-				<p class="text-base md:text-lg text-gray-600 mb-8 leading-relaxed max-w-xl mx-auto lg:mx-0">
+				<h2 class="text-3xl leading-[1.1] md:text-4xl">Hai qualche dubbio o curiosità?</h2>
+				<p class="max-w-[52ch] text-[17px] leading-relaxed text-[var(--ink60)]">
 					Se preferisci scrivermi un messaggio diretto o hai bisogno di informazioni specifiche
 					sulle modalità delle consulenze, non esitare a contattarmi via email o su instagram.
 				</p>
-
-				<div class="flex flex-wrap justify-center lg:justify-start gap-4">
-					<p-button
-						icon="pi pi-copy"
-						[rounded]="true"
-						class="flex-none"
-						label="Copia email"
-						(onClick)="onCopyEmail()"
-					/>
+				<div class="mt-2 flex flex-wrap gap-3.5">
+					<button
+						type="button"
+						(click)="onCopyEmail()"
+						class="inline-flex cursor-pointer items-center gap-2.5 rounded-full bg-[var(--v500)] px-5.5 py-3.5 text-[15.5px] font-bold text-white shadow-[0_10px_24px_-10px_rgba(114,55,190,0.8)] transition-all hover:-translate-y-0.5 hover:bg-[var(--v600)] active:scale-96"
+					>
+						<i class="pi pi-copy text-lg"></i>
+						Copia email
+					</button>
 					<a
 						href="https://www.instagram.com/pedagogista.insiemepercrescere/"
 						target="_blank"
 						rel="noopener noreferrer"
-						pButton
-						[rounded]="true"
-						label="Instagram"
-						[text]="true"
-						severity="contrast"
-						icon="pi pi-instagram"
 						title="Seguici su Instagram"
-					></a>
+						class="inline-flex items-center gap-2.5 rounded-full px-5.5 py-3.5 text-[15.5px] font-bold text-[var(--ink)] transition-all hover:-translate-y-0.5 hover:bg-[rgba(36,22,52,0.06)]"
+					>
+						<i class="pi pi-instagram text-lg"></i>
+						Instagram
+					</a>
 				</div>
 			</div>
 
-			<div class="hidden lg:flex lg:flex-1 justify-center">
-				<div class="relative">
-					<div class="absolute -inset-4 bg-violet-200/50 rounded-full blur-2xl"></div>
-					<i class="pi pi-comments text-[6rem]! xl:text-[8rem]! text-violet-300 relative z-10"></i>
+			<div class="relative flex min-h-55 items-center justify-center">
+				<div
+					class="float-slow absolute h-52.5 w-52.5 rounded-full bg-[linear-gradient(150deg,var(--v100),#fff)] shadow-[var(--shm)]"
+				></div>
+				<div class="relative flex flex-col gap-3">
+					<div
+						class="self-start rounded-[22px] rounded-bl-md bg-white px-5 py-3.5 text-[14.5px] font-semibold shadow-[var(--shs)]"
+					>
+						Come gestisco i capricci?
+					</div>
+					<div
+						class="self-end rounded-[22px] rounded-br-md bg-[var(--v500)] px-5 py-3.5 text-[14.5px] font-semibold whitespace-nowrap text-white shadow-[var(--shm)]"
+					>
+						Parliamone insieme 💜
+					</div>
 				</div>
 			</div>
 		</div>

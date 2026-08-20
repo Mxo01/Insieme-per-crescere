@@ -4,8 +4,9 @@
 	"extends": "./tsconfig.json",
 	"compilerOptions": {
 		"outDir": "./out-tsc/app",
+		"rootDir": "../",
 		"types": []
 	},
-	"include": ["src/**/*.ts", "../firebase.config.ts"],
+	"include": ["src/**/*.ts", "../firebase.config.ts", "../primeng.config.ts"],
 	"exclude": ["src/**/*.spec.ts"]
 }

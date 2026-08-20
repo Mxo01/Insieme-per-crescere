@@ -1,10 +1,10 @@
 import { Component, inject, computed, signal, viewChild, effect } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { TableModule } from "primeng/table";
-import { CardModule } from "primeng/card";
 import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { Menu, MenuModule } from "primeng/menu";
+import { UIChart } from "primeng/chart";
 import { MessageService, MenuItem, ConfirmationService } from "primeng/api";
 import { Bookings } from "../../shared/services/bookings/bookings";
 import { BookingDto } from "../../shared/services/bookings/bookings.model";
@@ -16,15 +16,23 @@ import { timeOptions } from "src/app/shared/utils/constants";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { Dates } from "src/app/shared/services/dates/dates";
 import { sendConfirmationEmail, getOneMonthFromNowRange } from "src/app/shared/utils/utils";
+import {
+	getBookingsChartData,
+	getMonthlyBookingCounts,
+	getUpcomingConfirmedBookings,
+	bookingsChartOptions
+} from "./home.utils";
+
+const AGENDA_PAGE_SIZE = 3;
 
 @Component({
 	imports: [
 		CommonModule,
 		TableModule,
-		CardModule,
 		ButtonModule,
 		TagModule,
 		MenuModule,
+		UIChart,
 		FormsModule,
 		DialogModule,
 		DatePicker,
@@ -49,6 +57,36 @@ export class Home {
 	readonly totalBookings = computed(() => this.bookings().length);
 	readonly pendingBookings = computed(() => this.bookings().filter(b => !b.isAccepted).length);
 	readonly acceptedBookings = computed(() => this.bookings().filter(b => b.isAccepted).length);
+
+	// See home.utils.ts for how the chart's months/counts and the agenda's
+	// filtered+sorted booking list are actually derived.
+	readonly monthlyBookingCounts = computed(() => getMonthlyBookingCounts(this.bookings()));
+	readonly chartData = computed(() => getBookingsChartData(this.monthlyBookingCounts()));
+	readonly chartOptions = bookingsChartOptions;
+
+	// "Prossimi appuntamenti": shown 3-at-a-time.
+	readonly agendaOpen = signal(true);
+	readonly agendaPage = signal(0);
+
+	readonly upcomingConfirmedBookings = computed(() =>
+		getUpcomingConfirmedBookings(this.bookings())
+	);
+
+	readonly agendaTotalPages = computed(() =>
+		Math.max(1, Math.ceil(this.upcomingConfirmedBookings().length / AGENDA_PAGE_SIZE))
+	);
+
+	readonly agendaPagedBookings = computed(() => {
+		const page = this.agendaPage();
+		return this.upcomingConfirmedBookings().slice(
+			page * AGENDA_PAGE_SIZE,
+			page * AGENDA_PAGE_SIZE + AGENDA_PAGE_SIZE
+		);
+	});
+
+	readonly agendaPageIndexes = computed(() =>
+		Array.from({ length: this.agendaTotalPages() }, (_, i) => i)
+	);
 
 	readonly selectedBooking = signal<BookingDto | null>(null);
 	readonly selectedDate = signal<Date | null>(null);
@@ -108,6 +146,33 @@ export class Home {
 				);
 			}
 		});
+
+		// Keep the agenda's current page in range as bookings are
+		// accepted/put on hold/deleted around it.
+		effect(() => {
+			if (this.agendaPage() >= this.agendaTotalPages()) this.agendaPage.set(0);
+		});
+	}
+
+	toggleAgenda() {
+		this.agendaOpen.update(isOpen => !isOpen);
+	}
+
+	agendaGoToPage(page: number) {
+		this.agendaPage.set(page);
+	}
+
+	agendaPrevPage() {
+		this.agendaPage.update(page => Math.max(0, page - 1));
+	}
+
+	agendaNextPage() {
+		this.agendaPage.update(page => Math.min(this.agendaTotalPages() - 1, page + 1));
+	}
+
+	openBookingNotes(booking: BookingDto) {
+		this.selectedBooking.set(booking);
+		this.onViewNotes();
 	}
 
 	onViewNotes() {

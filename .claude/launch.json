@@ -1,0 +1,29 @@
+{
+	"version": "0.0.1",
+	"configurations": [
+		{
+			"name": "portfolio",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": ["run", "start:portfolio"],
+			"port": 4200
+		},
+		{
+			"name": "dashboard",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": ["run", "start:dashboard"],
+			"port": 4201
+		},
+		{
+			"name": "portfolio-preview",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": ["--prefix", "portfolio", "run", "start", "--", "--port", "4202"],
+			"port": 4202
+		},
+		{
+			"name": "dashboard-preview",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": ["--prefix", "dashboard", "run", "start", "--", "--port", "4203"],
+			"port": 4203
+		}
+	]
+}

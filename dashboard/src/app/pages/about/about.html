@@ -1,74 +1,134 @@
-<div class="flex flex-col gap-8 max-w-4xl mx-auto">
-	<header>
-		<h1 class="text-3xl font-bold text-gray-900">About Me</h1>
-		<p class="text-gray-500">
+<div class="mx-auto flex max-w-4xl flex-col gap-7">
+	<header class="reveal">
+		<h1 class="mb-1.5 text-[38px]">About Me</h1>
+		<p class="m-0 text-base text-[var(--ink60)]">
 			Gestisci i documenti e le immagini visualizzate nella tua pagina biografica.
 		</p>
 	</header>
 
-	<p-card class="shadow-sm border border-stone-100 rounded-3xl overflow-hidden h-full">
-		<div class="flex flex-col gap-6 p-2 h-full">
-			<div class="flex items-center gap-4">
-				<div
-					class="w-12 h-12 rounded-2xl bg-amber-100 text-amber-600 flex items-center justify-center"
-				>
-					<i class="pi pi-file-pdf text-xl!"></i>
-				</div>
-				<div>
-					<h2 class="text-xl font-bold text-gray-900">Curriculum Vitae</h2>
-					<p class="text-sm text-gray-500">Il tuo CV in formato PDF.</p>
-				</div>
-			</div>
-
+	<div
+		class="reveal flex flex-col gap-6.5 rounded-[38px] border border-[var(--line)] bg-[var(--surface)] p-7 shadow-[var(--shs)] sm:p-9"
+	>
+		<div class="flex items-center gap-4">
 			<div
-				class="flex flex-col items-center justify-center p-8 bg-stone-50 rounded-2xl border border-dashed border-stone-200 gap-6 flex-1"
+				class="grid h-13.5 w-13.5 flex-none place-items-center rounded-2xl bg-[var(--coralsoft)] text-[var(--coral)]"
 			>
-				@if (assets()?.cvUrl) {
-					<div class="flex flex-col items-center gap-3">
-						<div
-							class="w-30 h-40 bg-white rounded-lg shadow-sm border border-stone-100 flex flex-col items-center justify-center relative group"
-						>
-							<i class="pi pi-file-pdf text-4xl! text-red-500"></i>
-							<div class="absolute -top-3 -right-3 bg-violet-500 text-white rounded-full py-1 px-2">
-								<i class="pi pi-check text-[10px]"></i>
-							</div>
-						</div>
-					</div>
-				} @else {
-					<div class="w-30 h-40 bg-stone-100 rounded-lg flex items-center justify-center">
-						<i class="pi pi-file text-4xl! text-stone-300"></i>
-					</div>
-				}
-
-				<div class="flex max-sm:flex-col items-center gap-4 whitespace-nowrap">
-					@if (assets()?.cvUrl) {
-						<p-button
-							label="Rimuovi CV"
-							icon="pi pi-trash"
-							[text]="true"
-							severity="danger"
-							[loading]="isCvLoading()"
-							[rounded]="true"
-							(onClick)="onRemoveCv()"
-						/>
-					}
-
-					<p-fileupload
-						mode="basic"
-						name="cv"
-						accept="application/pdf"
-						[maxFileSize]="10000000"
-						(onSelect)="onUploadCv($event)"
-						[auto]="true"
-						[chooseButtonProps]="{
-							loading: isCvLoading(),
-							rounded: true
-						}"
-						chooseLabel="Carica CV"
-						chooseIcon="pi pi-upload"
-					/>
-				</div>
+				<i class="pi pi-file-pdf text-xl"></i>
+			</div>
+			<div>
+				<h2 class="text-[21px]">Curriculum Vitae</h2>
+				<p class="m-0 text-[14.5px] font-semibold text-[var(--ink40)]">Il tuo CV in formato PDF.</p>
 			</div>
 		</div>
-	</p-card>
+
+		<div
+			class="flex flex-col items-center gap-6 rounded-3xl border-2 border-dashed border-[var(--line)] bg-[var(--g)] p-9 sm:p-11"
+		>
+			@if (assets()?.cvUrl) {
+				<div
+					class="relative grid h-43 w-32.5 place-items-center rounded-2xl bg-white shadow-[var(--shm)] transition-transform duration-500 hover:-rotate-3 hover:scale-104"
+				>
+					<i class="pi pi-file-pdf text-[42px] text-[var(--coral)]"></i>
+					<div
+						class="absolute -top-3 -right-3 grid h-8.5 w-8.5 place-items-center rounded-full bg-[var(--v500)] text-white shadow-[var(--shm)]"
+					>
+						<i class="pi pi-check text-sm"></i>
+					</div>
+				</div>
+			} @else {
+				<div class="grid h-43 w-32.5 place-items-center rounded-2xl bg-white shadow-[var(--shs)]">
+					<i class="pi pi-file text-[42px] text-[var(--ink40)]"></i>
+				</div>
+			}
+
+			<div class="flex flex-wrap items-center justify-center gap-3.5">
+				@if (assets()?.cvUrl) {
+					<button
+						type="button"
+						class="inline-flex cursor-pointer items-center gap-2.25 rounded-full px-5.5 py-3.25 text-[15px] font-bold text-[var(--coral)] transition-colors hover:bg-[var(--coralsoft)] disabled:cursor-not-allowed disabled:opacity-60"
+						[disabled]="isCvLoading()"
+						(click)="onRemoveCv()"
+					>
+						@if (isCvLoading()) {
+							<i class="pi pi-spin pi-spinner"></i>
+						} @else {
+							<i class="pi pi-trash"></i>
+						}
+						Rimuovi CV
+					</button>
+				}
+
+				<p-fileupload
+					mode="basic"
+					name="cv"
+					accept="application/pdf"
+					[maxFileSize]="10000000"
+					(onSelect)="onUploadCv($event)"
+					[auto]="true"
+					[chooseButtonProps]="{
+						loading: isCvLoading(),
+						rounded: true
+					}"
+					chooseLabel="Carica CV"
+					chooseIcon="pi pi-upload"
+				/>
+			</div>
+		</div>
+	</div>
+
+	<div
+		class="reveal flex flex-col gap-6.5 rounded-[38px] border border-[var(--line)] bg-[var(--surface)] p-7 shadow-[var(--shs)] sm:p-9"
+	>
+		<div class="flex items-center gap-4">
+			<div
+				class="grid h-13.5 w-13.5 flex-none place-items-center rounded-2xl bg-[var(--tealsoft)] text-[var(--teal)]"
+			>
+				<i class="pi pi-image text-xl"></i>
+			</div>
+			<div>
+				<h2 class="text-[21px]">Foto profilo</h2>
+				<p class="m-0 text-[14.5px] font-semibold text-[var(--ink40)]">
+					L'immagine mostrata nel portfolio.
+				</p>
+			</div>
+		</div>
+
+		<div class="flex flex-wrap items-center gap-6.5 rounded-[30px] bg-[var(--g)] p-6.5">
+			<div
+				class="h-27.5 w-27.5 flex-none overflow-hidden shadow-[var(--shm)] transition-all duration-500 [border-radius:38%_62%_55%_45%/50%_45%_55%_50%] hover:rounded-3xl"
+			>
+				@if (assets()?.profilePicUrl) {
+					<img
+						[src]="assets()!.profilePicUrl"
+						alt="Foto profilo"
+						class="h-full w-full object-cover"
+					/>
+				} @else {
+					<div class="grid h-full w-full place-items-center bg-white">
+						<i class="pi pi-user text-3xl text-[var(--ink40)]"></i>
+					</div>
+				}
+			</div>
+
+			<div class="flex flex-col items-start gap-3">
+				<span class="max-w-[44ch] text-[14.5px] leading-relaxed font-semibold text-[var(--ink60)]">
+					Consigliata un'immagine quadrata di almeno 800×800 px.
+				</span>
+				<p-fileupload
+					mode="basic"
+					name="profilePic"
+					accept="image/*"
+					[maxFileSize]="8000000"
+					(onSelect)="onUploadProfilePic($event)"
+					[auto]="true"
+					[chooseButtonProps]="{
+						loading: isPicLoading(),
+						rounded: true
+					}"
+					chooseLabel="Sostituisci foto"
+					chooseIcon="pi pi-upload"
+				/>
+			</div>
+		</div>
+	</div>
 </div>

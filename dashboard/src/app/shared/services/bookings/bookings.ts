@@ -8,7 +8,7 @@ import {
 	arrayUnion,
 	arrayRemove
 } from "@angular/fire/firestore";
-import { Observable, map } from "rxjs";
+import { Observable, catchError, map, of } from "rxjs";
 import { toSignal } from "@angular/core/rxjs-interop";
 import { Database } from "../database";
 import { BookingDto } from "./bookings.model";
@@ -25,6 +25,13 @@ export class Bookings {
 			BookingDto[]
 		>;
 
+		// `catchError` matters even with `initialValue` set below: that only
+		// covers the "no emission yet" case. Once the source errors (e.g. a
+		// permission-denied in local dev), `toSignal` re-throws it on every
+		// later read, which happens during change detection and aborts the
+		// whole CD pass — silently breaking every other component (toasts,
+		// dialogs, ...) for the rest of the session. Falling back to `[]`
+		// keeps the app resilient.
 		return toSignal(
 			bookings$.pipe(
 				map(bookings =>
@@ -32,7 +39,11 @@ export class Bookings {
 						...booking,
 						date: new Date(booking.date).toLocaleDateString()
 					}))
-				)
+				),
+				catchError(error => {
+					console.error("Impossibile caricare le prenotazioni:", error);
+					return of([]);
+				})
 			),
 			{ initialValue: [] }
 		);

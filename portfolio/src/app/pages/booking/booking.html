@@ -1,71 +1,66 @@
-<div class="min-h-screen bg-violet-50/40 text-gray-800 p-4 sm:p-6">
-	<main class="max-w-5xl mx-auto">
-		<nav class="mb-6 md:mb-12">
-			<p-button
-				routerLink="/"
-				link
-				label="Torna alla Home"
-				icon="pi pi-arrow-left"
-			/>
-		</nav>
+<div class="min-h-screen p-4 pb-24 sm:p-6">
+	<main class="mx-auto max-w-4xl">
+		<a
+			routerLink="/"
+			class="inline-flex items-center gap-2 rounded-full py-2.5 pr-4 pl-2.5 text-[15px] font-bold text-[var(--v600)] transition-all hover:-translate-x-1 hover:bg-[var(--v50)]"
+		>
+			<i class="pi pi-arrow-left"></i>
+			Torna alla Home
+		</a>
 
-		<header class="text-center mb-6 md:mb-8 flex flex-col items-center">
+		<header class="mt-8 mb-10 flex flex-col items-center gap-4 text-center">
 			<span
-				class="inline-flex items-center gap-2 text-violet-600 font-bold tracking-widest uppercase text-xs sm:text-sm mb-3 sm:mb-4"
+				class="flex items-center gap-2 text-[12.5px] font-bold tracking-[0.14em] text-[var(--v600)] uppercase"
 			>
 				<i class="pi pi-calendar text-xs"></i>
 				Prenotazione
 			</span>
-			<h1
-				class="text-3xl sm:text-4xl md:text-6xl font-extrabold text-gray-900 tracking-tight mb-4 sm:mb-6"
-			>
+			<h1 class="text-4xl leading-[1.05] sm:text-5xl md:text-[60px]">
 				Prenota una
-				<span class="text-violet-600">Consulenza</span>
+				<span class="text-[var(--v600)]">Consulenza</span>
 			</h1>
-			<p class="mb-4 text-base sm:text-lg md:text-xl text-gray-600 max-w-2xl mx-auto font-medium">
+			<p class="max-w-[48ch] text-lg leading-relaxed text-[var(--ink60)]">
 				Scegli il giorno e l'orario che preferisci per iniziare questo percorso insieme.
 			</p>
 			<p-tag
 				[style]="{
-					padding: '0.5rem 1rem',
-					borderRadius: '2rem',
-					border: '1px solid #e9d5ff',
-					marginBottom: '2rem'
+					padding: '9px 18px',
+					borderRadius: '999px',
+					border: '1px solid var(--v100)',
+					boxShadow: 'var(--shs)',
+					background: 'var(--surface)',
+					color: 'var(--ink60)'
 				}"
 				[rounded]="true"
 			>
-				<span class="w-full flex items-center gap-2">
-					<i class="pi pi-clock text-sm text-violet-500"></i>
-					<span class="font-normal!">
-						Durata sessione:
-						<strong>45 minuti</strong>
-					</span>
+				<span class="flex items-center gap-2 text-sm font-semibold">
+					<i class="pi pi-clock text-[15px] text-[var(--v500)]"></i>
+					Durata sessione:
+					<strong class="text-[var(--ink)]">45 minuti</strong>
 				</span>
 			</p-tag>
 		</header>
 
 		@if (verificationState() === "confirming") {
 			<div
-				class="flex flex-col items-center text-center gap-3 bg-white rounded-3xl p-8 sm:p-12 shadow-sm border border-stone-100 mb-6"
+				class="mb-6 flex flex-col items-center gap-3 rounded-3xl border border-[var(--line)] bg-[var(--surface)] p-8 text-center shadow-[var(--shs)] sm:p-12"
 			>
-				<i class="pi pi-spin pi-spinner text-3xl text-violet-500"></i>
-				<p class="text-base sm:text-lg font-semibold text-gray-800">
+				<i class="pi pi-spin pi-spinner text-3xl text-[var(--v500)]"></i>
+				<p class="text-base font-semibold text-[var(--ink)] sm:text-lg">
 					Stiamo confermando la tua email...
 				</p>
 			</div>
 		}
 
 		<div
-			class="bg-white rounded-3xl md:rounded-4xl p-6 sm:p-8 md:p-12 shadow-sm border border-stone-100 relative overflow-hidden transition-all duration-500"
+			class="relative rounded-3xl border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[var(--shm)] transition-all duration-500 sm:p-8 md:rounded-[40px] md:p-11"
 			[class.hidden]="verificationState() === 'confirming'"
 		>
-			<div class="flex flex-col md:flex-row gap-10 md:gap-12">
-				<div class="flex flex-col gap-4 sm:gap-6">
-					<h2
-						class="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-3 whitespace-nowrap"
-					>
+			<div class="flex flex-col gap-10 md:flex-row md:gap-12">
+				<div class="flex flex-col gap-5 sm:gap-5.5 md:w-[340px] md:flex-none">
+					<h2 class="flex items-center gap-3 text-xl whitespace-nowrap sm:text-[21px]">
 						<span
-							class="flex items-center justify-center min-w-8 w-8 h-8 rounded-full bg-violet-100 text-violet-600 text-sm"
+							class="grid h-8 min-w-8 place-items-center rounded-full bg-[var(--v100)] font-['DM_Sans'] text-sm font-bold text-[var(--v700)]"
 						>
 							1
 						</span>
@@ -77,21 +72,40 @@
 						[disabledDates]="disabledDates()"
 						[ngModel]="selectedDate()"
 						(ngModelChange)="onDateChange($event)"
+						(onMonthChange)="onMonthChange($event)"
+						[class.prev-locked]="isPrevMonthDisabled()"
 						inline
-						class="overflow-auto"
-						panelStyleClass="border-none! bg-transparent! p-0!"
+						panelStyleClass="!border-none !bg-transparent !p-0"
 					/>
+					<div
+						class="flex flex-col gap-2.25 rounded-3xl bg-[var(--v50)] px-4.5 py-4 text-[13px] font-semibold text-[var(--ink60)]"
+					>
+						<span class="flex items-center gap-2.25">
+							<span class="h-3 w-3 rounded-full bg-[var(--v500)]"></span>
+							Giorno selezionato
+						</span>
+						<span class="flex items-center gap-2.25">
+							<span
+								class="h-3 w-3 rounded-full border-[1.5px] border-[var(--v300)] bg-white"
+							></span>
+							Disponibile
+						</span>
+						<span class="flex items-center gap-2.25">
+							<span class="h-3 w-3 rounded-full bg-[rgba(36,22,52,0.08)]"></span>
+							Non disponibile
+						</span>
+					</div>
 				</div>
 
 				<div
 					#timeSection
-					class="flex flex-col w-full gap-4 sm:gap-6 transition-opacity duration-300"
-					[class.opacity-50]="!selectedDate()"
+					class="flex w-full flex-col gap-5 transition-opacity duration-300 sm:gap-5.5"
+					[class.opacity-45]="!selectedDate()"
 					[class.pointer-events-none]="!selectedDate()"
 				>
-					<h2 class="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-3">
+					<h2 class="flex items-center gap-3 text-xl sm:text-[21px]">
 						<span
-							class="flex items-center justify-center min-w-8 w-8 h-8 rounded-full bg-violet-100 text-violet-600 text-sm"
+							class="grid h-8 min-w-8 place-items-center rounded-full bg-[var(--v100)] font-['DM_Sans'] text-sm font-bold text-[var(--v700)]"
 						>
 							2
 						</span>
@@ -99,43 +113,56 @@
 					</h2>
 
 					@if (selectedDate()) {
-						@if (!availableTimeSlots().length) {
-							<div
-								class="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-stone-200 rounded-3xl p-6 sm:p-8 text-center bg-stone-50/50 min-h-40 sm:min-h-50"
-							>
-								<i class="pi pi-clock text-3xl sm:text-4xl text-stone-300 mb-3 sm:mb-4"></i>
-								<p class="text-sm sm:text-base text-gray-500 font-medium max-w-xs">
-									Non ci sono orari disponibili per la data selezionata.
-								</p>
-							</div>
-						} @else {
-							<div class="grid grid-cols-2 sm:grid-cols-3 gap-3 sm:gap-4">
-								@for (time of availableTimeSlots(); track time) {
-									<button
-										type="button"
-										class="py-3 sm:py-4 px-3 sm:px-4 rounded-2xl border-2 font-semibold transition-all text-center text-base sm:text-lg cursor-pointer"
-										[class.border-violet-600]="selectedTime() === time"
-										[class.bg-violet-50]="selectedTime() === time"
-										[class.text-violet-700]="selectedTime() === time"
-										[class.border-stone-100]="selectedTime() !== time"
-										[class.bg-white]="selectedTime() !== time"
-										[class.text-gray-600]="selectedTime() !== time"
-										[class.hover:border-violet-300]="selectedTime() !== time"
-										(click)="onTimeSelect(time)"
-									>
-										{{ time }}
-									</button>
-								}
-							</div>
-						}
+						<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-3.5">
+							@for (time of allTimeSlots; track time) {
+								@let isAvailable = availableTimeSlots().includes(time);
+								<button
+									type="button"
+									class="rounded-full border-[1.5px] px-3 py-4 text-center text-base font-bold transition-all sm:px-2 sm:text-base"
+									[class]="
+										selectedTime() === time
+											? 'cursor-pointer border-transparent bg-[linear-gradient(140deg,var(--v500),var(--v700))] text-white shadow-[0_14px_28px_-10px_rgba(114,55,190,0.75)] -translate-y-0.5'
+											: isAvailable
+												? 'cursor-pointer bg-white border-[var(--line)] text-[var(--ink60)] hover:border-[var(--v300)]'
+												: 'cursor-not-allowed bg-[rgba(36,22,52,0.06)] border-transparent text-[var(--ink40)] line-through'
+									"
+									[disabled]="!isAvailable"
+									(click)="onTimeSelect(time)"
+								>
+									{{ time }}
+								</button>
+							}
+						</div>
 					} @else {
 						<div
-							class="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-stone-200 rounded-3xl p-6 sm:p-8 text-center bg-stone-50/50 min-h-40 sm:min-h-50"
+							class="flex min-h-40 flex-1 flex-col items-center justify-center rounded-3xl border-2 border-dashed border-[var(--line)] bg-[var(--g)]/60 p-6 text-center sm:min-h-52.5 sm:p-8"
 						>
-							<i class="pi pi-clock text-3xl sm:text-4xl text-stone-300 mb-3 sm:mb-4"></i>
-							<p class="text-sm sm:text-base text-gray-500 font-medium max-w-xs">
+							<div
+								class="mb-3.5 grid h-14 w-14 place-items-center rounded-full bg-[var(--v50)] sm:mb-4"
+							>
+								<i class="pi pi-clock text-2xl text-[var(--v300)]"></i>
+							</div>
+							<p class="max-w-xs text-sm font-semibold text-[var(--ink40)] sm:text-base">
 								Seleziona prima una data per vedere gli orari disponibili.
 							</p>
+						</div>
+					}
+
+					@if (selectedDate() && selectedTime()) {
+						<div
+							class="mt-2 flex items-center gap-4 rounded-3xl bg-[linear-gradient(135deg,var(--v600),var(--v900))] px-6 py-5.5 text-white shadow-[var(--shl)]"
+						>
+							<div class="grid h-11.5 w-11.5 place-items-center rounded-full bg-white/16">
+								<i class="pi pi-check text-xl"></i>
+							</div>
+							<div>
+								<div class="text-[12.5px] font-bold tracking-[0.1em] text-white/70 uppercase">
+									Appuntamento scelto
+								</div>
+								<div class="font-['Outfit'] text-lg font-bold">
+									{{ selectedDate()?.toLocaleDateString() }}, ore {{ selectedTime() }}
+								</div>
+							</div>
 						</div>
 					}
 				</div>
@@ -144,13 +171,11 @@
 			@if (selectedDate() && selectedTime()) {
 				<div
 					#detailsSection
-					class="mt-8 sm:mt-12 pt-8 sm:pt-12 border-t border-stone-100 transition-opacity duration-500"
+					class="mt-9 border-t border-[var(--line)] pt-9 transition-opacity duration-500 sm:mt-11 sm:pt-11"
 				>
-					<h2
-						class="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-3 mb-6 sm:mb-8"
-					>
+					<h2 class="mb-6 flex items-center gap-3 text-xl sm:mb-7 sm:text-[21px]">
 						<span
-							class="flex items-center justify-center min-w-8 w-8 h-8 rounded-full bg-violet-100 text-violet-600 text-sm"
+							class="grid h-8 min-w-8 place-items-center rounded-full bg-[var(--v100)] font-['DM_Sans'] text-sm font-bold text-[var(--v700)]"
 						>
 							3
 						</span>
@@ -159,35 +184,42 @@
 
 					@if (verificationState() === "awaiting-email") {
 						<div
-							class="flex flex-col items-center text-center gap-4 border-2 border-dashed border-violet-200 rounded-3xl p-6 sm:p-10 bg-violet-50/50"
+							class="flex flex-col items-center gap-4 rounded-3xl border-2 border-dashed border-[var(--v100)] bg-[var(--v50)] p-6 text-center sm:p-9"
 						>
-							<i class="pi pi-envelope text-4xl text-violet-500"></i>
+							<i class="pi pi-envelope text-4xl text-[var(--v500)]"></i>
 							<div>
-								<p class="text-lg font-bold text-gray-900 mb-1">Controlla la tua email</p>
-								<p class="text-sm sm:text-base text-gray-600 max-w-md">
+								<p class="mb-1 text-lg font-bold text-[var(--ink)]">Controlla la tua email</p>
+								<p class="max-w-md text-sm text-[var(--ink60)] sm:text-base">
 									Ti abbiamo inviato un link di conferma a
-									<strong>{{ pendingEmail() }}</strong>
+									<strong class="text-[var(--ink)]">{{ pendingEmail() }}</strong>
 									. Aprilo per completare la prenotazione (controlla anche lo spam).
 								</p>
 							</div>
-							<div class="flex flex-col sm:flex-row gap-3 mt-2">
-								<p-button
-									label="Modifica dati"
-									severity="secondary"
-									[rounded]="true"
-									(onClick)="onCancelVerification()"
-								/>
-								<p-button
-									[label]="
-										resendCooldown() > 0
-											? 'Rinvia email (' + resendCooldown() + 's)'
-											: 'Rinvia email'
-									"
-									severity="secondary"
-									[rounded]="true"
+							<div class="mt-1 flex flex-col gap-3 sm:flex-row">
+								<button
+									type="button"
+									class="cursor-pointer rounded-full bg-[rgba(36,22,52,0.06)] px-6.5 py-3.25 text-[15px] font-bold text-[var(--ink60)] transition-colors hover:bg-[rgba(36,22,52,0.11)]"
+									(click)="onCancelVerification()"
+								>
+									Modifica dati
+								</button>
+								<button
+									type="button"
 									[disabled]="resendCooldown() > 0"
-									(onClick)="onResendVerificationLink()"
-								/>
+									class="cursor-pointer rounded-full px-6.5 py-3.25 text-[15px] font-bold transition-colors disabled:cursor-not-allowed"
+									[class]="
+										resendCooldown() > 0
+											? 'bg-[rgba(36,22,52,0.04)] text-[var(--ink40)]'
+											: 'bg-[var(--v500)] text-white shadow-[0_12px_26px_-12px_rgba(114,55,190,0.9)] hover:bg-[var(--v600)]'
+									"
+									(click)="onResendVerificationLink()"
+								>
+									{{
+										resendCooldown() > 0
+											? "Rinvia email (" + resendCooldown() + "s)"
+											: "Rinvia email"
+									}}
+								</button>
 							</div>
 						</div>
 					} @else {
@@ -212,55 +244,54 @@
 								bookingForm.controls.phone.touched &&
 								bookingForm.controls.phone.dirty;
 
-							<div class="grid md:grid-cols-2 gap-4 sm:gap-6 mb-4 sm:mb-6">
+							<div class="mb-5 grid gap-4 sm:mb-6 sm:gap-5 md:grid-cols-2">
 								<div class="flex flex-col gap-2">
 									<label
 										for="name"
-										class="font-semibold text-gray-700 text-sm sm:text-base"
+										class="flex items-center gap-1 text-sm font-bold sm:text-[14.5px]"
 									>
 										Nome
-										<span class="text-red-500">*</span>
+										<span class="text-[var(--coral)]">*</span>
 									</label>
 									<input
 										pInputText
 										id="name"
 										formControlName="name"
 										placeholder="Il tuo nome"
-										class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
+										class="w-full rounded-full border-[1.5px] px-5 py-3.5 font-['DM_Sans'] text-[15px] font-medium transition-colors"
 										[class.border-red-500]="isNameErrorVisible"
 									/>
-
 									@if (isNameErrorVisible) {
-										<small class="text-red-500 pl-2">Il nome è obbligatorio</small>
+										<small class="pl-2 text-[var(--coral)]">Il nome è obbligatorio</small>
 									}
 								</div>
 								<div class="flex flex-col gap-2">
 									<label
 										for="lastName"
-										class="font-semibold text-gray-700 text-sm sm:text-base"
+										class="flex items-center gap-1 text-sm font-bold sm:text-[14.5px]"
 									>
 										Cognome
-										<span class="text-red-500">*</span>
+										<span class="text-[var(--coral)]">*</span>
 									</label>
 									<input
 										pInputText
 										id="lastName"
 										formControlName="lastName"
 										placeholder="Il tuo cognome"
-										class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
+										class="w-full rounded-full border-[1.5px] px-5 py-3.5 font-['DM_Sans'] text-[15px] font-medium transition-colors"
 										[class.border-red-500]="isLastNameErrorVisible"
 									/>
 									@if (isLastNameErrorVisible) {
-										<small class="text-red-500 pl-2">Il cognome è obbligatorio</small>
+										<small class="pl-2 text-[var(--coral)]">Il cognome è obbligatorio</small>
 									}
 								</div>
 								<div class="flex flex-col gap-2">
 									<label
 										for="email"
-										class="font-semibold text-gray-700 text-sm sm:text-base"
+										class="flex items-center gap-1 text-sm font-bold sm:text-[14.5px]"
 									>
 										Email
-										<span class="text-red-500">*</span>
+										<span class="text-[var(--coral)]">*</span>
 									</label>
 									<input
 										pInputText
@@ -268,20 +299,20 @@
 										type="email"
 										formControlName="email"
 										placeholder="La tua email"
-										class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
+										class="w-full rounded-full border-[1.5px] px-5 py-3.5 font-['DM_Sans'] text-[15px] font-medium transition-colors"
 										[class.border-red-500]="isEmailErrorVisible"
 									/>
 									@if (isEmailErrorVisible) {
-										<small class="text-red-500 pl-2">Inserisci un'email valida</small>
+										<small class="pl-2 text-[var(--coral)]">Inserisci un'email valida</small>
 									}
 								</div>
 								<div class="flex flex-col gap-2">
 									<label
 										for="phone"
-										class="font-semibold text-gray-700 text-sm sm:text-base"
+										class="flex items-center gap-1 text-sm font-bold sm:text-[14.5px]"
 									>
 										Numero di telefono
-										<span class="text-red-500">*</span>
+										<span class="text-[var(--coral)]">*</span>
 									</label>
 									<input
 										pInputText
@@ -289,14 +320,16 @@
 										type="tel"
 										formControlName="phone"
 										placeholder="Il tuo numero"
-										class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
+										class="w-full rounded-full border-[1.5px] px-5 py-3.5 font-['DM_Sans'] text-[15px] font-medium transition-colors"
 										[class.border-red-500]="isPhoneErrorVisible"
 									/>
 									@if (isPhoneErrorVisible) {
 										@if (bookingForm.controls.phone.errors?.["required"]) {
-											<small class="text-red-500 pl-2">Il numero di telefono è obbligatorio</small>
+											<small class="pl-2 text-[var(--coral)]">
+												Il numero di telefono è obbligatorio
+											</small>
 										} @else {
-											<small class="text-red-500 pl-2">
+											<small class="pl-2 text-[var(--coral)]">
 												Inserisci un numero italiano valido (solo cifre, senza spazi)
 											</small>
 										}
@@ -304,10 +337,10 @@
 								</div>
 							</div>
 
-							<div class="flex flex-col gap-2 mb-6 sm:mb-8">
+							<div class="mb-6 flex flex-col gap-2 sm:mb-8">
 								<label
 									for="notes"
-									class="font-semibold text-gray-700 text-sm sm:text-base"
+									class="text-sm font-bold sm:text-[14.5px]"
 								>
 									Note
 								</label>
@@ -317,28 +350,30 @@
 									formControlName="notes"
 									rows="4"
 									placeholder="Raccontami di cosa hai bisogno: l'argomento della consulenza, le tue necessità o qualsiasi dettaglio tu voglia anticiparmi."
-									class="rounded-2xl px-4 py-3 bg-stone-50 border border-stone-200 resize-none focus:border-violet-500! hover:border-violet-300 transition-colors w-full"
+									class="w-full resize-none rounded-3xl border-[1.5px] px-5 py-4 font-['DM_Sans'] text-[15px] font-medium transition-colors"
 								></textarea>
 							</div>
 
 							<div
-								class="flex flex-col-reverse sm:flex-row justify-end gap-3 sm:gap-4 mt-6 sm:mt-8"
+								class="mt-6 flex flex-col-reverse justify-end gap-3 sm:mt-8 sm:flex-row sm:gap-4"
 							>
-								<p-button
-									label="Annulla"
-									severity="secondary"
-									[rounded]="true"
-									styleClass="w-full sm:w-auto"
-									(onClick)="onCancelBooking()"
-								/>
-								<p-button
-									label="Conferma prenotazione"
-									[rounded]="true"
+								<button
+									type="button"
+									class="w-full cursor-pointer rounded-full bg-[rgba(36,22,52,0.06)] px-7 py-3.75 text-[15.5px] font-bold text-[var(--ink60)] transition-colors hover:bg-[rgba(36,22,52,0.11)] sm:w-auto"
+									(click)="onCancelBooking()"
+								>
+									Annulla
+								</button>
+								<button
 									type="submit"
-									[disabled]="bookingForm.invalid"
-									styleClass="w-full sm:w-auto"
-									[loading]="isSubmitting()"
-								/>
+									[disabled]="bookingForm.invalid || isSubmitting()"
+									class="inline-flex w-full cursor-pointer items-center justify-center gap-2.5 rounded-full bg-[linear-gradient(135deg,var(--v500),var(--v700))] px-8 py-3.75 text-[15.5px] font-bold text-white shadow-[0_16px_34px_-14px_rgba(71,32,127,0.9)] transition-all hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60 sm:w-auto"
+								>
+									@if (isSubmitting()) {
+										<i class="pi pi-spin pi-spinner"></i>
+									}
+									Conferma prenotazione
+								</button>
 							</div>
 						</form>
 					}

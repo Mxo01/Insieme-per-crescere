@@ -10,7 +10,7 @@ import {
 	OnInit,
 	DestroyRef
 } from "@angular/core";
-import { DatePicker } from "primeng/datepicker";
+import { DatePicker, DatePickerMonthChangeEvent } from "primeng/datepicker";
 import { ButtonModule } from "primeng/button";
 import { InputText } from "primeng/inputtext";
 import { Textarea } from "primeng/textarea";
@@ -23,6 +23,7 @@ import { BookingDto } from "src/app/shared/services/bookings/bookings.model";
 import { AuthService } from "src/app/shared/services/auth/auth";
 import { Tag } from "primeng/tag";
 import { formatDateToISODateString, getOneMonthFromNowRange } from "src/app/shared/utils/utils";
+import { ALL_TIME_SLOTS } from "src/app/shared/utils/constants";
 
 type VerificationState = "idle" | "confirming" | "awaiting-email";
 
@@ -66,6 +67,27 @@ export class Booking implements OnInit {
 	readonly selectedDate = signal<Date | null>(null);
 	readonly selectedTime = signal<string | null>(null);
 	readonly monthRange = computed(() => getOneMonthFromNowRange());
+	readonly allTimeSlots = ALL_TIME_SLOTS;
+
+	// The datepicker's prev/next buttons ignore `minDate`/`maxDate` — they
+	// only gray out individual days, so without this the user could still
+	// page back into months that are entirely in the past. Tracked via
+	// `onMonthChange` and compared against `monthRange().start`'s month
+	// (tomorrow) so the button locks as soon as no earlier month has any
+	// selectable day left.
+	readonly viewedMonth = signal({
+		month: new Date().getMonth() + 1,
+		year: new Date().getFullYear()
+	});
+
+	readonly isPrevMonthDisabled = computed(() => {
+		const earliest = this.monthRange().start;
+		const { month, year } = this.viewedMonth();
+		return (
+			year < earliest.getFullYear() ||
+			(year === earliest.getFullYear() && month <= earliest.getMonth() + 1)
+		);
+	});
 
 	private readonly availableDates = this.datesService.getAvailableDates();
 
@@ -156,7 +178,13 @@ export class Booking implements OnInit {
 		this.timeSection()?.nativeElement.scrollIntoView({ behavior: "smooth", block: "start" });
 	}
 
+	onMonthChange(event: DatePickerMonthChangeEvent) {
+		if (event.month === undefined || event.year === undefined) return;
+		this.viewedMonth.set({ month: event.month, year: event.year });
+	}
+
 	onTimeSelect(time: string) {
+		if (!this.availableTimeSlots().includes(time)) return;
 		this.selectedTime.set(time);
 	}
 
