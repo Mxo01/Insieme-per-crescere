@@ -1,104 +1,105 @@
-<div class="flex flex-col gap-8 max-w-7xl mx-auto">
-	<header>
-		<h1 class="text-3xl font-bold text-gray-900">Gestione Disponibilità</h1>
-		<p class="text-gray-500">
+<div class="mx-auto flex max-w-7xl flex-col gap-7">
+	<header class="reveal">
+		<h1 class="mb-1.5 text-[38px]">Gestione Disponibilità</h1>
+		<p class="m-0 text-base text-[var(--ink60)]">
 			Imposta i giorni e le fasce orarie in cui sei disponibile per le consulenze.
 		</p>
 	</header>
 
-	<p-card class="shadow-sm border border-stone-100 rounded-3xl overflow-hidden">
-		<div class="flex flex-col gap-10 md:gap-12 md:flex-row">
-			<div class="flex flex-col gap-4 sm:gap-6">
-				<h2
-					class="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-3 whitespace-nowrap"
+	<div
+		class="reveal grid grid-cols-1 gap-10 rounded-[38px] border border-[var(--line)] bg-[var(--surface)] p-6 shadow-[var(--shs)] sm:p-8 md:grid-cols-[330px_1fr] md:gap-12 md:p-10"
+	>
+		<div class="flex flex-col gap-5">
+			<h2 class="flex items-center gap-3 text-xl">
+				<span
+					class="grid h-8 min-w-8 place-items-center rounded-full bg-[var(--v100)] font-['DM_Sans'] text-sm font-bold text-[var(--v700)]"
 				>
-					<span
-						class="flex items-center justify-center min-w-8 w-8 h-8 rounded-full bg-violet-100 text-violet-600 text-sm"
-					>
-						1
-					</span>
-					Seleziona un giorno
-				</h2>
-				<p-datepicker
-					[(ngModel)]="selectedDate"
-					inline
-					[minDate]="monthRange().start"
-					class="overflow-auto"
-					panelStyleClass="border-none! bg-transparent! p-0!"
-				/>
-			</div>
-
-			<div
-				class="flex flex-col w-full gap-4 sm:gap-6 transition-all duration-300"
-				[class.opacity-50]="!selectedDate()"
-			>
-				<h2
-					class="text-xl sm:text-2xl font-bold text-gray-900 flex items-center gap-3 whitespace-nowrap"
-				>
-					<span
-						class="flex items-center justify-center min-w-8 w-8 h-8 rounded-full bg-violet-100 text-violet-600 text-sm"
-					>
-						2
-					</span>
-					Imposta orari
-				</h2>
-
-				@if (selectedDate()) {
-					<div class="flex flex-col gap-4 animate-in fade-in slide-in-from-top-4 duration-300">
-						<p class="text-gray-600 font-medium text-lg">
-							Scegli le fasce orarie per il
-							<span class="text-violet-600 font-bold">
-								{{ selectedDate()?.toLocaleDateString() }}
-							</span>
-						</p>
-
-						<p-multiselect
-							[(ngModel)]="selectedTimeSlots"
-							[options]="timeOptions()"
-							showClear
-							placeholder="Scegli gli orari..."
-							optionDisabled="isBooked"
-							optionLabel="label"
-							optionValue="value"
-							class="w-full"
-							appendTo="body"
-							display="chip"
-							[loading]="isFetching()"
-							[maxSelectedLabels]="10"
-						/>
-
-						<div class="bg-violet-50 p-6 rounded-3xl border border-violet-100">
-							<p class="text-sm text-violet-700 flex items-start gap-3">
-								<i class="pi pi-info-circle mt-0.5 text-lg"></i>
-								<span class="leading-relaxed">
-									Puoi selezionare più fasce orarie contemporaneamente. Se non ne selezioni alcuna,
-									il giorno risulterà chiuso alle nuove prenotazioni.
-								</span>
-							</p>
-						</div>
-
-						<div class="flex flex-col justify-end gap-3 sm:flex-row">
-							<p-button
-								label="Salva Disponibilità"
-								icon="pi pi-check"
-								[rounded]="true"
-								(onClick)="onSave()"
-								[loading]="isSaving()"
-								[disabled]="isFetching()"
-							/>
-						</div>
-					</div>
-				} @else {
-					<div
-						class="flex-1 flex flex-col items-center justify-center border-2 border-dashed border-stone-200 rounded-3xl p-6 sm:p-8 text-center bg-stone-50/50 min-h-40 sm:min-h-50"
-					>
-						<i class="pi pi-clock text-3xl sm:text-4xl text-stone-300 mb-3 sm:mb-4"></i>
-						<p class="text-sm sm:text-base text-gray-500 font-medium max-w-xs">
-							Seleziona prima una data sul calendario per gestire le fasce orarie disponibili.
-						</p>
-					</div>
-				}
-			</div>
+					1
+				</span>
+				Seleziona un giorno
+			</h2>
+			<p-datepicker
+				[(ngModel)]="selectedDate"
+				inline
+				[minDate]="monthRange().start"
+				class="overflow-auto"
+				panelStyleClass="!border-none !bg-transparent !p-0"
+			/>
 		</div>
-	</p-card>
+
+		<div
+			class="flex w-full flex-col gap-5 transition-all duration-300"
+			[class.opacity-45]="!selectedDate()"
+		>
+			<h2 class="flex items-center gap-3 text-xl whitespace-nowrap">
+				<span
+					class="grid h-8 min-w-8 place-items-center rounded-full bg-[var(--v100)] font-['DM_Sans'] text-sm font-bold text-[var(--v700)]"
+				>
+					2
+				</span>
+				Imposta orari
+			</h2>
+
+			@if (selectedDate()) {
+				<div class="reveal flex flex-col gap-4.5">
+					<p class="m-0 text-lg font-semibold text-[var(--ink60)]">
+						Scegli le fasce orarie per il
+						<strong class="text-[var(--v600)]">{{ selectedDate()?.toLocaleDateString() }}</strong>
+					</p>
+
+					<p-multiselect
+						[(ngModel)]="selectedTimeSlots"
+						[options]="timeOptions()"
+						showClear
+						placeholder="Scegli gli orari..."
+						optionDisabled="isBooked"
+						optionLabel="label"
+						optionValue="value"
+						class="w-full"
+						appendTo="body"
+						display="chip"
+						[loading]="isFetching()"
+						[maxSelectedLabels]="10"
+					/>
+
+					<div
+						class="flex gap-3.5 rounded-[28px] border border-[var(--v100)] bg-[var(--v50)] p-5.5"
+					>
+						<i class="pi pi-info-circle mt-0.5 flex-none text-lg text-[var(--v600)]"></i>
+						<span class="text-[14.5px] leading-relaxed font-semibold text-[var(--v700)]">
+							Puoi selezionare più fasce orarie contemporaneamente. Se non ne selezioni alcuna, il
+							giorno risulterà chiuso alle nuove prenotazioni.
+						</span>
+					</div>
+
+					<div class="flex flex-col justify-end gap-3 sm:flex-row">
+						<button
+							type="button"
+							[disabled]="isFetching() || isSaving()"
+							class="inline-flex cursor-pointer items-center justify-center gap-2.5 rounded-full bg-[linear-gradient(135deg,var(--v500),var(--v700))] px-7.5 py-3.75 text-[15.5px] font-bold text-white shadow-[0_16px_34px_-14px_rgba(71,32,127,0.9)] transition-all hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-60"
+							(click)="onSave()"
+						>
+							@if (isSaving()) {
+								<i class="pi pi-spin pi-spinner"></i>
+							} @else {
+								<i class="pi pi-check"></i>
+							}
+							Salva Disponibilità
+						</button>
+					</div>
+				</div>
+			} @else {
+				<div
+					class="flex min-h-45 flex-1 flex-col items-center justify-center gap-3.5 rounded-3xl border-2 border-dashed border-[var(--line)] bg-[var(--g)] p-6 text-center sm:min-h-55 sm:p-8"
+				>
+					<div class="grid h-14 w-14 place-items-center rounded-full bg-white shadow-[var(--shs)]">
+						<i class="pi pi-clock text-2xl text-[var(--v300)]"></i>
+					</div>
+					<p class="m-0 max-w-[30ch] text-sm font-semibold text-[var(--ink40)]">
+						Seleziona prima una data sul calendario per gestire le fasce orarie disponibili.
+					</p>
+				</div>
+			}
+		</div>
+	</div>
 </div>

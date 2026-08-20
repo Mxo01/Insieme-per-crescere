@@ -3,8 +3,6 @@ import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { DatePicker } from "primeng/datepicker";
 import { MultiSelect } from "primeng/multiselect";
-import { ButtonModule } from "primeng/button";
-import { CardModule } from "primeng/card";
 import { MessageService } from "primeng/api";
 import { Dates } from "../../shared/services/dates/dates";
 import { timeOptions } from "../../shared/utils/constants";
@@ -13,7 +11,7 @@ import { getOneMonthFromNowRange } from "src/app/shared/utils/utils";
 
 @Component({
 	selector: "app-availability-management",
-	imports: [CommonModule, FormsModule, DatePicker, MultiSelect, ButtonModule, CardModule],
+	imports: [CommonModule, FormsModule, DatePicker, MultiSelect],
 	templateUrl: "./availability-management.html",
 	styleUrl: "./availability-management.scss"
 })

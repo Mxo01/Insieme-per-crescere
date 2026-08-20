@@ -9,6 +9,26 @@ import { environment } from "src/environments/environment.development";
 import { ConfirmDialog } from "primeng/confirmdialog";
 import { MessageService, ConfirmationService } from "primeng/api";
 import { ToastModule } from "primeng/toast";
+
+interface NavItem {
+	key: string;
+	label: string;
+	icon: string;
+	link?: string;
+	href?: string;
+}
+
+const NAV_ITEMS: NavItem[] = [
+	{ key: "home", label: "Prenotazioni", icon: "pi pi-calendar", link: "/home" },
+	{
+		key: "availability-management",
+		label: "Gestione Disponibilità",
+		icon: "pi pi-clock",
+		link: "/availability-management"
+	},
+	{ key: "about", label: "About Me", icon: "pi pi-user", link: "/about" }
+];
+
 @Component({
 	selector: "app-root",
 	imports: [
@@ -34,12 +54,17 @@ export class App {
 	readonly isSidebarVisible = signal<boolean>(false);
 
 	protected readonly portfolioUrl = environment.portfolioUrl;
+	protected readonly navItems = NAV_ITEMS;
 
 	user = this.authService.user;
 	isAuthenticated = computed(() => this.user() !== null);
 
 	toggleSidebar() {
 		this.isSidebarVisible.update(isVisible => !isVisible);
+	}
+
+	closeSidebar() {
+		this.isSidebarVisible.set(false);
 	}
 
 	async logout() {

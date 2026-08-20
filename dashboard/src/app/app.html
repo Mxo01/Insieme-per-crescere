@@ -2,38 +2,49 @@
 <p-confirm-dialog />
 
 @if (isAuthenticated()) {
-	<div class="min-h-screen bg-stone-50">
+	<div class="min-h-screen">
 		<header
-			class="h-16 bg-white border-b border-stone-200 flex items-center justify-between px-6 sticky top-0 z-10 shadow-xs"
+			class="sticky top-0 z-20 flex h-18 items-center gap-4.5 border-b border-[var(--line)] bg-[var(--surface)]/90 px-6 backdrop-blur-lg"
 		>
-			<p-button
-				icon="pi pi-bars"
-				[text]="true"
-				[rounded]="true"
-				severity="secondary"
-				(onClick)="toggleSidebar()"
-			/>
+			<button
+				type="button"
+				class="grid h-10.5 w-10.5 flex-none cursor-pointer place-items-center rounded-full border border-[var(--line)] bg-white text-[var(--ink)] transition-all hover:scale-106 hover:border-[var(--v300)] hover:bg-[var(--v50)] active:scale-94"
+				(click)="toggleSidebar()"
+			>
+				<i class="pi pi-bars text-[17px]"></i>
+			</button>
+
+			<div class="mr-auto flex items-center gap-2.5">
+				<img
+					src="favicon.ico"
+					alt="Insieme per crescere"
+					class="h-7.5 w-7.5 object-contain"
+				/>
+				<span class="font-['Outfit'] text-[15.5px] font-bold">Insieme per crescere</span>
+			</div>
 
 			@if (user()) {
-				<div class="flex items-center gap-4">
-					<div class="flex flex-col items-end sm:flex">
-						<span class="text-sm font-semibold text-gray-900">{{ user()!.displayName }}</span>
-						<span class="text-xs text-gray-500">{{ user()!.email }}</span>
+				<div class="flex items-center gap-3.5">
+					<div class="hidden flex-col items-end leading-tight sm:flex">
+						<span class="text-sm font-bold">{{ user()!.displayName }}</span>
+						<span class="text-[12.5px] font-semibold text-[var(--ink40)]">{{ user()!.email }}</span>
 					</div>
 
 					<p-avatar
 						[image]="user()!.photoURL || ''"
 						shape="circle"
 						size="large"
+						styleClass="!border-2 !border-white !shadow-[var(--shs)]"
 					/>
 
-					<p-button
-						icon="pi pi-sign-out"
-						[text]="true"
-						[rounded]="true"
-						severity="danger"
-						(onClick)="logout()"
-					/>
+					<button
+						type="button"
+						title="Esci"
+						class="grid h-10.5 w-10.5 cursor-pointer place-items-center rounded-full bg-[var(--coralsoft)] text-[var(--coral)] transition-all hover:scale-106 hover:bg-[var(--coral)] hover:text-white active:scale-94"
+						(click)="logout()"
+					>
+						<i class="pi pi-sign-out text-[17px]"></i>
+					</button>
 				</div>
 			}
 		</header>
@@ -41,50 +52,45 @@
 		<p-drawer
 			[(visible)]="isSidebarVisible"
 			header="Menu"
+			styleClass="!bg-[var(--surface)] !border-none"
 		>
-			<div class="flex flex-col gap-2 mt-4">
-				<a
-					routerLink="/home"
-					routerLinkActive="bg-violet-50 text-violet-600"
-					class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-violet-50 transition-all font-medium"
-					(click)="isSidebarVisible.set(false)"
-				>
-					<i class="pi pi-home"></i>
-					Prenotazioni
-				</a>
-				<a
-					routerLink="/availability-management"
-					routerLinkActive="bg-violet-50 text-violet-600"
-					class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-violet-50 transition-all font-medium"
-					(click)="isSidebarVisible.set(false)"
-				>
-					<i class="pi pi-calendar"></i>
-					Gestione Disponibilità
-				</a>
-				<a
-					routerLink="/about"
-					routerLinkActive="bg-violet-50 text-violet-600"
-					class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-violet-50 transition-all font-medium"
-					(click)="isSidebarVisible.set(false)"
-				>
-					<i class="pi pi-user"></i>
-					About
-				</a>
+			<div class="flex h-full flex-col gap-2">
+				@for (item of navItems; track item.key) {
+					<a
+						[routerLink]="item.link"
+						routerLinkActive="!bg-[var(--v50)] !text-[var(--v700)]"
+						#rla="routerLinkActive"
+						class="flex w-full items-center gap-3.5 rounded-[22px] px-4.5 py-3.75 text-left text-[15.5px] font-bold text-[var(--ink60)] transition-all"
+						(click)="closeSidebar()"
+					>
+						<span
+							class="h-2.5 w-2.5 flex-none rounded-full transition-colors"
+							[class]="rla.isActive ? 'bg-[var(--v500)]' : 'bg-[rgba(36,22,52,0.16)]'"
+						></span>
+						{{ item.label }}
+					</a>
+				}
 				<a
 					[href]="portfolioUrl"
 					target="_blank"
 					rel="noopener noreferrer"
-					routerLinkActive="bg-violet-50 text-violet-600"
-					class="flex items-center gap-3 px-4 py-3 rounded-xl text-gray-600 hover:bg-violet-50 transition-all font-medium"
-					(click)="isSidebarVisible.set(false)"
+					class="flex w-full items-center gap-3.5 rounded-[22px] px-4.5 py-3.75 text-left text-[15.5px] font-bold text-[var(--ink60)] transition-all hover:bg-[var(--v50)] hover:text-[var(--v700)]"
+					(click)="closeSidebar()"
 				>
-					<i class="pi pi-external-link"></i>
+					<i class="pi pi-external-link text-base"></i>
 					Portfolio
 				</a>
+
+				<div class="mt-auto rounded-[28px] border border-[var(--v100)] bg-[var(--v50)] p-5">
+					<div class="mb-1.5 font-['Outfit'] text-base font-bold">Buona giornata 💜</div>
+					<p class="m-0 text-[13.5px] leading-relaxed font-semibold text-[var(--ink60)]">
+						Qui trovi prenotazioni, disponibilità e la tua pagina About.
+					</p>
+				</div>
 			</div>
 		</p-drawer>
 
-		<main class="p-8">
+		<main class="p-6 sm:p-8">
 			<router-outlet />
 		</main>
 	</div>

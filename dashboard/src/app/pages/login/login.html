@@ -1,17 +1,35 @@
-<div class="h-screen flex items-center justify-center bg-violet-50">
+<div
+	class="relative flex min-h-screen items-center justify-center overflow-hidden p-6"
+	style="background: radial-gradient(120% 90% at 15% 0%, var(--v50), var(--g) 60%)"
+>
 	<div
-		class="bg-white p-12 rounded-3xl shadow-xl border border-stone-100 flex flex-col items-center gap-8 max-w-md w-full mx-4"
+		class="float-slow absolute -top-30 -left-22.5 h-105 w-105 rounded-full bg-[radial-gradient(circle_at_40%_40%,var(--v100),rgba(234,223,249,0))]"
+	></div>
+	<div
+		class="spin-slow absolute -right-15 -bottom-25 h-70 w-70 rounded-full border-2 border-dashed border-[var(--v300)] opacity-45"
+	></div>
+
+	<div
+		class="reveal relative flex w-full max-w-108 flex-col items-center gap-6.5 rounded-[40px] border border-[var(--line)] bg-[var(--surface)] p-12 shadow-[var(--shl)]"
 	>
-		<div class="text-center">
-			<h1 class="text-3xl font-bold text-gray-900 mb-2">Area Riservata</h1>
-			<p class="text-gray-500">Accedi per gestire le prenotazioni di Insieme per Crescere.</p>
-		</div>
-		<p-button
-			label="Accedi con Google"
-			icon="pi pi-google"
-			[rounded]="true"
-			size="large"
-			(onClick)="login()"
+		<img
+			src="favicon.ico"
+			alt="Insieme per crescere"
+			class="h-13 w-13 object-contain"
 		/>
+		<div class="text-center">
+			<h1 class="mb-2 text-[30px]">Area Riservata</h1>
+			<p class="text-[15.5px] leading-relaxed text-[var(--ink60)]">
+				Accedi per gestire le prenotazioni di Insieme per crescere.
+			</p>
+		</div>
+		<button
+			type="button"
+			class="inline-flex w-full cursor-pointer items-center justify-center gap-2.75 rounded-full bg-[linear-gradient(135deg,var(--v500),var(--v700))] px-7 py-4 text-base font-bold text-white shadow-[0_18px_36px_-14px_rgba(71,32,127,0.9)] transition-all hover:-translate-y-0.5 active:scale-97"
+			(click)="login()"
+		>
+			<i class="pi pi-google text-[19px]"></i>
+			Accedi con Google
+		</button>
 	</div>
 </div>

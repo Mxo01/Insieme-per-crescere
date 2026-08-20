@@ -17,17 +17,17 @@ import { provideAppCheck, initializeAppCheck, ReCaptchaV3Provider } from "@angul
 const primengPreset = definePreset(Aura, {
 	semantic: {
 		primary: {
-			50: "{violet.50}",
-			100: "{violet.100}",
-			200: "{violet.200}",
-			300: "{violet.300}",
-			400: "{violet.400}",
-			500: "{violet.500}",
-			600: "{violet.600}",
-			700: "{violet.700}",
-			800: "{violet.800}",
-			900: "{violet.900}",
-			950: "{violet.950}"
+			50: "#f6f1fc",
+			100: "#eadff9",
+			200: "#d9c3f3",
+			300: "#b58be8",
+			400: "#8a58d1",
+			500: "#7237be",
+			600: "#5d2b9e",
+			700: "#47207f",
+			800: "#341864",
+			900: "#24123b",
+			950: "#180c28"
 		}
 	}
 });

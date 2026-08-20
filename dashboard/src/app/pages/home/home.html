@@ -1,148 +1,306 @@
-<div class="flex flex-col gap-8 max-w-7xl mx-auto">
-	<header>
-		<h1 class="text-3xl font-bold text-gray-900">Prenotazioni</h1>
-		<p class="text-gray-500">Gestisci le richieste di consulenza e gli appuntamenti.</p>
+<div class="mx-auto flex max-w-7xl flex-col gap-7">
+	<header class="reveal flex flex-wrap items-end justify-between gap-5">
+		<div>
+			<h1 class="mb-1.5 text-[38px]">Prenotazioni</h1>
+			<p class="m-0 text-base text-[var(--ink60)]">
+				Gestisci le richieste di consulenza e gli appuntamenti.
+			</p>
+		</div>
 	</header>
 
-	<div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-		<p-card class="border bg-violet-50! border-violet-500">
-			<div class="flex items-center gap-4">
-				<i
-					class="pi pi-calendar text-2xl! text-violet-600 bg-violet-200 rounded-full py-3 px-4"
-				></i>
+	<div class="reveal grid grid-cols-1 gap-5 md:grid-cols-3">
+		<div
+			class="relative overflow-hidden rounded-[28px] bg-[linear-gradient(140deg,var(--v600),var(--v900))] p-6.5 text-white shadow-[var(--shl)] transition-transform hover:-translate-y-1.5"
+		>
+			<div class="absolute -top-12.5 -right-10 h-37.5 w-37.5 rounded-full bg-white/9"></div>
+			<div class="relative flex items-center gap-4.5">
+				<div class="grid h-14 w-14 flex-none place-items-center rounded-2xl bg-white/16">
+					<i class="pi pi-calendar text-2xl"></i>
+				</div>
 				<div>
-					<p class="font-medium text-violet-600 whitespace-nowrap">Totale Prenotazioni</p>
-					<p class="text-2xl font-bold text-violet-600">{{ totalBookings() }}</p>
+					<div
+						class="text-[13px] font-bold tracking-[0.08em] whitespace-nowrap text-white/75 uppercase"
+					>
+						Totale Prenotazioni
+					</div>
+					<div class="font-['Outfit'] text-4xl leading-tight font-bold">{{ totalBookings() }}</div>
 				</div>
 			</div>
-		</p-card>
+		</div>
 
-		<p-card class="border bg-amber-50! border-amber-500">
-			<div class="flex items-center gap-4">
-				<i class="pi pi-clock text-2xl! text-amber-600 bg-amber-200 rounded-full py-3 px-4"></i>
+		<div
+			class="relative overflow-hidden rounded-[28px] border border-[rgba(232,160,60,0.3)] bg-[var(--ochresoft)] p-6.5 shadow-[var(--shs)] transition-all hover:-translate-y-1.5 hover:shadow-[var(--shm)]"
+		>
+			<div
+				class="absolute -top-12.5 -right-10 h-37.5 w-37.5 rounded-full bg-[rgba(232,160,60,0.16)]"
+			></div>
+			<div class="relative flex items-center gap-4.5">
+				<div
+					class="grid h-14 w-14 flex-none place-items-center rounded-2xl bg-[var(--ochre)] text-white"
+				>
+					<i class="pi pi-clock text-2xl"></i>
+				</div>
 				<div>
-					<p class="text-sm font-medium text-amber-600 whitespace-nowrap">In Attesa</p>
-					<p class="text-2xl font-bold text-amber-600">{{ pendingBookings() }}</p>
+					<div
+						class="text-[13px] font-bold tracking-[0.08em] whitespace-nowrap text-[#A96C12] uppercase"
+					>
+						In Attesa
+					</div>
+					<div class="font-['Outfit'] text-4xl leading-tight font-bold text-[#8A5407]">
+						{{ pendingBookings() }}
+					</div>
 				</div>
 			</div>
-		</p-card>
+		</div>
 
-		<p-card class="border bg-emerald-50! border-emerald-500">
-			<div class="flex items-center gap-4">
-				<i
-					class="pi pi-check-circle text-2xl! text-emerald-600 bg-emerald-200 rounded-full py-3 px-4"
-				></i>
+		<div
+			class="relative overflow-hidden rounded-[28px] border border-[rgba(44,158,154,0.28)] bg-[var(--tealsoft)] p-6.5 shadow-[var(--shs)] transition-all hover:-translate-y-1.5 hover:shadow-[var(--shm)]"
+		>
+			<div
+				class="absolute -top-12.5 -right-10 h-37.5 w-37.5 rounded-full bg-[rgba(44,158,154,0.14)]"
+			></div>
+			<div class="relative flex items-center gap-4.5">
+				<div
+					class="grid h-14 w-14 flex-none place-items-center rounded-2xl bg-[var(--teal)] text-white"
+				>
+					<i class="pi pi-check-circle text-2xl"></i>
+				</div>
 				<div>
-					<p class="text-sm font-medium text-emerald-600 whitespace-nowrap">Confermate</p>
-					<p class="text-2xl font-bold text-emerald-600">{{ acceptedBookings() }}</p>
+					<div
+						class="text-[13px] font-bold tracking-[0.08em] whitespace-nowrap text-[#1F7A77] uppercase"
+					>
+						Confermate
+					</div>
+					<div class="font-['Outfit'] text-4xl leading-tight font-bold text-[#155E5B]">
+						{{ acceptedBookings() }}
+					</div>
 				</div>
 			</div>
-		</p-card>
+		</div>
 	</div>
 
-	<p-table
-		[value]="bookings()"
-		stripedRows
-		class="shadow-sm"
-		[rows]="20"
-		[paginator]="true"
-		[rowsPerPageOptions]="[10, 20, 50]"
+	<div
+		class="reveal grid gap-5"
+		[class.md:grid-cols-3]="agendaOpen()"
 	>
-		<ng-template #header>
-			<tr>
-				<th>Azioni</th>
-				<th>Stato</th>
-				<th>Data</th>
-				<th>Ora</th>
-				<th>Cliente</th>
-				<th>Email</th>
-				<th>Telefono</th>
-			</tr>
-			<tr>
-				<th></th>
-				<th>
-					<p-columnFilter
-						type="boolean"
-						field="isAccepted"
-					/>
-				</th>
-				<th>
-					<p-columnFilter
-						type="text"
-						field="date"
-						ariaLabel="Filter Date"
-						filterOn="input"
-					/>
-				</th>
-				<th>
-					<p-columnFilter
-						type="text"
-						field="time"
-						ariaLabel="Filter Time"
-						filterOn="input"
-					/>
-				</th>
-				<th>
-					<p-columnFilter
-						type="text"
-						field="name"
-						ariaLabel="Filter Name"
-						filterOn="input"
-					/>
-				</th>
-				<th>
-					<p-columnFilter
-						type="text"
-						field="email"
-						ariaLabel="Filter email"
-						filterOn="input"
-					/>
-				</th>
-				<th></th>
-			</tr>
-		</ng-template>
-		<ng-template
-			#body
-			let-booking
+		<div
+			class="flex flex-col rounded-[30px] border border-[var(--line)] bg-[var(--surface)] p-6.5 shadow-[var(--shs)] md:col-span-2"
 		>
-			<tr class="[&>td]:text-sm">
-				<td>
-					<p-button
-						icon="pi pi-ellipsis-v"
-						[rounded]="true"
-						[text]="true"
-						severity="secondary"
-						(click)="onRowActionsClick($event, booking)"
-					/>
-				</td>
-				<td class="whitespace-nowrap">
-					<p-tag
-						[severity]="booking.isAccepted ? 'success' : 'warn'"
-						[value]="booking.isAccepted ? 'Accettata' : 'In attesa'"
-						[rounded]="true"
-					/>
-				</td>
-				<td>{{ booking.date }}</td>
-				<td>{{ booking.time }}</td>
-				<td>{{ booking.name }} {{ booking.lastName }}</td>
-				<td>{{ booking.email }}</td>
-				<td>{{ booking.phone }}</td>
-			</tr>
-		</ng-template>
-		<ng-template #emptymessage>
-			<tr>
-				<td
-					colspan="7"
-					class="text-center py-12"
-				>
-					<div class="flex flex-col items-center gap-4 text-stone-400">
-						<i class="pi pi-inbox text-4xl"></i>
-						<p>Nessuna prenotazione trovata.</p>
+			<div class="mb-5 flex items-baseline justify-between">
+				<h2 class="text-[19px]">Prenotazioni nel tempo</h2>
+				<span class="text-[13px] font-bold text-[var(--ink40)]">Ultimi 12 mesi</span>
+			</div>
+			<div class="h-52">
+				<p-chart
+					type="bar"
+					[data]="chartData()"
+					[options]="chartOptions"
+					height="100%"
+				/>
+			</div>
+		</div>
+
+		@if (agendaOpen()) {
+			<div
+				class="reveal flex flex-col gap-4 rounded-[30px] border border-[var(--line)] bg-[var(--surface)] p-6.5 shadow-[var(--shs)]"
+			>
+				<div class="flex items-baseline justify-between">
+					<h2 class="text-[19px]">Prossimi appuntamenti</h2>
+					<span class="text-[13px] font-bold text-[var(--v600)]">Solo confermate</span>
+				</div>
+
+				<div class="flex flex-col gap-2">
+					@for (booking of agendaPagedBookings(); track booking.id) {
+						<button
+							type="button"
+							class="flex cursor-pointer items-center gap-4 rounded-[22px] bg-[var(--g)] p-3.5 text-left transition-all hover:translate-x-1 hover:bg-[var(--v50)]"
+							(click)="openBookingNotes(booking)"
+						>
+							<div class="w-13 flex-none rounded-2xl bg-white py-2 text-center shadow-[var(--shs)]">
+								<div class="font-['Outfit'] text-lg leading-none font-bold">
+									{{ booking.date.split("/")[0] }}
+								</div>
+								<div class="text-[11px] font-bold text-[var(--ink40)] uppercase">
+									{{ booking.date.split("/")[1] }}/{{ booking.date.split("/")[2].slice(2) }}
+								</div>
+							</div>
+							<div class="min-w-0">
+								<div class="truncate text-[15px] font-bold">
+									{{ booking.name }} {{ booking.lastName }}
+								</div>
+								<div class="text-[13px] font-semibold text-[var(--ink40)]">
+									{{ booking.time }}
+								</div>
+							</div>
+							<span class="ml-auto grid flex-none place-items-center text-[var(--v600)]">
+								<i class="pi pi-info-circle"></i>
+							</span>
+						</button>
+					} @empty {
+						<p class="py-8 text-center text-sm font-semibold text-[var(--ink40)]">
+							Nessun appuntamento confermato in programma.
+						</p>
+					}
+				</div>
+
+				<div class="mt-auto flex items-center justify-between border-t border-[var(--line)] pt-4">
+					<span class="text-[13px] font-bold text-[var(--ink40)]">
+						Pagina {{ agendaPage() + 1 }} di {{ agendaTotalPages() }}
+					</span>
+					<div class="flex items-center gap-2">
+						@for (page of agendaPageIndexes(); track page) {
+							<button
+								type="button"
+								class="h-2 cursor-pointer rounded-full transition-all"
+								[class]="
+									page === agendaPage() ? 'w-5.5 bg-[var(--v500)]' : 'w-2 bg-[rgba(36,22,52,0.16)]'
+								"
+								(click)="agendaGoToPage(page)"
+							>
+								<span class="sr-only">Pagina {{ page + 1 }}</span>
+							</button>
+						}
 					</div>
-				</td>
-			</tr>
-		</ng-template>
-	</p-table>
+					<div class="flex gap-1.5">
+						<button
+							type="button"
+							class="grid h-8 w-8 cursor-pointer place-items-center rounded-full border border-[var(--line)] bg-white text-[var(--ink40)] transition-colors hover:bg-[var(--v50)] hover:text-[var(--v600)]"
+							(click)="agendaPrevPage()"
+						>
+							<i class="pi pi-chevron-left text-xs"></i>
+						</button>
+						<button
+							type="button"
+							class="grid h-8 w-8 cursor-pointer place-items-center rounded-full border border-[var(--line)] bg-white text-[var(--ink40)] transition-colors hover:bg-[var(--v50)] hover:text-[var(--v600)]"
+							(click)="agendaNextPage()"
+						>
+							<i class="pi pi-chevron-right text-xs"></i>
+						</button>
+					</div>
+				</div>
+			</div>
+		}
+	</div>
+
+	<div class="-mb-2 flex justify-end">
+		<button
+			type="button"
+			class="inline-flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-[14px] font-bold text-[var(--ink60)] transition-colors hover:bg-[var(--v50)] hover:text-[var(--v600)]"
+			(click)="toggleAgenda()"
+		>
+			<i class="pi pi-calendar"></i>
+			{{ agendaOpen() ? "Nascondi agenda" : "Mostra agenda" }}
+		</button>
+	</div>
+
+	<div
+		class="reveal overflow-hidden rounded-[30px] border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shs)]"
+	>
+		<p-table
+			[value]="bookings()"
+			stripedRows
+			[rows]="20"
+			[paginator]="true"
+			[rowsPerPageOptions]="[10, 20, 50]"
+		>
+			<ng-template #header>
+				<tr>
+					<th>Azioni</th>
+					<th>Stato</th>
+					<th>Data</th>
+					<th>Ora</th>
+					<th>Cliente</th>
+					<th>Email</th>
+					<th>Telefono</th>
+				</tr>
+				<tr>
+					<th></th>
+					<th>
+						<p-columnFilter
+							type="boolean"
+							field="isAccepted"
+						/>
+					</th>
+					<th>
+						<p-columnFilter
+							type="text"
+							field="date"
+							ariaLabel="Filter Date"
+							filterOn="input"
+						/>
+					</th>
+					<th>
+						<p-columnFilter
+							type="text"
+							field="time"
+							ariaLabel="Filter Time"
+							filterOn="input"
+						/>
+					</th>
+					<th>
+						<p-columnFilter
+							type="text"
+							field="name"
+							ariaLabel="Filter Name"
+							filterOn="input"
+						/>
+					</th>
+					<th>
+						<p-columnFilter
+							type="text"
+							field="email"
+							ariaLabel="Filter email"
+							filterOn="input"
+						/>
+					</th>
+					<th></th>
+				</tr>
+			</ng-template>
+			<ng-template
+				#body
+				let-booking
+			>
+				<tr class="[&>td]:text-sm">
+					<td>
+						<p-button
+							icon="pi pi-ellipsis-v"
+							[rounded]="true"
+							[text]="true"
+							severity="secondary"
+							(click)="onRowActionsClick($event, booking)"
+						/>
+					</td>
+					<td class="whitespace-nowrap">
+						<p-tag
+							[severity]="booking.isAccepted ? 'success' : 'warn'"
+							[value]="booking.isAccepted ? 'Accettata' : 'In attesa'"
+							[rounded]="true"
+						/>
+					</td>
+					<td>{{ booking.date }}</td>
+					<td>{{ booking.time }}</td>
+					<td>{{ booking.name }} {{ booking.lastName }}</td>
+					<td>{{ booking.email }}</td>
+					<td>{{ booking.phone }}</td>
+				</tr>
+			</ng-template>
+			<ng-template #emptymessage>
+				<tr>
+					<td
+						colspan="7"
+						class="text-center py-12"
+					>
+						<div class="flex flex-col items-center gap-4 text-[var(--ink40)]">
+							<div class="grid h-16 w-16 place-items-center rounded-full bg-[var(--g)]">
+								<i class="pi pi-inbox text-2xl"></i>
+							</div>
+							<p class="m-0 font-semibold">Nessuna prenotazione trovata.</p>
+						</div>
+					</td>
+				</tr>
+			</ng-template>
+		</p-table>
+	</div>
 </div>
 
 <p-menu

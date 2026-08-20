@@ -35,6 +35,50 @@ export function generateGoogleCalendarLink(booking: BookingDto) {
 	return googleUrl;
 }
 
+// Firestore documents are capped at 1MiB, and this project has no Firebase
+// Storage: images are stored as base64 directly on the `assets/info` doc
+// (like the CV). Resizing/re-encoding client-side on an offscreen canvas
+// keeps the upload well under that limit while staying as close to the
+// original quality as reasonably possible.
+export function resizeImageToBase64(
+	file: File,
+	maxDimension = 1600,
+	quality = 0.9
+): Promise<string> {
+	return new Promise((resolve, reject) => {
+		const objectUrl = URL.createObjectURL(file);
+		const image = new Image();
+
+		image.onload = () => {
+			URL.revokeObjectURL(objectUrl);
+
+			const scale = Math.min(1, maxDimension / Math.max(image.width, image.height));
+			const width = Math.round(image.width * scale);
+			const height = Math.round(image.height * scale);
+
+			const canvas = document.createElement("canvas");
+			canvas.width = width;
+			canvas.height = height;
+
+			const context = canvas.getContext("2d");
+			if (!context) {
+				reject(new Error("Impossibile elaborare l'immagine."));
+				return;
+			}
+
+			context.drawImage(image, 0, 0, width, height);
+			resolve(canvas.toDataURL("image/jpeg", quality));
+		};
+
+		image.onerror = () => {
+			URL.revokeObjectURL(objectUrl);
+			reject(new Error("Impossibile leggere l'immagine selezionata."));
+		};
+
+		image.src = objectUrl;
+	});
+}
+
 export function convertFileToBase64(file: File): Promise<string> {
 	return new Promise((resolve, reject) => {
 		const reader = new FileReader();
