@@ -2,7 +2,8 @@ import { inject, Injectable, signal } from "@angular/core";
 import {
 	GoogleAuthProvider,
 	Auth,
-	signInWithPopup,
+	signInWithRedirect,
+	getRedirectResult,
 	User,
 	signOut,
 	authState,
@@ -27,25 +28,40 @@ export class AuthService {
 
 	constructor() {
 		this.authReady = new Promise(resolve => {
-			authState(this.auth)
-				.pipe(take(1))
-				.subscribe({
-					next: user => {
-						this.validateUser(user).finally(() => {
-							this.isAuthLoading.set(false);
-							resolve();
+			// getRedirectResult lets the SDK finish processing a pending
+			// signInWithRedirect() before we read the auth state below; we
+			// don't need its return value, authState() already reflects the
+			// signed-in user once this settles.
+			getRedirectResult(this.auth)
+				.catch(() => null)
+				.finally(() => {
+					authState(this.auth)
+						.pipe(take(1))
+						.subscribe({
+							next: user => {
+								this.validateUser(user).finally(() => {
+									this.isAuthLoading.set(false);
+									resolve();
+								});
+							}
 						});
-					}
 				});
 		});
 	}
 
+	// Using a full-page redirect instead of a popup: popups need
+	// third-party storage access to relay the auth result back to the
+	// opener, which privacy-focused browsers (Brave, Safari, Chrome with
+	// tracking protection) block outright, breaking login. A redirect is a
+	// normal top-level navigation and doesn't have that problem.
 	public async signInWithGoogle() {
 		await setPersistence(this.auth, browserSessionPersistence);
 
-		return signInWithPopup(this.auth, new GoogleAuthProvider())
-			.then(userCredential => this.validateUser(userCredential.user))
-			.catch(() => this.user.set(null));
+		try {
+			await signInWithRedirect(this.auth, new GoogleAuthProvider());
+		} catch {
+			this.user.set(null);
+		}
 	}
 
 	public async signOut() {
