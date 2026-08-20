@@ -1,4 +1,13 @@
-import { Component, computed, inject } from "@angular/core";
+import {
+	Component,
+	computed,
+	inject,
+	signal,
+	DestroyRef,
+	viewChild,
+	ElementRef,
+	afterNextRender
+} from "@angular/core";
 import { ButtonModule } from "primeng/button";
 import { RouterLink } from "@angular/router";
 import { TagModule } from "primeng/tag";
@@ -14,9 +23,47 @@ import { MessageService } from "primeng/api";
 export class Home {
 	private readonly assetsService = inject(Assets);
 	private readonly messageService = inject(MessageService);
+	private readonly destroyRef = inject(DestroyRef);
 
 	assets = this.assetsService.getAssets();
 	email = computed(() => "pedagogista.insiemepercrescere@gmail.com");
+
+	// Nav hides on scroll-down and reappears on scroll-up, like most
+	// content-heavy marketing sites — always visible near the top (<80px)
+	// regardless of direction, so it doesn't flicker while reading the hero.
+	//
+	// Animating `top` rather than `transform`: a `position: sticky` element
+	// that also has `backdrop-blur` and an active `transform` hits a real
+	// compositing bug in Chromium (confirmed via devtools — layout/
+	// `getBoundingClientRect` stayed correct, but the painted frame didn't),
+	// so the nav visually ended up glued to the bottom of the viewport.
+	// Sliding it away via `top` (its own stick offset) avoids that combo.
+	readonly navRef = viewChild<ElementRef<HTMLElement>>("navEl");
+	readonly isNavHidden = signal(false);
+	readonly navHeight = signal(0);
+	private lastScrollY = 0;
+
+	constructor() {
+		afterNextRender(() => this.updateNavHeight());
+
+		const onScroll = () => {
+			const currentY = window.scrollY;
+			this.isNavHidden.set(currentY >= 80 && currentY > this.lastScrollY);
+			this.lastScrollY = currentY;
+		};
+		const onResize = () => this.updateNavHeight();
+
+		window.addEventListener("scroll", onScroll, { passive: true });
+		window.addEventListener("resize", onResize);
+		this.destroyRef.onDestroy(() => {
+			window.removeEventListener("scroll", onScroll);
+			window.removeEventListener("resize", onResize);
+		});
+	}
+
+	private updateNavHeight() {
+		this.navHeight.set(this.navRef()?.nativeElement.offsetHeight ?? 0);
+	}
 
 	// Handled manually instead of leaving it to plain anchor navigation +
 	// the router's anchorScrolling: a plain `<a href="#...">` click is a

@@ -1,5 +1,31 @@
 import { BookingDto } from "../services/bookings/bookings.model";
 
+// navigator.clipboard is only reliably available in a secure, top-level
+// browsing context: it's silently undefined in some embedded/iframe
+// previews, so writeText() would resolve into nothing and no feedback
+// would ever show. Falls back to the older execCommand approach there.
+export async function copyTextToClipboard(text: string): Promise<void> {
+	if (navigator.clipboard && window.isSecureContext) {
+		await navigator.clipboard.writeText(text);
+		return;
+	}
+
+	const textarea = document.createElement("textarea");
+	textarea.value = text;
+	textarea.style.position = "fixed";
+	textarea.style.opacity = "0";
+	document.body.appendChild(textarea);
+	textarea.focus();
+	textarea.select();
+
+	try {
+		const succeeded = document.execCommand("copy");
+		if (!succeeded) throw new Error("execCommand('copy') failed");
+	} finally {
+		document.body.removeChild(textarea);
+	}
+}
+
 export function sendConfirmationEmail(booking: BookingDto) {
 	const googleCalendarLink = generateGoogleCalendarLink(booking);
 	const subject = encodeURIComponent(`Conferma appuntamento: ${booking.date}`);

@@ -1,6 +1,10 @@
 <div class="min-h-screen text-[var(--ink)]">
 	<!-- Nav -->
-	<nav class="sticky top-0 z-40 border-b border-[var(--line)] bg-[var(--g)]/90 backdrop-blur-lg">
+	<nav
+		#navEl
+		class="sticky z-40 border-b border-[var(--line)] bg-[var(--g)]/90 backdrop-blur-lg transition-[top] duration-300"
+		[style.top.px]="isNavHidden() ? -navHeight() : 0"
+	>
 		<div class="mx-auto flex max-w-6xl items-center gap-7 px-6 py-3.5">
 			<div class="mr-auto flex items-center gap-2.5">
 				<img

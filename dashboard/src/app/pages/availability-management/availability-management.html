@@ -48,20 +48,32 @@
 						<strong class="text-[var(--v600)]">{{ selectedDate()?.toLocaleDateString() }}</strong>
 					</p>
 
-					<p-multiselect
-						[(ngModel)]="selectedTimeSlots"
-						[options]="timeOptions()"
-						showClear
-						placeholder="Scegli gli orari..."
-						optionDisabled="isBooked"
-						optionLabel="label"
-						optionValue="value"
-						class="w-full"
-						appendTo="body"
-						display="chip"
-						[loading]="isFetching()"
-						[maxSelectedLabels]="10"
-					/>
+					@if (isFetching()) {
+						<div class="grid h-32 place-items-center">
+							<i class="pi pi-spin pi-spinner text-2xl text-[var(--v500)]"></i>
+						</div>
+					} @else {
+						<div class="grid grid-cols-2 gap-3 sm:grid-cols-3 sm:gap-3.5">
+							@for (option of timeOptions(); track option.value) {
+								@let isSelected = selectedTimeSlots().includes(option.value);
+								<button
+									type="button"
+									class="rounded-full border-[1.5px] px-3 py-4 text-center text-base font-bold transition-all"
+									[class]="
+										option.isBooked
+											? 'cursor-not-allowed bg-[rgba(36,22,52,0.06)] border-transparent text-[var(--ink40)] line-through'
+											: isSelected
+												? 'cursor-pointer border-transparent bg-[linear-gradient(140deg,var(--v500),var(--v700))] text-white shadow-[0_14px_28px_-10px_rgba(114,55,190,0.75)] -translate-y-0.5'
+												: 'cursor-pointer bg-white border-[var(--line)] text-[var(--ink60)] hover:border-[var(--v300)]'
+									"
+									[disabled]="option.isBooked"
+									(click)="onToggleTimeSlot(option.value)"
+								>
+									{{ option.label }}
+								</button>
+							}
+						</div>
+					}
 
 					<div
 						class="flex gap-3.5 rounded-[28px] border border-[var(--v100)] bg-[var(--v50)] p-5.5"

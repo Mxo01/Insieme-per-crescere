@@ -268,3 +268,129 @@ p-datepicker.prev-locked .p-datepicker-prev-button {
 	pointer-events: none;
 	opacity: 0.35;
 }
+
+// Dialogs (plain p-dialog + the shared confirm-dialog panel): rounded,
+// soft-shadowed cards matching the rest of the design instead of PrimeNG's
+// sharper, flatter default.
+.p-dialog,
+.p-confirmdialog {
+	border: none;
+	border-radius: 32px;
+	box-shadow: var(--shl);
+	overflow: hidden;
+}
+
+.p-dialog-header {
+	padding: 1.75rem 1.75rem 0.5rem;
+}
+
+.p-dialog-content {
+	padding: 0.5rem 1.75rem 1.75rem;
+}
+
+.p-dialog-title {
+	font-family: "Outfit", system-ui, sans-serif;
+	font-weight: 700;
+}
+
+.p-confirmdialog {
+	.p-dialog-content {
+		display: flex;
+		flex-direction: column;
+		gap: 1.5rem;
+		padding: 1.75rem;
+	}
+
+	.p-confirmdialog-icon {
+		font-size: 1.4rem;
+		color: var(--v500);
+	}
+
+	.p-confirmdialog-message {
+		font-weight: 600;
+		color: var(--ink60);
+	}
+}
+
+// Bookings table (see dashboard/home.html): plain white rows with a hair
+// divider instead of PrimeNG's default zebra striping, small-caps headers,
+// and a pill-styled paginator to match the rest of the app.
+.dashboard-table {
+	.p-datatable-thead > tr > th {
+		background: transparent;
+		border: none;
+		border-bottom: 1px solid var(--line);
+		padding: 0.9rem 1.5rem;
+		font-size: 12px;
+		font-weight: 700;
+		letter-spacing: 0.06em;
+		color: var(--ink40);
+		text-transform: uppercase;
+	}
+
+	.p-datatable-tbody > tr {
+		background: transparent;
+		transition: background-color 0.15s;
+	}
+
+	.p-datatable-tbody > tr > td {
+		border: none;
+		border-bottom: 1px solid var(--line);
+		padding: 1rem 1.5rem;
+		font-size: 14px;
+		font-weight: 600;
+		color: var(--ink);
+	}
+
+	.p-datatable-tbody > tr:hover > td {
+		background: var(--v50);
+	}
+
+	.p-datatable-tbody > tr:last-child > td {
+		border-bottom: none;
+	}
+}
+
+.p-paginator {
+	gap: 0.5rem;
+	border: none;
+	background: transparent;
+	padding: 1.25rem 1.5rem;
+}
+
+.p-paginator-current {
+	margin-right: auto;
+	font-size: 13px;
+	font-weight: 700;
+	color: var(--ink40);
+}
+
+.p-paginator-pages {
+	display: flex;
+	gap: 0.35rem;
+}
+
+.p-paginator-page,
+.p-paginator-prev,
+.p-paginator-next {
+	min-width: 2rem;
+	height: 2rem;
+	border: 1px solid var(--line);
+	border-radius: 999px;
+	background: #fff;
+	color: var(--ink40);
+	transition: all 0.15s;
+}
+
+.p-paginator-page:hover,
+.p-paginator-prev:not(.p-disabled):hover,
+.p-paginator-next:not(.p-disabled):hover {
+	background: var(--v50);
+	color: var(--v600);
+}
+
+.p-paginator-page-selected {
+	border-color: transparent;
+	background: var(--v500);
+	color: #fff;
+}

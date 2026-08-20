@@ -2,7 +2,6 @@ import { Component, inject, signal, effect, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { DatePicker, DatePickerMonthChangeEvent } from "primeng/datepicker";
-import { MultiSelect } from "primeng/multiselect";
 import { MessageService } from "primeng/api";
 import { Dates } from "../../shared/services/dates/dates";
 import { timeOptions } from "../../shared/utils/constants";
@@ -11,7 +10,7 @@ import { getOneMonthFromNowRange } from "src/app/shared/utils/utils";
 
 @Component({
 	selector: "app-availability-management",
-	imports: [CommonModule, FormsModule, DatePicker, MultiSelect],
+	imports: [CommonModule, FormsModule, DatePicker],
 	templateUrl: "./availability-management.html",
 	styleUrl: "./availability-management.scss"
 })
@@ -73,6 +72,12 @@ export class AvailabilityManagement {
 	onMonthChange(event: DatePickerMonthChangeEvent) {
 		if (event.month === undefined || event.year === undefined) return;
 		this.viewedMonth.set({ month: event.month, year: event.year });
+	}
+
+	onToggleTimeSlot(value: string) {
+		this.selectedTimeSlots.update(slots =>
+			slots.includes(value) ? slots.filter(slot => slot !== value) : [...slots, value]
+		);
 	}
 
 	onSave() {

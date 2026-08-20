@@ -15,15 +15,21 @@ import { Select } from "primeng/select";
 import { timeOptions } from "src/app/shared/utils/constants";
 import { ConfirmDialogModule } from "primeng/confirmdialog";
 import { Dates } from "src/app/shared/services/dates/dates";
-import { sendConfirmationEmail, getOneMonthFromNowRange } from "src/app/shared/utils/utils";
+import {
+	sendConfirmationEmail,
+	getOneMonthFromNowRange,
+	copyTextToClipboard
+} from "src/app/shared/utils/utils";
 import {
 	getBookingsChartData,
 	getMonthlyBookingCounts,
 	getUpcomingConfirmedBookings,
-	bookingsChartOptions
+	bookingsChartOptions,
+	barValueLabelsPlugin
 } from "./home.utils";
 
 const AGENDA_PAGE_SIZE = 3;
+type StatusFilter = "all" | "pending" | "accepted";
 
 @Component({
 	imports: [
@@ -63,9 +69,37 @@ export class Home {
 	readonly monthlyBookingCounts = computed(() => getMonthlyBookingCounts(this.bookings()));
 	readonly chartData = computed(() => getBookingsChartData(this.monthlyBookingCounts()));
 	readonly chartOptions = bookingsChartOptions;
+	readonly chartPlugins = [barValueLabelsPlugin];
 	readonly hasChartData = computed(() =>
 		this.monthlyBookingCounts().some(month => month.count > 0)
 	);
+
+	// Table toolbar: a single search box (name/email) plus a status segment,
+	// replacing the old per-column filter row.
+	readonly searchQuery = signal("");
+	readonly statusFilter = signal<StatusFilter>("all");
+	readonly statusFilterOptions: { value: StatusFilter; label: string }[] = [
+		{ value: "all", label: "Tutte" },
+		{ value: "pending", label: "In attesa" },
+		{ value: "accepted", label: "Accettate" }
+	];
+
+	readonly filteredBookings = computed(() => {
+		const query = this.searchQuery().trim().toLowerCase();
+		const status = this.statusFilter();
+
+		return this.bookings().filter(booking => {
+			if (status === "pending" && booking.isAccepted) return false;
+			if (status === "accepted" && !booking.isAccepted) return false;
+			if (!query) return true;
+
+			return (
+				booking.name.toLowerCase().includes(query) ||
+				booking.lastName.toLowerCase().includes(query) ||
+				booking.email.toLowerCase().includes(query)
+			);
+		});
+	});
 
 	// "Prossimi appuntamenti": shown 3-at-a-time.
 	readonly agendaOpen = signal(true);
@@ -110,7 +144,7 @@ export class Home {
 			{
 				label: booking.isAccepted ? "Metti in attesa" : "Accetta",
 				icon: booking.isAccepted ? "pi pi-clock" : "pi pi-check-circle",
-				command: event => this.confirmAcceptBooking(event.originalEvent, booking)
+				command: () => this.confirmAcceptBooking(booking)
 			},
 			{
 				label: "Modifica data",
@@ -187,6 +221,29 @@ export class Home {
 		this.menu()?.toggle(event);
 	}
 
+	onToggleFromDialog(booking: BookingDto) {
+		this.isNotesDialogVisible.set(false);
+		this.confirmAcceptBooking(booking);
+	}
+
+	async copyToClipboard(text: string) {
+		try {
+			await copyTextToClipboard(text);
+			this.messageService.add({
+				severity: "success",
+				summary: "Copiato",
+				detail: text,
+				life: 2500
+			});
+		} catch {
+			this.messageService.add({
+				severity: "error",
+				summary: "Errore",
+				detail: "Impossibile copiare"
+			});
+		}
+	}
+
 	private toggleBookingStatus(booking: BookingDto) {
 		if (!booking.id) return;
 
@@ -208,21 +265,20 @@ export class Home {
 			);
 	}
 
-	private confirmAcceptBooking(event: Event | undefined, booking: BookingDto) {
+	private confirmAcceptBooking(booking: BookingDto) {
 		if (booking.isAccepted) {
 			this.toggleBookingStatus(booking);
 			return;
 		}
 
-		if (!booking.id || !event) return;
+		if (!booking.id) return;
 
 		this.confirmationService.confirm({
-			target: event.currentTarget as EventTarget,
 			header: "Conferma prenotazione",
 			message: "Vuoi inviare una mail di conferma al cliente?",
 			icon: "pi pi-envelope",
 			acceptIcon: "pi pi-send",
-			closable: false,
+			closable: true,
 			acceptButtonProps: {
 				label: "Sì, invia",
 				rounded: true

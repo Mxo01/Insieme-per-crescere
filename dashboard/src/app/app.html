@@ -4,7 +4,9 @@
 @if (isAuthenticated()) {
 	<div class="min-h-screen">
 		<header
-			class="sticky top-0 z-20 flex h-18 items-center gap-4.5 border-b border-[var(--line)] bg-[var(--surface)]/90 px-6 backdrop-blur-lg"
+			#headerEl
+			class="sticky z-20 flex h-18 items-center gap-4.5 border-b border-[var(--line)] bg-[var(--surface)]/90 px-6 backdrop-blur-lg transition-[top] duration-300"
+			[style.top.px]="isNavHidden() ? -headerHeight() : 0"
 		>
 			<button
 				type="button"
