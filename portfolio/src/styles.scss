@@ -40,12 +40,15 @@
 // not `--p-form-field-background` — so that's the one to redefine per
 // component (`--p-form-field-*` is set too, for anything that does read
 // the semantic alias directly).
-@mixin form-field-tokens($prefix) {
+@mixin form-field-tokens($prefix, $radius) {
 	--p-form-field-background: var(--g);
 	--p-form-field-border-color: var(--line);
 	--p-form-field-hover-border-color: var(--v300);
 	--p-form-field-focus-border-color: var(--v500);
 	--p-form-field-color: var(--ink);
+	--p-form-field-border-radius: #{$radius};
+	--p-form-field-padding-x: 1.25rem;
+	--p-form-field-padding-y: 0.875rem;
 	--p-form-field-focus-ring-width: 4px;
 	--p-form-field-focus-ring-style: solid;
 	--p-form-field-focus-ring-color: var(--v50);
@@ -55,18 +58,28 @@
 	--p-#{$prefix}-hover-border-color: var(--v300);
 	--p-#{$prefix}-focus-border-color: var(--v500);
 	--p-#{$prefix}-color: var(--ink);
+	--p-#{$prefix}-border-radius: #{$radius};
+	--p-#{$prefix}-padding-x: 1.25rem;
+	--p-#{$prefix}-padding-y: 0.875rem;
 	--p-#{$prefix}-focus-ring-width: 4px;
 	--p-#{$prefix}-focus-ring-style: solid;
 	--p-#{$prefix}-focus-ring-color: var(--v50);
 	--p-#{$prefix}-focus-ring-offset: 0px;
+
+	// PrimeNG's own `:enabled:focus` rule only touches border-color/ring,
+	// not background — the cream fill turning white on focus is our own
+	// addition, layered on top once the base token overrides above apply.
+	&:focus {
+		background: #fff;
+	}
 }
 
 .p-inputtext {
-	@include form-field-tokens("inputtext");
+	@include form-field-tokens("inputtext", 9999px);
 }
 
 .p-textarea {
-	@include form-field-tokens("textarea");
+	@include form-field-tokens("textarea", 1.5rem);
 }
 
 html {
