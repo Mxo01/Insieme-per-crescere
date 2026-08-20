@@ -1,7 +1,7 @@
 import { Component, inject, signal, effect, computed } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FormsModule } from "@angular/forms";
-import { DatePicker } from "primeng/datepicker";
+import { DatePicker, DatePickerMonthChangeEvent } from "primeng/datepicker";
 import { MultiSelect } from "primeng/multiselect";
 import { MessageService } from "primeng/api";
 import { Dates } from "../../shared/services/dates/dates";
@@ -29,6 +29,24 @@ export class AvailabilityManagement {
 
 	readonly monthRange = computed(() => getOneMonthFromNowRange());
 
+	// The datepicker's prev/next buttons ignore `minDate` — they only gray
+	// out individual days, so without this the admin could still page back
+	// into months that are entirely in the past. Tracked via
+	// `onMonthChange` and compared against `monthRange().start`'s month.
+	readonly viewedMonth = signal({
+		month: new Date().getMonth() + 1,
+		year: new Date().getFullYear()
+	});
+
+	readonly isPrevMonthDisabled = computed(() => {
+		const earliest = this.monthRange().start;
+		const { month, year } = this.viewedMonth();
+		return (
+			year < earliest.getFullYear() ||
+			(year === earliest.getFullYear() && month <= earliest.getMonth() + 1)
+		);
+	});
+
 	constructor() {
 		effect(async () => {
 			const date = this.selectedDate();
@@ -50,6 +68,11 @@ export class AvailabilityManagement {
 				);
 			}
 		});
+	}
+
+	onMonthChange(event: DatePickerMonthChangeEvent) {
+		if (event.month === undefined || event.year === undefined) return;
+		this.viewedMonth.set({ month: event.month, year: event.year });
 	}
 
 	onSave() {

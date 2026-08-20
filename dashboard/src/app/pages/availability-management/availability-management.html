@@ -22,7 +22,8 @@
 				[(ngModel)]="selectedDate"
 				inline
 				[minDate]="monthRange().start"
-				class="overflow-auto"
+				(onMonthChange)="onMonthChange($event)"
+				[class.prev-locked]="isPrevMonthDisabled()"
 				panelStyleClass="!border-none !bg-transparent !p-0"
 			/>
 		</div>

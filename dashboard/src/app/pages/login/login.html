@@ -23,13 +23,17 @@
 				Accedi per gestire le prenotazioni di Insieme per crescere.
 			</p>
 		</div>
-		<button
-			type="button"
-			class="inline-flex w-full cursor-pointer items-center justify-center gap-2.75 rounded-full bg-[linear-gradient(135deg,var(--v500),var(--v700))] px-7 py-4 text-base font-bold text-white shadow-[0_18px_36px_-14px_rgba(71,32,127,0.9)] transition-all hover:-translate-y-0.5 active:scale-97"
-			(click)="login()"
-		>
-			<i class="pi pi-google text-[19px]"></i>
-			Accedi con Google
-		</button>
+		<!-- TEMP: hidden on request, Google sign-in doesn't work in local dev
+		(App Check). Restore by removing this comment/@if wrapper. -->
+		@if (false) {
+			<button
+				type="button"
+				class="inline-flex w-full cursor-pointer items-center justify-center gap-2.75 rounded-full bg-[linear-gradient(135deg,var(--v500),var(--v700))] px-7 py-4 text-base font-bold text-white shadow-[0_18px_36px_-14px_rgba(71,32,127,0.9)] transition-all hover:-translate-y-0.5 active:scale-97"
+				(click)="login()"
+			>
+				<i class="pi pi-google text-[19px]"></i>
+				Accedi con Google
+			</button>
+		}
 	</div>
 </div>
