@@ -236,6 +236,17 @@ p-datepicker {
 		flex: 1 !important;
 	}
 
+	// PrimeNG's own base style for inline mode sets `overflow-x: auto` on
+	// the panel (a horizontal-scroll fallback), which per the CSS spec
+	// forces `overflow-y` to `auto` too when it isn't set explicitly —
+	// clipping the selected-day glow shadow on every row, not just the
+	// last one, whenever it's tall enough to poke past the panel edge.
+	// The table now fits its column (see the day-cell padding fix below),
+	// so the horizontal fallback is no longer needed either.
+	.p-datepicker-panel-inline {
+		overflow: visible;
+	}
+
 	.p-datepicker-header {
 		background: transparent;
 		display: flex;
