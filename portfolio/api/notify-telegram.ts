@@ -27,7 +27,7 @@ function getAdminFirestore() {
 	const app =
 		getApps()[0] ??
 		initializeApp({
-			credential: cert(JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT_KEY ?? "{}"))
+			credential: cert(JSON.parse(process.env["FIREBASE_SERVICE_ACCOUNT_KEY"] ?? "{}"))
 		});
 
 	return getFirestore(app);
@@ -43,8 +43,8 @@ async function bookingExists(bookingId: string): Promise<BookingRecord | null> {
 }
 
 async function sendTelegramMessage(text: string) {
-	const token = process.env.TELEGRAM_BOT_TOKEN;
-	const chatId = process.env.TELEGRAM_CHAT_ID;
+	const token = process.env["TELEGRAM_BOT_TOKEN"];
+	const chatId = process.env["TELEGRAM_CHAT_ID"];
 
 	if (!token || !chatId) throw new Error("Telegram bot is not configured");
 
