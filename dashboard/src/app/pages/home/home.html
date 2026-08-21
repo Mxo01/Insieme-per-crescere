@@ -6,6 +6,14 @@
 				Gestisci le richieste di consulenza e gli appuntamenti.
 			</p>
 		</div>
+		<button
+			type="button"
+			class="inline-flex cursor-pointer items-center gap-2.25 rounded-full border border-[var(--line)] bg-white px-5.5 py-3 text-[14.5px] font-bold text-[var(--ink)] transition-all hover:-translate-y-0.5 hover:border-[var(--v300)] hover:bg-[var(--v50)] active:scale-96"
+			(click)="toggleAgenda()"
+		>
+			<i class="pi pi-calendar"></i>
+			{{ agendaOpen() ? "Nascondi agenda" : "Mostra agenda" }}
+		</button>
 	</header>
 
 	<div class="reveal grid grid-cols-1 gap-5 md:grid-cols-3">
@@ -201,17 +209,6 @@
 		}
 	</div>
 
-	<div class="-mb-2 flex justify-end">
-		<button
-			type="button"
-			class="inline-flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-[14px] font-bold text-[var(--ink60)] transition-all hover:bg-[var(--v50)] hover:text-[var(--v600)] active:scale-96"
-			(click)="toggleAgenda()"
-		>
-			<i class="pi pi-calendar"></i>
-			{{ agendaOpen() ? "Nascondi agenda" : "Mostra agenda" }}
-		</button>
-	</div>
-
 	<div
 		class="reveal overflow-hidden rounded-[30px] border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shs)]"
 	>
@@ -360,7 +357,7 @@
 >
 	@let booking = selectedBooking();
 	@if (booking) {
-		<div class="flex flex-col gap-5 pt-2">
+		<div class="flex flex-col gap-5 pt-4">
 			<div class="flex items-start justify-between gap-4">
 				<div class="flex items-center gap-3.5">
 					<div
@@ -377,7 +374,7 @@
 				</div>
 				<button
 					type="button"
-					class="grid h-8 w-8 flex-none cursor-pointer place-items-center rounded-full text-[var(--ink40)] transition-all hover:scale-106 hover:bg-[var(--g)] active:scale-94"
+					class="grid h-8 w-8 flex-none cursor-pointer place-items-center rounded-full text-[var(--ink40)] transition-all duration-300 hover:rotate-90 hover:bg-[var(--coralsoft)] hover:text-[var(--coral)] active:scale-90"
 					(click)="isNotesDialogVisible.set(false)"
 				>
 					<i class="pi pi-times"></i>

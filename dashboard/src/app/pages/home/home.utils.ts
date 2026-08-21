@@ -71,7 +71,8 @@ export function getBookingsChartData(months: MonthlyBookingCount[]) {
 	};
 }
 
-// No axis, no gridlines, no hover — the value is printed right above each
+// Month labels stay (there's no other way to tell the bars apart), but no
+// axis line/gridlines/y-axis/hover — the value is printed right above each
 // bar instead (see `barValueLabelsPlugin`), so the y-axis scale would be
 // pure redundant clutter.
 export const bookingsChartOptions = {
@@ -83,7 +84,11 @@ export const bookingsChartOptions = {
 		tooltip: { enabled: false }
 	},
 	scales: {
-		x: { display: false },
+		x: {
+			border: { display: false },
+			grid: { display: false },
+			ticks: { color: "#8A7C96", font: { weight: 700, size: 12 } }
+		},
 		y: { display: false, beginAtZero: true }
 	}
 };

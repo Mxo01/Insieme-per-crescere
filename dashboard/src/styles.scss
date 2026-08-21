@@ -25,6 +25,60 @@
 	--shl: 0 30px 64px -18px rgba(71, 32, 127, 0.32);
 }
 
+// Form fields (see the "Modifica la data" dialog): same cream/rounded/
+// focus-to-white treatment as the portfolio's booking form. PrimeNG aliases
+// its component-scoped tokens (e.g. --p-inputtext-background) from the
+// semantic --p-form-field-* ones only at token-definition time, not at the
+// CSS rule that actually consumes them — so both have to be overridden, and
+// scoped onto the real selector (not :root) to beat PrimeNG's own
+// same-specificity, later-injected :root rule.
+@mixin form-field-tokens($prefix, $radius) {
+	--p-form-field-background: var(--g);
+	--p-form-field-border-color: var(--line);
+	--p-form-field-hover-border-color: var(--v300);
+	--p-form-field-focus-border-color: var(--v500);
+	--p-form-field-color: var(--ink);
+	--p-form-field-border-radius: #{$radius};
+	--p-form-field-padding-x: 1.25rem;
+	--p-form-field-padding-y: 0.875rem;
+	--p-form-field-focus-ring-width: 4px;
+	--p-form-field-focus-ring-style: solid;
+	--p-form-field-focus-ring-color: var(--v50);
+	--p-form-field-focus-ring-offset: 0px;
+	--p-#{$prefix}-background: var(--g);
+	--p-#{$prefix}-border-color: var(--line);
+	--p-#{$prefix}-hover-border-color: var(--v300);
+	--p-#{$prefix}-focus-border-color: var(--v500);
+	--p-#{$prefix}-color: var(--ink);
+	--p-#{$prefix}-border-radius: #{$radius};
+	--p-#{$prefix}-padding-x: 1.25rem;
+	--p-#{$prefix}-padding-y: 0.875rem;
+	--p-#{$prefix}-focus-ring-width: 4px;
+	--p-#{$prefix}-focus-ring-style: solid;
+	--p-#{$prefix}-focus-ring-color: var(--v50);
+	--p-#{$prefix}-focus-ring-offset: 0px;
+}
+
+// The datepicker's text input renders via `pInputText` internally, so this
+// also covers it.
+.p-inputtext {
+	@include form-field-tokens("inputtext", 9999px);
+
+	&:focus {
+		background: #fff;
+	}
+}
+
+// p-select focuses a hidden proxy input, not its own root, so PrimeNG
+// mirrors that state onto the root via a `.p-focus` class instead.
+.p-select {
+	@include form-field-tokens("select", 9999px);
+
+	&.p-focus {
+		background: #fff;
+	}
+}
+
 html {
 	overflow-x: hidden;
 }
@@ -275,9 +329,15 @@ p-datepicker.prev-locked .p-datepicker-prev-button {
 .p-dialog,
 .p-confirmdialog {
 	border: none;
-	border-radius: 32px;
+	border-radius: 40px;
 	box-shadow: var(--shl);
 	overflow: hidden;
+}
+
+// Stronger backdrop blur behind every modal, on top of PrimeNG's own dim
+// overlay.
+.p-dialog-mask {
+	backdrop-filter: blur(6px);
 }
 
 .p-dialog-header {
@@ -294,16 +354,22 @@ p-datepicker.prev-locked .p-datepicker-prev-button {
 }
 
 // Built-in close (X) button, shared by every p-dialog/p-confirmdialog —
-// same hover/press feedback as the app's other icon buttons.
+// stays PrimeNG's plain default at rest, turns coral and spins a quarter
+// turn on hover.
 .p-dialog-close-button {
-	transition: all 0.2s;
+	transition:
+		background-color 0.25s,
+		color 0.25s,
+		transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
 
 	&:hover {
-		transform: scale(1.06);
+		background: var(--coralsoft);
+		color: var(--coral);
+		transform: rotate(90deg);
 	}
 
 	&:active {
-		transform: scale(0.94);
+		transform: rotate(90deg) scale(0.9);
 	}
 }
 
@@ -327,42 +393,55 @@ p-datepicker.prev-locked .p-datepicker-prev-button {
 		font-weight: 600;
 		color: var(--ink60);
 	}
+}
 
-	.p-button {
-		border: none;
-		padding: 0.75rem 1.75rem;
-		font-weight: 700;
-		transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.5);
-		box-shadow: none;
+// Every real action button inside any dialog (Sì/No, Annulla/Conferma,
+// Elimina, ...) shares the same pill/gradient look as the rest of the app —
+// scoped to p-dialog (which p-confirmdialog renders under the hood too), and
+// excluding text/icon-only buttons so the built-in close (X) is untouched.
+.p-dialog .p-button:not(.p-button-text):not(.p-button-icon-only) {
+	border: none;
+	padding: 0.75rem 1.75rem;
+	font-weight: 700;
+	// `translateY` on hover was the culprit behind a flicker loop: lifting
+	// the button shifts it out from under the cursor near its edges, which
+	// un-hovers it, drops it back down, re-hovers it, repeat. `filter:
+	// brightness` gives hover feedback without moving anything.
+	transition:
+		filter 0.15s,
+		transform 0.15s cubic-bezier(0.2, 0.9, 0.3, 1.5);
+	box-shadow: none;
 
-		&:not(:disabled):hover {
-			transform: translateY(-2px);
-		}
-
-		&:not(:disabled):active {
-			transform: scale(0.96);
-		}
+	&:not(:disabled):hover {
+		filter: brightness(1.06);
 	}
 
-	// Default (no severity) button — the sole "accept" action, e.g. "Sì, invia".
-	.p-button:not(.p-button-secondary):not(.p-button-danger) {
-		background: linear-gradient(135deg, var(--v500), var(--v700));
-		box-shadow: 0 14px 28px -12px rgba(71, 32, 127, 0.9);
+	&:not(:disabled):active {
+		transform: scale(0.96);
 	}
+}
 
-	.p-button-secondary {
-		background: rgba(36, 22, 52, 0.06);
-		color: var(--ink60);
+// Default (no severity) button — e.g. "Sì, invia", "Conferma".
+.p-dialog
+	.p-button:not(.p-button-text):not(.p-button-icon-only):not(.p-button-secondary):not(
+		.p-button-danger
+	) {
+	background: linear-gradient(135deg, var(--v500), var(--v700));
+	box-shadow: 0 14px 28px -12px rgba(71, 32, 127, 0.9);
+}
 
-		&:hover {
-			background: rgba(36, 22, 52, 0.11);
-		}
+.p-dialog .p-button-secondary:not(.p-button-text):not(.p-button-icon-only) {
+	background: rgba(36, 22, 52, 0.06);
+	color: var(--ink60);
+
+	&:hover {
+		background: rgba(36, 22, 52, 0.11);
 	}
+}
 
-	.p-button-danger {
-		background: linear-gradient(135deg, var(--coral), #d8536b);
-		box-shadow: 0 14px 28px -12px rgba(239, 111, 132, 0.7);
-	}
+.p-dialog .p-button-danger:not(.p-button-text):not(.p-button-icon-only) {
+	background: linear-gradient(135deg, var(--coral), #d8536b);
+	box-shadow: 0 14px 28px -12px rgba(239, 111, 132, 0.7);
 }
 
 // Bookings table (see dashboard/home.html): plain white rows with a hair
