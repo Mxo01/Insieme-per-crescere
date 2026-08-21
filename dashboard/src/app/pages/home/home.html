@@ -6,6 +6,14 @@
 				Gestisci le richieste di consulenza e gli appuntamenti.
 			</p>
 		</div>
+		<button
+			type="button"
+			class="inline-flex cursor-pointer items-center gap-2.25 rounded-full border border-[var(--line)] bg-white px-5.5 py-3 text-[14.5px] font-bold text-[var(--ink)] transition-all hover:-translate-y-0.5 hover:border-[var(--v300)] hover:bg-[var(--v50)] active:scale-96"
+			(click)="toggleAgenda()"
+		>
+			<i class="pi pi-calendar"></i>
+			{{ agendaOpen() ? "Nascondi agenda" : "Mostra agenda" }}
+		</button>
 	</header>
 
 	<div class="reveal grid grid-cols-1 gap-5 md:grid-cols-3">
@@ -96,6 +104,7 @@
 						type="bar"
 						[data]="chartData()"
 						[options]="chartOptions"
+						[plugins]="chartPlugins"
 						height="100%"
 					/>
 				</div>
@@ -200,77 +209,63 @@
 		}
 	</div>
 
-	<div class="-mb-2 flex justify-end">
-		<button
-			type="button"
-			class="inline-flex cursor-pointer items-center gap-2 rounded-full px-4 py-2 text-[14px] font-bold text-[var(--ink60)] transition-all hover:bg-[var(--v50)] hover:text-[var(--v600)] active:scale-96"
-			(click)="toggleAgenda()"
-		>
-			<i class="pi pi-calendar"></i>
-			{{ agendaOpen() ? "Nascondi agenda" : "Mostra agenda" }}
-		</button>
-	</div>
-
 	<div
 		class="reveal overflow-hidden rounded-[30px] border border-[var(--line)] bg-[var(--surface)] shadow-[var(--shs)]"
 	>
+		<div class="flex flex-wrap items-center justify-between gap-4 p-6.5 pb-0">
+			<h2 class="text-[19px]">Tutte le richieste</h2>
+
+			<div class="flex flex-wrap items-center gap-3">
+				<div class="relative">
+					<i
+						class="pi pi-search absolute top-1/2 left-4 -translate-y-1/2 text-sm text-[var(--ink40)]"
+					></i>
+					<input
+						type="text"
+						placeholder="Cerca cliente, email..."
+						class="w-56 rounded-full border border-[var(--line)] bg-[var(--g)] py-2.5 pr-4 pl-10 text-[13.5px] font-semibold text-[var(--ink)] outline-none transition-colors focus:border-[var(--v300)] focus:bg-white sm:w-64"
+						[ngModel]="searchQuery()"
+						(ngModelChange)="searchQuery.set($event)"
+					/>
+				</div>
+
+				<div class="flex gap-1.5 rounded-full bg-[var(--g)] p-1.5">
+					@for (option of statusFilterOptions; track option.value) {
+						<button
+							type="button"
+							class="cursor-pointer rounded-full px-5 py-2.5 text-[13px] font-bold whitespace-nowrap transition-colors"
+							[class]="
+								statusFilter() === option.value
+									? 'bg-[var(--v500)] text-white shadow-[var(--shs)]'
+									: 'text-[var(--ink60)] hover:text-[var(--v600)]'
+							"
+							(click)="statusFilter.set(option.value)"
+						>
+							{{ option.label }}
+						</button>
+					}
+				</div>
+			</div>
+		</div>
+
 		<p-table
-			[value]="bookings()"
-			stripedRows
+			[value]="filteredBookings()"
 			[rows]="20"
 			[paginator]="true"
+			[showFirstLastIcon]="false"
+			[showCurrentPageReport]="true"
+			currentPageReportTemplate="{first} - {last} di {totalRecords} prenotazioni"
 			[rowsPerPageOptions]="[10, 20, 50]"
+			styleClass="dashboard-table"
 		>
 			<ng-template #header>
 				<tr>
-					<th>Azioni</th>
 					<th>Stato</th>
 					<th>Data</th>
 					<th>Ora</th>
 					<th>Cliente</th>
 					<th>Email</th>
 					<th>Telefono</th>
-				</tr>
-				<tr>
-					<th></th>
-					<th>
-						<p-columnFilter
-							type="boolean"
-							field="isAccepted"
-						/>
-					</th>
-					<th>
-						<p-columnFilter
-							type="text"
-							field="date"
-							ariaLabel="Filter Date"
-							filterOn="input"
-						/>
-					</th>
-					<th>
-						<p-columnFilter
-							type="text"
-							field="time"
-							ariaLabel="Filter Time"
-							filterOn="input"
-						/>
-					</th>
-					<th>
-						<p-columnFilter
-							type="text"
-							field="name"
-							ariaLabel="Filter Name"
-							filterOn="input"
-						/>
-					</th>
-					<th>
-						<p-columnFilter
-							type="text"
-							field="email"
-							ariaLabel="Filter email"
-							filterOn="input"
-						/>
-					</th>
 					<th></th>
 				</tr>
 			</ng-template>
@@ -278,7 +273,43 @@
 				#body
 				let-booking
 			>
-				<tr class="[&>td]:text-sm">
+				<tr>
+					<td class="whitespace-nowrap">
+						<p-tag
+							[severity]="booking.isAccepted ? 'success' : 'warn'"
+							[value]="booking.isAccepted ? 'Accettata' : 'In attesa'"
+							[rounded]="true"
+						/>
+					</td>
+					<td class="font-bold whitespace-nowrap">{{ booking.date }}</td>
+					<td class="whitespace-nowrap">{{ booking.time }}</td>
+					<td class="font-bold whitespace-nowrap">{{ booking.name }} {{ booking.lastName }}</td>
+					<td class="whitespace-nowrap">
+						<div class="flex items-center gap-1.5">
+							<span>{{ booking.email }}</span>
+							<button
+								type="button"
+								title="Copia email"
+								class="grid h-6.5 w-6.5 flex-none cursor-pointer place-items-center rounded-full text-[var(--ink40)] transition-colors hover:bg-[var(--v50)] hover:text-[var(--v600)]"
+								(click)="copyToClipboard(booking.email)"
+							>
+								<i class="pi pi-copy text-xs"></i>
+							</button>
+						</div>
+					</td>
+					<td class="whitespace-nowrap">
+						<div class="flex items-center gap-1.5">
+							<span>{{ booking.phone }}</span>
+							<button
+								type="button"
+								title="Copia telefono"
+								class="grid h-6.5 w-6.5 flex-none cursor-pointer place-items-center rounded-full text-[var(--ink40)] transition-colors hover:bg-[var(--v50)] hover:text-[var(--v600)]"
+								(click)="copyToClipboard(booking.phone)"
+							>
+								<i class="pi pi-copy text-xs"></i>
+							</button>
+						</div>
+					</td>
 					<td>
 						<p-button
 							icon="pi pi-ellipsis-v"
@@ -288,25 +319,13 @@
 							(click)="onRowActionsClick($event, booking)"
 						/>
 					</td>
-					<td class="whitespace-nowrap">
-						<p-tag
-							[severity]="booking.isAccepted ? 'success' : 'warn'"
-							[value]="booking.isAccepted ? 'Accettata' : 'In attesa'"
-							[rounded]="true"
-						/>
-					</td>
-					<td>{{ booking.date }}</td>
-					<td>{{ booking.time }}</td>
-					<td>{{ booking.name }} {{ booking.lastName }}</td>
-					<td>{{ booking.email }}</td>
-					<td>{{ booking.phone }}</td>
 				</tr>
 			</ng-template>
 			<ng-template #emptymessage>
 				<tr>
 					<td
 						colspan="7"
-						class="text-center py-12"
+						class="py-12 text-center"
 					>
 						<div class="flex flex-col items-center gap-4 text-[var(--ink40)]">
 							<div class="grid h-16 w-16 place-items-center rounded-full bg-[var(--g)]">
@@ -330,12 +349,71 @@
 
 <p-dialog
 	[modal]="true"
-	header="Note del cliente"
+	[showHeader]="false"
 	[focusOnShow]="false"
 	(onHide)="selectedBooking.set(null)"
 	[(visible)]="isNotesDialogVisible"
+	styleClass="!max-w-md"
 >
-	<p class="py-5">{{ selectedBooking()?.notes }}</p>
+	@let booking = selectedBooking();
+	@if (booking) {
+		<div class="flex flex-col gap-5 pt-4">
+			<div class="flex items-start justify-between gap-4">
+				<div class="flex items-center gap-3.5">
+					<div
+						class="grid h-11.5 w-11.5 flex-none place-items-center rounded-2xl bg-[var(--v100)] text-[var(--v700)]"
+					>
+						<i class="pi pi-file-edit text-lg"></i>
+					</div>
+					<div>
+						<div class="font-['Outfit'] text-lg leading-tight font-bold">Note del cliente</div>
+						<div class="text-[13.5px] font-semibold text-[var(--ink40)]">
+							{{ booking.name }} {{ booking.lastName }}
+						</div>
+					</div>
+				</div>
+				<button
+					type="button"
+					class="grid h-8 w-8 flex-none cursor-pointer place-items-center rounded-full text-[var(--ink40)] transition-all duration-300 hover:rotate-90 hover:bg-[var(--coralsoft)] hover:text-[var(--coral)] active:scale-90"
+					(click)="isNotesDialogVisible.set(false)"
+				>
+					<i class="pi pi-times"></i>
+				</button>
+			</div>
+
+			@if (booking.notes) {
+				<p
+					class="m-0 rounded-3xl bg-[var(--g)] p-5 text-[15px] leading-relaxed font-medium whitespace-pre-line text-[var(--ink)]"
+				>
+					{{ booking.notes }}
+				</p>
+			} @else {
+				<p
+					class="m-0 rounded-3xl border-2 border-dashed border-[var(--line)] p-5 text-center text-[14.5px] font-semibold text-[var(--ink40)]"
+				>
+					Il cliente non ha lasciato note.
+				</p>
+			}
+
+			<div class="flex justify-end gap-3">
+				<button
+					type="button"
+					class="cursor-pointer rounded-full bg-[rgba(36,22,52,0.06)] px-6 py-3 text-[15px] font-bold text-[var(--ink60)] transition-all hover:bg-[rgba(36,22,52,0.11)] active:scale-96"
+					(click)="isNotesDialogVisible.set(false)"
+				>
+					Chiudi
+				</button>
+				<button
+					type="button"
+					class="inline-flex cursor-pointer items-center gap-2 rounded-full bg-[linear-gradient(135deg,var(--v500),var(--v700))] px-6 py-3 text-[15px] font-bold text-white shadow-[0_14px_28px_-12px_rgba(71,32,127,0.9)] transition-all hover:-translate-y-0.5 active:scale-96"
+					(click)="onToggleFromDialog(booking)"
+				>
+					<i [class]="booking.isAccepted ? 'pi pi-clock' : 'pi pi-check-circle'"></i>
+					{{ booking.isAccepted ? "Metti in attesa" : "Accetta" }}
+				</button>
+			</div>
+		</div>
+	}
 </p-dialog>
 
 <p-dialog

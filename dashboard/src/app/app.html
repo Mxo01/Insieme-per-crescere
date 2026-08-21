@@ -1,10 +1,32 @@
 <p-toast [breakpoints]="{ '920px': { width: '75%' } }" />
-<p-confirm-dialog />
+<p-confirm-dialog #confirmDialog>
+	<!-- Icon moved next to the title (matching the notes dialog) instead of
+	PrimeNG's default centered-above-the-message placement — one override
+	here covers every confirm() call in the app. -->
+	<ng-template #header>
+		<div class="flex items-center gap-3.5">
+			<div
+				class="grid h-11.5 w-11.5 flex-none place-items-center rounded-2xl bg-[var(--v100)] text-[var(--v700)]"
+			>
+				<i
+					class="text-lg"
+					[class]="confirmDialog.confirmation?.icon"
+				></i>
+			</div>
+			<span class="font-['Outfit'] text-lg font-bold">
+				{{ confirmDialog.confirmation?.header }}
+			</span>
+		</div>
+	</ng-template>
+	<ng-template #icon />
+</p-confirm-dialog>
 
 @if (isAuthenticated()) {
 	<div class="min-h-screen">
 		<header
-			class="sticky top-0 z-20 flex h-18 items-center gap-4.5 border-b border-[var(--line)] bg-[var(--surface)]/90 px-6 backdrop-blur-lg"
+			#headerEl
+			class="sticky z-20 flex h-18 items-center gap-4.5 border-b border-[var(--line)] bg-[var(--surface)]/90 px-6 backdrop-blur-lg transition-[top] duration-300"
+			[style.top.px]="isNavHidden() ? -headerHeight() : 0"
 		>
 			<button
 				type="button"

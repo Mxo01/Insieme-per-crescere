@@ -1,3 +1,4 @@
+import type { Plugin } from "chart.js";
 import { BookingDto } from "src/app/shared/services/bookings/bookings.model";
 
 // Pulled out of Home so the component stays focused on wiring signals to
@@ -70,20 +71,52 @@ export function getBookingsChartData(months: MonthlyBookingCount[]) {
 	};
 }
 
+// Month labels stay (there's no other way to tell the bars apart), but no
+// axis line/gridlines/y-axis/hover — the value is printed right above each
+// bar instead (see `barValueLabelsPlugin`), so the y-axis scale would be
+// pure redundant clutter.
 export const bookingsChartOptions = {
 	responsive: true,
 	maintainAspectRatio: false,
-	plugins: { legend: { display: false } },
+	layout: { padding: { top: 24 } },
+	plugins: {
+		legend: { display: false },
+		tooltip: { enabled: false }
+	},
 	scales: {
 		x: {
+			border: { display: false },
 			grid: { display: false },
 			ticks: { color: "#8A7C96", font: { weight: 700, size: 12 } }
 		},
-		y: {
-			beginAtZero: true,
-			ticks: { precision: 0, color: "#8A7C96" },
-			grid: { color: "rgba(36,22,52,0.06)" }
-		}
+		y: { display: false, beginAtZero: true }
+	}
+};
+
+// Draws each bar's value centered right above it. There's no y-axis to read
+// the height against anymore, so this is the only place the actual count
+// is shown.
+export const barValueLabelsPlugin: Plugin<"bar"> = {
+	id: "barValueLabels",
+	afterDatasetsDraw(chart) {
+		const { ctx } = chart;
+
+		chart.data.datasets.forEach((dataset, datasetIndex) => {
+			const meta = chart.getDatasetMeta(datasetIndex);
+
+			meta.data.forEach((bar, index) => {
+				const value = dataset.data[index];
+				if (!value) return;
+
+				ctx.save();
+				ctx.fillStyle = "#241634";
+				ctx.font = "700 12px 'DM Sans', system-ui, sans-serif";
+				ctx.textAlign = "center";
+				ctx.textBaseline = "bottom";
+				ctx.fillText(String(value), bar.x, bar.y - 6);
+				ctx.restore();
+			});
+		});
 	}
 };
 
