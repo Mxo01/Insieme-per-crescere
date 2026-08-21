@@ -5,7 +5,7 @@ import { ButtonModule } from "primeng/button";
 import { TagModule } from "primeng/tag";
 import { Menu, MenuModule } from "primeng/menu";
 import { UIChart } from "primeng/chart";
-import { MessageService, MenuItem, ConfirmationService } from "primeng/api";
+import { MessageService, MenuItem, ConfirmationService, ConfirmEventType } from "primeng/api";
 import { Bookings } from "../../shared/services/bookings/bookings";
 import { BookingDto } from "../../shared/services/bookings/bookings.model";
 import { FormsModule } from "@angular/forms";
@@ -292,7 +292,13 @@ export class Home {
 				sendConfirmationEmail(booking);
 				this.toggleBookingStatus(booking);
 			},
-			reject: () => this.toggleBookingStatus(booking)
+			// PrimeNG fires this same callback for a real "No" click AND for
+			// closing the dialog via the X/Escape/outside-click (as a
+			// CANCEL-typed reject) — without this check, dismissing the
+			// dialog silently accepted the booking.
+			reject: (type: ConfirmEventType) => {
+				if (type === ConfirmEventType.REJECT) this.toggleBookingStatus(booking);
+			}
 		});
 	}
 

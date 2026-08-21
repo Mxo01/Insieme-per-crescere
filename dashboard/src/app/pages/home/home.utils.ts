@@ -83,10 +83,7 @@ export const bookingsChartOptions = {
 		tooltip: { enabled: false }
 	},
 	scales: {
-		x: {
-			grid: { display: false },
-			ticks: { color: "#8A7C96", font: { weight: 700, size: 12 } }
-		},
+		x: { display: false },
 		y: { display: false, beginAtZero: true }
 	}
 };

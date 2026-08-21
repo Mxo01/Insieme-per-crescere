@@ -293,22 +293,75 @@ p-datepicker.prev-locked .p-datepicker-prev-button {
 	font-weight: 700;
 }
 
+// Built-in close (X) button, shared by every p-dialog/p-confirmdialog —
+// same hover/press feedback as the app's other icon buttons.
+.p-dialog-close-button {
+	transition: all 0.2s;
+
+	&:hover {
+		transform: scale(1.06);
+	}
+
+	&:active {
+		transform: scale(0.94);
+	}
+}
+
 .p-confirmdialog {
 	.p-dialog-content {
 		display: flex;
 		flex-direction: column;
 		gap: 1.5rem;
-		padding: 1.75rem;
+		padding: 0.5rem 1.75rem 1.75rem;
+		text-align: left;
 	}
 
+	// The icon moved into the header (see app.html's #header override) — the
+	// default centered-above-the-message one is suppressed via an empty
+	// #icon template, this is just a safety net.
 	.p-confirmdialog-icon {
-		font-size: 1.4rem;
-		color: var(--v500);
+		display: none;
 	}
 
 	.p-confirmdialog-message {
 		font-weight: 600;
 		color: var(--ink60);
+	}
+
+	.p-button {
+		border: none;
+		padding: 0.75rem 1.75rem;
+		font-weight: 700;
+		transition: all 0.2s cubic-bezier(0.2, 0.9, 0.3, 1.5);
+		box-shadow: none;
+
+		&:not(:disabled):hover {
+			transform: translateY(-2px);
+		}
+
+		&:not(:disabled):active {
+			transform: scale(0.96);
+		}
+	}
+
+	// Default (no severity) button — the sole "accept" action, e.g. "Sì, invia".
+	.p-button:not(.p-button-secondary):not(.p-button-danger) {
+		background: linear-gradient(135deg, var(--v500), var(--v700));
+		box-shadow: 0 14px 28px -12px rgba(71, 32, 127, 0.9);
+	}
+
+	.p-button-secondary {
+		background: rgba(36, 22, 52, 0.06);
+		color: var(--ink60);
+
+		&:hover {
+			background: rgba(36, 22, 52, 0.11);
+		}
+	}
+
+	.p-button-danger {
+		background: linear-gradient(135deg, var(--coral), #d8536b);
+		box-shadow: 0 14px 28px -12px rgba(239, 111, 132, 0.7);
 	}
 }
 
