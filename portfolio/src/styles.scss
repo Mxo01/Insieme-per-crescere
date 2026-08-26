@@ -83,7 +83,6 @@
 }
 
 html {
-	overflow-x: hidden;
 	scroll-behavior: smooth;
 }
 
@@ -98,6 +97,13 @@ html {
 html,
 body {
 	margin: 0;
+	// `clip`, not `hidden`: `hidden` forces the paired `overflow-y` to
+	// compute as `auto` (CSS Overflow §3), turning body into its own real
+	// scroll container and detaching it from the page's actual scroll —
+	// which breaks the nav's `position: sticky` (it ends up "stuck" to a
+	// box that never scrolls, instead of the viewport). `clip` suppresses
+	// horizontal scrolling the same way without that side effect.
+	overflow-x: clip;
 	font-family: "DM Sans", system-ui, sans-serif;
 	-webkit-font-smoothing: antialiased;
 	color: var(--ink);
