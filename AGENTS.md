@@ -110,3 +110,15 @@ affected flow by hand.
   `.github/workflows/deploy-firestore-rules.yml`.
 - No CI builds or lints either app: run `npm run clean-code` and a production
   build before opening a PR.
+
+## Git
+
+`main` is PR-only: a branch protection rule blocks force-pushes and branch
+deletion, and the shared rules apply — branch, commit, open the PR, merge it
+once the build is green.
+
+There is deliberately **no required review and no required check**. A solo
+repository cannot satisfy a review requirement (GitHub does not allow approving
+your own PR), so requiring one would only be bypassed with an admin override on
+every merge. The honest gate is the one in Deployment: `npm run clean-code` and
+a production build of the affected app before the PR is opened.
